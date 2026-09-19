@@ -3,11 +3,13 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { SITE_CONFIG, ASSETS } from '@/core';
+import { useInView } from './useInView';
 
 export const PersonalizeCardSection: React.FC = () => {
   const { personalizeCardSection } = SITE_CONFIG;
   const [name, setName] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const { ref, isInView } = useInView<HTMLElement>({ threshold: 0.15 });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,17 +22,30 @@ export const PersonalizeCardSection: React.FC = () => {
   };
 
   return (
-    <section className="w-full py-16 sm:py-24 lg:py-28 px-4 sm:px-6 lg:px-8 bg-white text-[#1A1818] overflow-hidden select-none">
+    <section
+      ref={ref}
+      className="w-full py-16 sm:py-24 lg:py-28 px-4 sm:px-6 lg:px-8 bg-white text-[#1A1818] overflow-hidden select-none"
+    >
       <div className="max-w-6xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
           {/* Left Column: Credit Card Visual with 3 Overlay Badges */}
           <div className="lg:col-span-6 flex justify-center">
             <div className="relative w-full max-w-[420px] sm:max-w-[450px] aspect-[4/4.5] flex items-center justify-center">
               {/* Warm Ivory Background Frame */}
-              <div className="absolute inset-4 sm:inset-6 bg-[#F7F1EB] rounded-none shadow-sm z-0" />
+              <div
+                className={`absolute inset-4 sm:inset-6 bg-[#F7F1EB] rounded-none shadow-sm z-0 transition-all duration-1000 ease-out ${
+                  isInView ? 'opacity-100 scale-100' : 'opacity-0 scale-90'
+                }`}
+              />
 
-              {/* Credit Card-1 Image Display */}
-              <div className="relative z-10 w-[80%] h-[80%] overflow-hidden rounded-none shadow-2xl border-4 border-white transform -rotate-3 hover:rotate-0 transition-transform duration-500 ease-out">
+              {/* Credit Card-1 Image Display with 3D Deal Entrance */}
+              <div
+                className={`relative z-10 w-[80%] h-[80%] overflow-hidden rounded-none shadow-2xl border-4 border-white transition-all duration-1000 ease-out hover:rotate-0 ${
+                  isInView
+                    ? 'opacity-100 translate-y-0 -rotate-3 scale-100'
+                    : 'opacity-0 translate-y-16 -rotate-12 scale-90'
+                }`}
+              >
                 <Image
                   src={ASSETS.images.creditCard1}
                   alt="Personalized Credit Card Showcase"
@@ -45,45 +60,63 @@ export const PersonalizeCardSection: React.FC = () => {
 
               {/* Overlay Badge 1: Top-Left (buy-home.png) */}
               <div className="absolute top-2 left-2 sm:top-5 sm:left-5 z-20">
-                <div className="animate-badge-bounce-1 w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white shadow-xl flex items-center justify-center border border-[#EDE4D9] hover:scale-110 transition-transform duration-300">
-                  <div className="relative w-7 h-7 sm:w-8 sm:h-8">
-                    <Image
-                      src={ASSETS.icons.buyHome}
-                      alt="Buy Home Icon"
-                      fill
-                      sizes="32px"
-                      className="object-contain"
-                    />
+                <div
+                  className={`transition-all duration-700 delay-300 ease-out ${
+                    isInView ? 'opacity-100 scale-100 translate-x-0' : 'opacity-0 scale-50 -translate-x-6'
+                  }`}
+                >
+                  <div className="animate-badge-bounce-1 w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white shadow-xl flex items-center justify-center border border-[#EDE4D9] hover:scale-110 transition-transform duration-300">
+                    <div className="relative w-7 h-7 sm:w-8 sm:h-8">
+                      <Image
+                        src={ASSETS.icons.buyHome}
+                        alt="Buy Home Icon"
+                        fill
+                        sizes="32px"
+                        className="object-contain"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
 
               {/* Overlay Badge 2: Middle-Right (online-shopping.png) */}
               <div className="absolute top-1/2 -right-3 sm:-right-5 -translate-y-1/2 z-20">
-                <div className="animate-badge-bounce-2 w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white shadow-xl flex items-center justify-center border border-[#EDE4D9] hover:scale-110 transition-transform duration-300">
-                  <div className="relative w-7 h-7 sm:w-8 sm:h-8">
-                    <Image
-                      src={ASSETS.icons.onlineShopping}
-                      alt="Online Shopping Icon"
-                      fill
-                      sizes="32px"
-                      className="object-contain"
-                    />
+                <div
+                  className={`transition-all duration-700 delay-500 ease-out ${
+                    isInView ? 'opacity-100 scale-100 translate-x-0' : 'opacity-0 scale-50 translate-x-6'
+                  }`}
+                >
+                  <div className="animate-badge-bounce-2 w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white shadow-xl flex items-center justify-center border border-[#EDE4D9] hover:scale-110 transition-transform duration-300">
+                    <div className="relative w-7 h-7 sm:w-8 sm:h-8">
+                      <Image
+                        src={ASSETS.icons.onlineShopping}
+                        alt="Online Shopping Icon"
+                        fill
+                        sizes="32px"
+                        className="object-contain"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
 
               {/* Overlay Badge 3: Bottom-Right (watching-a-movie.png) */}
               <div className="absolute -bottom-2 right-12 sm:-bottom-4 sm:right-16 z-20">
-                <div className="animate-badge-bounce-3 w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white shadow-xl flex items-center justify-center border border-[#EDE4D9] hover:scale-110 transition-transform duration-300">
-                  <div className="relative w-7 h-7 sm:w-8 sm:h-8">
-                    <Image
-                      src={ASSETS.icons.watchingAMovie}
-                      alt="Watching a Movie Icon"
-                      fill
-                      sizes="32px"
-                      className="object-contain"
-                    />
+                <div
+                  className={`transition-all duration-700 delay-700 ease-out ${
+                    isInView ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-50 translate-y-6'
+                  }`}
+                >
+                  <div className="animate-badge-bounce-3 w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white shadow-xl flex items-center justify-center border border-[#EDE4D9] hover:scale-110 transition-transform duration-300">
+                    <div className="relative w-7 h-7 sm:w-8 sm:h-8">
+                      <Image
+                        src={ASSETS.icons.watchingAMovie}
+                        alt="Watching a Movie Icon"
+                        fill
+                        sizes="32px"
+                        className="object-contain"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -92,42 +125,63 @@ export const PersonalizeCardSection: React.FC = () => {
 
           {/* Right Column: Copy, Checklist, and Apply Form */}
           <div className="lg:col-span-6 flex flex-col justify-center">
-            {/* Title */}
-            <h2 className="font-poppins text-3xl sm:text-4xl lg:text-[42px] font-bold text-[#1A1818] leading-[1.2] tracking-tight">
-              {personalizeCardSection.title}
-            </h2>
+            {/* Title & Description with Smooth Slide-Up */}
+            <div
+              className={`transition-all duration-700 delay-200 ease-out ${
+                isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+              }`}
+            >
+              <h2 className="font-poppins text-3xl sm:text-4xl lg:text-[42px] font-bold text-[#1A1818] leading-[1.2] tracking-tight">
+                {personalizeCardSection.title}
+              </h2>
 
-            {/* Description */}
-            <p className="font-roboto text-sm sm:text-base text-gray-500 mt-4 leading-relaxed max-w-lg font-normal">
-              {personalizeCardSection.description}
-            </p>
+              <p className="font-roboto text-sm sm:text-base text-gray-500 mt-4 leading-relaxed max-w-lg font-normal">
+                {personalizeCardSection.description}
+              </p>
+            </div>
 
-            {/* Red Checkmark List */}
+            {/* Red Checkmark List with Sequential Cascade */}
             <ul className="mt-6 space-y-3">
-              {personalizeCardSection.checklist.map((item, idx) => (
-                <li key={idx} className="flex items-center gap-3">
-                  <svg
-                    className="w-4 h-4 text-[#B81446] flex-shrink-0"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.5"
-                    viewBox="0 0 24 24"
+              {personalizeCardSection.checklist.map((item, idx) => {
+                const checkDelays = ['delay-[350ms]', 'delay-[500ms]', 'delay-[650ms]'];
+
+                return (
+                  <li
+                    key={idx}
+                    className={`flex items-center gap-3 transition-all duration-500 ease-out ${
+                      checkDelays[idx]
+                    } ${
+                      isInView ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-6'
+                    }`}
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
-                  <span className="font-roboto text-sm sm:text-[15px] text-gray-700 font-normal">
-                    {item}
-                  </span>
-                </li>
-              ))}
+                    <svg
+                      className="w-4 h-4 text-[#B81446] flex-shrink-0"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                    <span className="font-roboto text-sm sm:text-[15px] text-gray-700 font-normal">
+                      {item}
+                    </span>
+                  </li>
+                );
+              })}
             </ul>
 
-            {/* Application Form */}
-            <form onSubmit={handleSubmit} className="mt-8 max-w-md">
+            {/* Application Form with Smooth Lift */}
+            <form
+              onSubmit={handleSubmit}
+              className={`mt-8 max-w-md transition-all duration-700 delay-[750ms] ease-out ${
+                isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+              }`}
+            >
               <label
                 htmlFor="applicant-name"
                 className="block font-roboto text-xs sm:text-sm font-semibold text-[#1A1818] mb-2"

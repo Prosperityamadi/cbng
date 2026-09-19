@@ -4,10 +4,12 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { SITE_CONFIG, ASSETS } from '@/core';
+import { useInView } from './useInView';
 
 export const EmergencyServicesSection: React.FC = () => {
   const { emergencyServicesSection } = SITE_CONFIG;
   const [activeCategory, setActiveCategory] = useState<string>('credit-debit');
+  const { ref, isInView } = useInView<HTMLElement>({ threshold: 0.15 });
 
   const categoryIconMap = {
     creditCard: ASSETS.icons.creditCard,
@@ -23,10 +25,17 @@ export const EmergencyServicesSection: React.FC = () => {
   const { calloutBanner } = emergencyServicesSection;
 
   return (
-    <section className="w-full py-16 sm:py-24 px-4 sm:px-6 lg:px-8 bg-[#F7F1EB] text-[#1A1818] select-none">
+    <section
+      ref={ref}
+      className="w-full py-16 sm:py-24 px-4 sm:px-6 lg:px-8 bg-[#F7F1EB] text-[#1A1818] select-none overflow-hidden"
+    >
       <div className="max-w-5xl mx-auto">
-        {/* Section Header */}
-        <div className="text-center max-w-xl mx-auto">
+        {/* Section Header - Subtle Scale Pop */}
+        <div
+          className={`text-center max-w-xl mx-auto transition-all duration-700 ease-out ${
+            isInView ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 -translate-y-4'
+          }`}
+        >
           <h2 className="font-poppins text-3xl sm:text-4xl font-bold text-[#1A1818] tracking-tight">
             {emergencyServicesSection.title}
           </h2>
@@ -35,9 +44,10 @@ export const EmergencyServicesSection: React.FC = () => {
           </p>
         </div>
 
-        {/* 4 Category Filter Icons Row */}
+        {/* 4 Category Filter Icons Row - Staggered Radial Drop & Pop */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 sm:gap-8 mt-10 sm:mt-14 mb-10 sm:mb-14 max-w-3xl mx-auto">
-          {emergencyServicesSection.categories.map(category => {
+          {emergencyServicesSection.categories.map((category, idx) => {
+            const delays = ['delay-100', 'delay-200', 'delay-300', 'delay-[400ms]'];
             const isActive = activeCategory === category.id;
             const iconSrc = categoryIconMap[category.icon as keyof typeof categoryIconMap];
 
@@ -46,7 +56,13 @@ export const EmergencyServicesSection: React.FC = () => {
                 key={category.id}
                 type="button"
                 onClick={() => setActiveCategory(category.id)}
-                className="group flex flex-col items-center text-center cursor-pointer transition-all duration-200 focus:outline-none"
+                className={`group flex flex-col items-center text-center cursor-pointer transition-all duration-700 ease-out focus:outline-none ${
+                  delays[idx]
+                } ${
+                  isInView
+                    ? 'opacity-100 translate-y-0 scale-100'
+                    : 'opacity-0 -translate-y-8 scale-75'
+                }`}
               >
                 {/* Circle Icon Container */}
                 <div
@@ -96,10 +112,14 @@ export const EmergencyServicesSection: React.FC = () => {
           })}
         </div>
 
-        {/* Two-Column Grid: Service Request List (Left) + Private Banking Callout Banner (Right) */}
+        {/* Two-Column Grid: Split-Door Convergence Entrance */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-stretch max-w-4xl mx-auto">
-          {/* Left Column: Interactive Request List */}
-          <div className="bg-white border border-[#E7DFD4] shadow-sm rounded-none divide-y divide-[#E7DFD4] flex flex-col justify-between">
+          {/* Left Column: Interactive Request List (Slides in from Left) */}
+          <div
+            className={`bg-white border border-[#E7DFD4] shadow-sm rounded-none divide-y divide-[#E7DFD4] flex flex-col justify-between transition-all duration-800 delay-300 ease-out ${
+              isInView ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-12'
+            }`}
+          >
             {selectedCategoryData.requests.map((request, index) => (
               <Link
                 key={`${selectedCategoryData.id}-${index}`}
@@ -133,8 +153,12 @@ export const EmergencyServicesSection: React.FC = () => {
             ))}
           </div>
 
-          {/* Right Column: Call for Private Banking Banner with Cutout Geometry and Customer Rep */}
-          <div className="relative bg-[#16161D] rounded-none shadow-sm border border-[#E5DDD3] overflow-hidden flex flex-col sm:flex-row min-h-[220px] sm:min-h-[240px]">
+          {/* Right Column: Call for Private Banking Banner (Slides in from Right) */}
+          <div
+            className={`relative bg-[#16161D] rounded-none shadow-sm border border-[#E5DDD3] overflow-hidden flex flex-col sm:flex-row min-h-[220px] sm:min-h-[240px] transition-all duration-800 delay-300 ease-out ${
+              isInView ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12'
+            }`}
+          >
             {/* Left Portion: Dark Support Box */}
             <div className="w-full sm:w-[50%] bg-[#16161D] p-6 sm:p-7 flex flex-col items-center justify-center text-center relative z-20">
               {/* Headset / Support Icon */}
@@ -172,7 +196,11 @@ export const EmergencyServicesSection: React.FC = () => {
             </div>
 
             {/* Geometric Angled Chevron Divider (Brand Red & White Notch) */}
-            <div className="hidden sm:block absolute inset-y-0 left-[48%] w-10 z-30 pointer-events-none">
+            <div
+              className={`hidden sm:block absolute inset-y-0 left-[48%] w-10 z-30 pointer-events-none transition-all duration-700 delay-500 ease-out ${
+                isInView ? 'opacity-100 scale-100' : 'opacity-0 scale-75'
+              }`}
+            >
               <svg
                 className="w-full h-full"
                 viewBox="0 0 40 100"
@@ -192,14 +220,16 @@ export const EmergencyServicesSection: React.FC = () => {
               </svg>
             </div>
 
-            {/* Right Portion: Customer Representative Image */}
+            {/* Right Portion: Customer Representative Image with Cinematic Zoom */}
             <div className="relative w-full sm:w-[50%] min-h-[190px] sm:min-h-full bg-[#181822] overflow-hidden">
               <Image
                 src={ASSETS.images.customerRep}
                 alt={calloutBanner.imageAlt}
                 fill
                 sizes="(max-width: 640px) 100vw, 30vw"
-                className="object-cover object-[68%_20%]"
+                className={`object-cover object-[68%_20%] transition-transform duration-1000 delay-300 ease-out ${
+                  isInView ? 'scale-100' : 'scale-110'
+                }`}
                 priority
               />
               {/* Subtle gradient vignette to blend with the dark left side on small screens */}

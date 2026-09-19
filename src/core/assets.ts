@@ -16,9 +16,14 @@ import ChequeBookImg from '@/assets/icons/cheque-book.png';
 import BuyHomeImg from '@/assets/icons/buy-home.png';
 import OnlineShoppingImg from '@/assets/icons/online-shopping.png';
 import WatchingAMovieImg from '@/assets/icons/watching-a-movie.png';
+import CostumerImg from '@/assets/icons/costumer.png';
+import CalendarImg from '@/assets/icons/calendar.png';
+import BranchImg from '@/assets/icons/branch.png';
+import GoalImg from '@/assets/icons/goal.png';
 import CustomerRepImg from '@/assets/images/customer-rep-image.jpg';
 import CreditCard1Img from '@/assets/images/credit-card-1.jpg';
 import BankingNeedsBg from '@/assets/images/banking-needs-bg.jpg';
+import ForexBgImg from '@/assets/images/forex-bg.jpg';
 
 /**
  * Core Assets Reference
@@ -38,6 +43,7 @@ export const ASSETS = {
   },
   backgrounds: {
     bankingNeeds: BankingNeedsBg,
+    forex: ForexBgImg,
   },
   images: {
     customerRep: CustomerRepImg,
@@ -56,6 +62,10 @@ export const ASSETS = {
     buyHome: BuyHomeImg,
     onlineShopping: OnlineShoppingImg,
     watchingAMovie: WatchingAMovieImg,
+    costumer: CostumerImg,
+    calendar: CalendarImg,
+    branch: BranchImg,
+    goal: GoalImg,
     check: '/icons/custom-check.svg',
   }
 } as const;
