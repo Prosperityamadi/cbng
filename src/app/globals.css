@@ -1,26 +1,77 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Roboto:wght@300;400;500;700&display=swap');
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Core brand colors */
+  --primary: #9C113D;
+  --primary-crimson: #B81446;
+  --primary-burgundy: #5A0620;
+  
+  --secondary: #F7F1EB;
+  --secondary-dark: #EDE3D7;
+  --background: #F7F1EB;
+  --foreground: #1A1818;
 }
 
 @theme inline {
+  --color-primary: var(--primary);
+  --color-primary-crimson: var(--primary-crimson);
+  --color-primary-burgundy: var(--primary-burgundy);
+  --color-secondary: var(--secondary);
+  --color-secondary-dark: var(--secondary-dark);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-poppins: 'Poppins', sans-serif;
+  --font-roboto: 'Roboto', sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Two-tone primary red gradient utilities */
+.bg-primary-vertical {
+  background: linear-gradient(180deg, #B81446 0%, #8A0E34 45%, #5A0620 100%);
+}
+
+.bg-primary-horizontal {
+  background: linear-gradient(90deg, #8A0E34 0%, #6E0B2B 50%, #5A0620 100%);
+}
+
+.bg-primary-diagonal {
+  background: linear-gradient(135deg, #B81446 0%, #8A0E34 50%, #5A0620 100%);
 }
 
 body {
-  background: var(--background);
+  background-color: #FFFFFF;
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Roboto', sans-serif;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
 }
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Floating bounce animations for overlay badges */
+@keyframes badge-bounce {
+  0%, 100% {
+    transform: translateY(0);
+    animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+  }
+  50% {
+    transform: translateY(-16px);
+    animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  }
+}
+
+.animate-badge-bounce-1 {
+  animation: badge-bounce 2.4s infinite;
+}
+
+.animate-badge-bounce-2 {
+  animation: badge-bounce 2.6s infinite 0.45s;
+}
+
+.animate-badge-bounce-3 {
+  animation: badge-bounce 2.3s infinite 0.9s;
+}
+
