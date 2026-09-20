@@ -121,8 +121,8 @@ export const TopNavbar: React.FC = () => {
                         type="button"
                         onClick={() => setActiveDropdown(isDropdownOpen ? null : item.label)}
                         className={`h-full flex items-center gap-1.5 px-4 xl:px-5 font-poppins font-medium text-[14px] xl:text-[15px] transition-all duration-150 focus:outline-none whitespace-nowrap ${
-                          isDropdownOpen
-                            ? 'bg-white text-[#B81446] shadow-sm'
+                          isDropdownOpen || (item.label === 'Services' && pathname.includes('/services'))
+                            ? 'bg-white text-[#B81446] shadow-sm font-semibold'
                             : 'text-[#2D2825] hover:text-[#B81446] hover:bg-white/70'
                         }`}
                         aria-expanded={isDropdownOpen}
@@ -149,17 +149,28 @@ export const TopNavbar: React.FC = () => {
                       {item.hasDropdown && item.subItems && isDropdownOpen && (
                         <div className="absolute top-full left-0 min-w-[210px] bg-white shadow-xl z-50 border-t-0 animate-in fade-in slide-in-from-top-1 duration-150">
                           <div className="flex flex-col py-1">
-                            {item.subItems.map((subItem, idx) => (
-                              <Link
-                                key={subItem.label}
-                                href={subItem.href}
-                                className={`px-6 py-3.5 font-roboto text-sm text-[#666666] hover:text-[#B81446] hover:bg-[#FAF7F3] transition-colors ${
-                                  idx !== item.subItems!.length - 1 ? 'border-b border-[#F4EFEA]' : ''
-                                }`}
-                              >
-                                {subItem.label}
-                              </Link>
-                            ))}
+                            {item.subItems.map((subItem, idx) => {
+                              const isActiveSub =
+                                pathname === subItem.href ||
+                                (subItem.href === '/services/accounts' && pathname.includes('/accounts')) ||
+                                (subItem.href === '/services/cards' && pathname.includes('/cards'));
+                              return (
+                                <Link
+                                  key={subItem.label}
+                                  href={subItem.href}
+                                  onClick={() => setActiveDropdown(null)}
+                                  className={`px-6 py-3.5 font-roboto text-sm transition-colors ${
+                                    isActiveSub
+                                      ? 'text-[#B81446] font-semibold bg-[#FAF7F3]'
+                                      : 'text-[#666666] hover:text-[#B81446] hover:bg-[#FAF7F3]'
+                                  } ${
+                                    idx !== item.subItems!.length - 1 ? 'border-b border-[#F4EFEA]' : ''
+                                  }`}
+                                >
+                                  {subItem.label}
+                                </Link>
+                              );
+                            })}
                           </div>
                         </div>
                       )}
@@ -320,6 +331,7 @@ export const TopNavbar: React.FC = () => {
                         <Link
                           key={subItem.label}
                           href={subItem.href}
+                          onClick={() => setMobileMenuOpen(false)}
                           className="block py-2 px-2 text-sm text-[#666666] hover:text-[#B81446] hover:bg-[#F7F1EB] rounded transition-colors"
                         >
                           {subItem.label}
@@ -413,17 +425,28 @@ export const TopNavbar: React.FC = () => {
                     {item.hasDropdown && item.subItems && isDropdownOpen && (
                       <div className="absolute top-full left-0 min-w-[210px] bg-white shadow-xl z-50 border border-gray-100 animate-in fade-in slide-in-from-top-1 duration-150">
                         <div className="flex flex-col py-1">
-                          {item.subItems.map((subItem, idx) => (
-                            <Link
-                              key={subItem.label}
-                              href={subItem.href}
-                              className={`px-6 py-3.5 font-roboto text-sm text-[#666666] hover:text-[#B81446] hover:bg-[#FAF7F3] transition-colors ${
-                                idx !== item.subItems!.length - 1 ? 'border-b border-[#F4EFEA]' : ''
-                              }`}
-                            >
-                              {subItem.label}
-                            </Link>
-                          ))}
+                          {item.subItems.map((subItem, idx) => {
+                            const isActiveSub =
+                              pathname === subItem.href ||
+                              (subItem.href === '/services/accounts' && pathname.includes('/accounts')) ||
+                              (subItem.href === '/services/cards' && pathname.includes('/cards'));
+                            return (
+                              <Link
+                                key={subItem.label}
+                                href={subItem.href}
+                                onClick={() => setStickyDropdown(null)}
+                                className={`px-6 py-3.5 font-roboto text-sm transition-colors ${
+                                  isActiveSub
+                                    ? 'text-[#B81446] font-semibold bg-[#FAF7F3]'
+                                    : 'text-[#666666] hover:text-[#B81446] hover:bg-[#FAF7F3]'
+                                } ${
+                                  idx !== item.subItems!.length - 1 ? 'border-b border-[#F4EFEA]' : ''
+                                }`}
+                              >
+                                {subItem.label}
+                              </Link>
+                            );
+                          })}
                         </div>
                       </div>
                     )}
@@ -502,6 +525,7 @@ export const TopNavbar: React.FC = () => {
                         <Link
                           key={subItem.label}
                           href={subItem.href}
+                          onClick={() => setStickyMobileOpen(false)}
                           className="block py-2 px-2 text-sm text-[#666666] hover:text-[#B81446] hover:bg-white rounded transition-colors"
                         >
                           {subItem.label}

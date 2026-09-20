@@ -21,9 +21,15 @@ export const NAV_ITEMS: readonly NavItem[] = [
     href: '/',
     hasDropdown: true,
     subItems: [
-      { label: 'Personal Banking', href: '/personal' },
-      { label: 'Corporate Banking', href: '/corporate' },
-      { label: 'Private Wealth', href: '/private-wealth' },
+      { label: 'Better Tomorrow', href: '/#better-tomorrow' },
+      { label: 'Why Choose Us', href: '/#why-choose-us' },
+      { label: 'Banking For Your Needs', href: '/#banking-needs' },
+      { label: 'Emergency Services', href: '/#emergency-services' },
+      { label: 'Personalize Card', href: '/#personalize-card' },
+      { label: 'Forex Rates', href: '/#forex-rates' },
+      { label: 'Questions & Answers', href: '/#faqs' },
+      { label: 'EMI Calculator', href: '/#emi-calculator' },
+      { label: 'Money Protection', href: '/#money-protection' },
     ],
   },
   {

@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   title: `${SITE_CONFIG.brand.name} | ${SITE_CONFIG.brand.tagline}`,
   description: `Official portal for ${SITE_CONFIG.brand.name}. Modern private banking, high-yield savings accounts, and corporate financial solutions.`,
   icons: {
-    icon: '/src/assets/icons/NemiCapital-International-Bank-logo.png',
+    icon: '/favicon.png',
   },
 };
 

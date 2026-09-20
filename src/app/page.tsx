@@ -34,34 +34,54 @@ export default function HomePage() {
   return (
     <div className="flex-1 flex flex-col bg-white text-[#1A1818] selection:bg-[#B81446] selection:text-white relative">
       {/* 1. Hero Carousel */}
-      <HeroSlider autoPlayInterval={5000} />
+      <div id="hero">
+        <HeroSlider autoPlayInterval={5000} />
+      </div>
 
       {/* 2. "Bank For A Better Tomorrow" Section */}
-      <BetterTomorrowSection />
+      <div id="better-tomorrow" className="scroll-mt-16 sm:scroll-mt-20">
+        <BetterTomorrowSection />
+      </div>
 
       {/* 2b. "Why Choose Us / Proven Financial Milestones" Section */}
-      <WhyChooseUsStatsSection />
+      <div id="why-choose-us" className="scroll-mt-16 sm:scroll-mt-20">
+        <WhyChooseUsStatsSection />
+      </div>
 
       {/* 3. "Banking For Your Needs" Section */}
-      <BankingNeedsSection />
+      <div id="banking-needs" className="scroll-mt-16 sm:scroll-mt-20">
+        <BankingNeedsSection />
+      </div>
 
       {/* 4. "Emergency Service Requests" Section */}
-      <EmergencyServicesSection />
+      <div id="emergency-services" className="scroll-mt-16 sm:scroll-mt-20">
+        <EmergencyServicesSection />
+      </div>
 
       {/* 5. "Personalize Your Card" Section */}
-      <PersonalizeCardSection />
+      <div id="personalize-card" className="scroll-mt-16 sm:scroll-mt-20">
+        <PersonalizeCardSection />
+      </div>
 
       {/* 6. "Foreign Exchange Rates" Section */}
-      <ForexRatesSection />
+      <div id="forex-rates" className="scroll-mt-16 sm:scroll-mt-20">
+        <ForexRatesSection />
+      </div>
 
       {/* 7. "Questions & Answers" FAQ Section */}
-      <QuestionsAnswersSection />
+      <div id="faqs" className="scroll-mt-16 sm:scroll-mt-20">
+        <QuestionsAnswersSection />
+      </div>
 
       {/* 8. "Flexible EMI Calculator Online" Section */}
-      <EmiCalculatorSection />
+      <div id="emi-calculator" className="scroll-mt-16 sm:scroll-mt-20">
+        <EmiCalculatorSection />
+      </div>
 
       {/* 9. "Money Protection & Security" Section */}
-      <MoneyProtectionSection />
+      <div id="money-protection" className="scroll-mt-16 sm:scroll-mt-20">
+        <MoneyProtectionSection />
+      </div>
 
       {/* 10. Global Footer Section */}
       <FooterSection />

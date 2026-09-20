@@ -1,4 +1,4 @@
-import BankLogoImg from '@/assets/icons/NemiCapital-International-Bank-logo.png';
+import BankLogoImg from '@/assets/icons/nemicapital-logo.png';
 import Hero1Img from '@/assets/images/hero-1.jpg';
 import Hero2Img from '@/assets/images/hero-2.jpg';
 import Hero3Img from '@/assets/images/hero-3.jpg';
@@ -31,6 +31,18 @@ import MoneyProtectionImg from '@/assets/images/money-protection.jpg';
 import MobileAppBgImg from '@/assets/images/mobile-app-bg.jpg';
 import PlaystoreImg from '@/assets/icons/playstore.png';
 import AppstoreImg from '@/assets/icons/appstore.png';
+import ManTypingOnLaptopImg from '@/assets/images/man-typing-on-laptop.jpg';
+import MoneyImg from '@/assets/images/money.jpg';
+import PiggyvestImg from '@/assets/images/piggyvest.jpg';
+import CouplesSmilingImg from '@/assets/images/couples-smiling.jpg';
+import NemiCapitalAppHandsImg from '@/assets/images/nemicapital-app-hands.jpg';
+import SavingFinancialIcon from '@/assets/icons/saving-financial.png';
+import TradingIcon from '@/assets/icons/trading.png';
+import GoldIcon from '@/assets/icons/gold.png';
+import DocumentIcon from '@/assets/icons/document.png';
+import GuidanceIcon from '@/assets/icons/guidance.png';
+import KycIcon from '@/assets/icons/kyc.png';
+import RetirementPlanningIcon from '@/assets/icons/retirement-planning.png';
 
 /**
  * Core Assets Reference
@@ -59,6 +71,11 @@ export const ASSETS = {
     houseLoan: HouseLoanImg,
     moneyProtection: MoneyProtectionImg,
     mobileAppBg: MobileAppBgImg,
+    manTypingOnLaptop: ManTypingOnLaptopImg,
+    money: MoneyImg,
+    piggyvest: PiggyvestImg,
+    couplesSmiling: CouplesSmilingImg,
+    nemicapitalAppHands: NemiCapitalAppHandsImg,
   },
   icons: {
     binoculars: BinocularsImg,
@@ -80,6 +97,13 @@ export const ASSETS = {
     carLoan: CarLoanImg,
     playstore: PlaystoreImg,
     appstore: AppstoreImg,
+    savingFinancial: SavingFinancialIcon,
+    trading: TradingIcon,
+    gold: GoldIcon,
+    document: DocumentIcon,
+    guidance: GuidanceIcon,
+    kyc: KycIcon,
+    retirementPlanning: RetirementPlanningIcon,
     check: '/icons/custom-check.svg',
   }
 } as const;
