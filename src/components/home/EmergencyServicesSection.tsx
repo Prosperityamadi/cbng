@@ -72,13 +72,15 @@ export const EmergencyServicesSection: React.FC = () => {
                       : 'bg-white border border-[#E2DAD0] shadow-sm hover:border-gray-400 hover:shadow-md'
                   }`}
                 >
-                  <div className="relative w-8 h-8 sm:w-9 sm:h-9">
+                  <div className="relative w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center">
                     <Image
                       src={iconSrc}
                       alt={category.labelLine1}
-                      fill
-                      sizes="36px"
-                      className={`object-contain transition-transform duration-200 ${
+                      width={36}
+                      height={36}
+                      unoptimized
+                      priority
+                      className={`w-8 h-8 sm:w-9 sm:h-9 object-contain transition-transform duration-200 ${
                         isActive ? 'scale-110' : 'group-hover:scale-105'
                       }`}
                     />

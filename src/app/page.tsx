@@ -7,6 +7,10 @@ import {
   EmergencyServicesSection,
   PersonalizeCardSection,
   ForexRatesSection,
+  QuestionsAnswersSection,
+  EmiCalculatorSection,
+  MoneyProtectionSection,
+  FooterSection,
   ScrollToTopButton,
 } from '@/components/home';
 
@@ -20,7 +24,11 @@ import {
  * 4. EmergencyServicesSection (Custom icons: credit-card, mobile-banking, account-details, cheque-book; customer-rep banner)
  * 5. PersonalizeCardSection (Credit card showcase with 3 overlay badges: buy-home, online-shopping, watching-a-movie)
  * 6. ForexRatesSection (Live exchange rates, currency cards, mode tabs & assistant calculator)
- * 7. ScrollToTopButton (Floating red sharp action)
+ * 7. QuestionsAnswersSection (Interactive FAQ accordion, search filter, question.jpg visual, and deal CTA)
+ * 8. EmiCalculatorSection (Flexible EMI Calculator Online, live sliders, loan category badges, house model)
+ * 9. MoneyProtectionSection (Institutional investor protection, 3 security pillars, wealth preservation visual)
+ * 10. FooterSection (App promo banner, non-clickable link matrix, customer care, action boxes, sub-footer)
+ * 11. ScrollToTopButton (Floating red sharp action)
  */
 export default function HomePage() {
   return (
@@ -45,6 +53,18 @@ export default function HomePage() {
 
       {/* 6. "Foreign Exchange Rates" Section */}
       <ForexRatesSection />
+
+      {/* 7. "Questions & Answers" FAQ Section */}
+      <QuestionsAnswersSection />
+
+      {/* 8. "Flexible EMI Calculator Online" Section */}
+      <EmiCalculatorSection />
+
+      {/* 9. "Money Protection & Security" Section */}
+      <MoneyProtectionSection />
+
+      {/* 10. Global Footer Section */}
+      <FooterSection />
 
       {/* Floating Sharp Red Scroll to Top Button */}
       <ScrollToTopButton />

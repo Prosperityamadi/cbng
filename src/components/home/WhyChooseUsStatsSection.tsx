@@ -55,12 +55,15 @@ export const WhyChooseUsStatsSection: React.FC = () => {
   const { whyChooseUsSection } = SITE_CONFIG;
   const { ref, isInView } = useInView<HTMLElement>({ threshold: 0.15 });
 
-  const iconMap = {
+  const iconMap: Record<string, any> = {
     costumer: ASSETS.icons.costumer,
+    customer: ASSETS.icons.costumer,
     calendar: ASSETS.icons.calendar,
     branch: ASSETS.icons.branch,
     goal: ASSETS.icons.goal,
   };
+
+  const [imgErrors, setImgErrors] = useState<Record<string, boolean>>({});
 
   return (
     <section
@@ -100,15 +103,18 @@ export const WhyChooseUsStatsSection: React.FC = () => {
 
         {/* Header Content with Smooth Dropdown Entrance */}
         <div className="relative z-10 max-w-4xl mx-auto text-center">
-          {/* Eyebrow Tag */}
+          {/* Eyebrow Tag with Line Accent */}
           <div
             className={`transition-all duration-700 ease-out ${
-              isInView ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-90 -translate-y-4'
+              isInView ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'
             }`}
           >
-            <span className="inline-block px-4 py-1.5 rounded-none bg-white/15 backdrop-blur-md border border-white/25 text-white text-[11px] sm:text-xs font-poppins font-semibold uppercase tracking-widest shadow-sm">
-              {whyChooseUsSection.tag}
-            </span>
+            <div className="inline-flex items-center gap-2.5">
+              <span className="w-5 h-[2px] bg-white" />
+              <span className="font-poppins font-bold text-xs uppercase tracking-[0.2em] text-white">
+                {whyChooseUsSection.tag}
+              </span>
+            </div>
           </div>
 
           {/* Main Title */}
@@ -152,14 +158,46 @@ export const WhyChooseUsStatsSection: React.FC = () => {
                 {/* Top Circular Icon Container with Soft Brand Glow */}
                 <div className="relative mb-5">
                   <div className="w-16 h-16 sm:w-18 sm:h-18 rounded-full bg-[#FAF7F3] border-2 border-[#EDE5DB] group-hover:border-[#B81446] group-hover:bg-[#B81446]/5 transition-all duration-300 flex items-center justify-center shadow-sm">
-                    <div className="relative w-8 h-8 sm:w-9 sm:h-9 group-hover:scale-110 transition-transform duration-300">
-                      <Image
-                        src={iconSrc}
-                        alt={stat.label}
-                        fill
-                        sizes="36px"
-                        className="object-contain"
-                      />
+                    <div className="relative w-8 h-8 sm:w-9 sm:h-9 group-hover:scale-110 transition-transform duration-300 flex items-center justify-center">
+                      {iconSrc && !imgErrors[stat.id] ? (
+                        <Image
+                          src={iconSrc}
+                          alt={stat.label}
+                          width={36}
+                          height={36}
+                          unoptimized
+                          priority
+                          onError={() => setImgErrors(prev => ({ ...prev, [stat.id]: true }))}
+                          className="w-8 h-8 sm:w-9 sm:h-9 object-contain"
+                        />
+                      ) : (
+                        // Guaranteed SVG Fallback if image load fails
+                        <div className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center text-[#1A1818] group-hover:text-[#B81446] transition-colors">
+                          {stat.id === 'customers' && (
+                            <svg className="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                            </svg>
+                          )}
+                          {stat.id === 'experience' && (
+                            <svg className="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
+                              <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                              <line x1="16" y1="2" x2="16" y2="6" strokeLinecap="round" />
+                              <line x1="8" y1="2" x2="8" y2="6" strokeLinecap="round" />
+                              <line x1="3" y1="10" x2="21" y2="10" />
+                            </svg>
+                          )}
+                          {stat.id === 'branches' && (
+                            <svg className="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                            </svg>
+                          )}
+                          {stat.id === 'works' && (
+                            <svg className="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                            </svg>
+                          )}
+                        </div>
+                      )}
                     </div>
                   </div>
 

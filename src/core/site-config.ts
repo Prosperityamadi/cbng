@@ -439,6 +439,219 @@ export const SITE_CONFIG = {
     ],
   },
 
+  // Questions & Answers (FAQ) Section
+  faqSection: {
+    title: 'Questions & Answers',
+    subtitle: 'Find answers to all your queries about our service.',
+    searchLabel: 'Help You to Find',
+    searchPlaceholder: 'Related Keyword...',
+    helperText: "Didn't get, Click below button to more answers or",
+    contactText: 'contact us',
+    contactHref: '/contact',
+    ctaText: 'Grab Your Deals',
+    ctaHref: '/offers',
+    items: [
+      {
+        id: 'faq-1',
+        question: 'What is the minimum balance?',
+        answer:
+          'Our standard savings accounts require a zero minimum balance for the initial 90 days. Thereafter, maintaining an average monthly balance of $1,000 (or currency equivalent) waives all monthly maintenance fees and unlocks our premier yield tiers.',
+      },
+      {
+        id: 'faq-2',
+        question: 'What is the rate of interest?',
+        answer:
+          'We offer tiered annual percentage yields starting at 4.25% p.a. for standard high-yield savings accounts, scaling up to 5.75% p.a. on institutional term deposits and certificates of deposit (CDs) with daily compounding.',
+      },
+      {
+        id: 'faq-3',
+        question: 'When will I receive my account statement?',
+        answer:
+          'Electronic e-statements are automatically published on the 1st of every calendar month and available anytime via your secure online dashboard. Physical consolidated statements are dispatched quarterly to your registered address upon request.',
+      },
+      {
+        id: 'faq-4',
+        question: 'Can I use any branch across Europe?',
+        answer:
+          'Yes. All NemiCapital international branches, regional centers, and authorized partner banking networks across Europe and overseas offer complete cross-branch interoperability with biometric identification and instant counter service.',
+      },
+      {
+        id: 'faq-5',
+        question: 'How safe/secure is our net banking a/c?',
+        answer:
+          'Our digital infrastructure is protected with military-grade 256-bit AES encryption, multi-factor biometric authorization, real-time zero-trust fraud monitoring, and comprehensive regulatory deposit insurance across global jurisdictions.',
+      },
+    ],
+  },
+
+  // Section 8: Flexible EMI Calculator Online
+  emiCalculatorSection: {
+    title: 'Flexible EMI Calculator Online',
+    subtitle: 'Easily calculate your equated monthly instalment online.',
+    applyHref: '/apply/loan',
+    loanTypes: [
+      {
+        id: 'home',
+        label: 'Home Loan',
+        icon: 'buyHome' as const,
+        minAmount: 50000,
+        maxAmount: 5000000,
+        stepAmount: 10000,
+        defaultAmount: 1000000,
+        minTenure: 1,
+        maxTenure: 30,
+        stepTenure: 1,
+        defaultTenure: 20,
+        minRate: 4,
+        maxRate: 16,
+        stepRate: 0.25,
+        defaultRate: 8,
+      },
+      {
+        id: 'personal',
+        label: 'Personal Loan',
+        icon: 'debt' as const,
+        minAmount: 5000,
+        maxAmount: 250000,
+        stepAmount: 5000,
+        defaultAmount: 50000,
+        minTenure: 1,
+        maxTenure: 7,
+        stepTenure: 1,
+        defaultTenure: 5,
+        minRate: 8,
+        maxRate: 20,
+        stepRate: 0.25,
+        defaultRate: 10.5,
+      },
+      {
+        id: 'car',
+        label: 'Vehicle Loan',
+        icon: 'car' as const,
+        minAmount: 10000,
+        maxAmount: 200000,
+        stepAmount: 5000,
+        defaultAmount: 45000,
+        minTenure: 1,
+        maxTenure: 10,
+        stepTenure: 1,
+        defaultTenure: 7,
+        minRate: 5,
+        maxRate: 14,
+        stepRate: 0.25,
+        defaultRate: 6.9,
+      },
+    ],
+  },
+
+  // Section 9: Money Protection & Financial Security
+  moneyProtectionSection: {
+    tag: 'Protect your money',
+    title: 'We make every effort to ensure that our customers money is well protected.',
+    description:
+      "Investor protection is an integral part of NemiCapital's mission. Our Investor Alerts and other resources can help you build knowledge and avoid problems such as the latest frauds, which all too often are perpetrated by unauthorized actors.",
+    badgeText: 'Bank-Grade Security Guaranteed',
+    pillars: [
+      {
+        number: '1',
+        title: 'Investor Alerts',
+        description: 'Keep informed about new or complex products, scams and other investing issues.',
+        href: '/security/alerts',
+      },
+      {
+        number: '2',
+        title: 'Ask and Check',
+        description: 'Learn how to check out sellers and investments and what questions to ask.',
+        href: '/security/verification',
+      },
+      {
+        number: '3',
+        title: 'Protect Your Identity',
+        description:
+          "Identity theft can devastate your credit rating and derail financial security. Here's how you can protect yourself.",
+        href: '/security/identity',
+      },
+    ],
+  },
+
+  // Section 10: Global Footer Section
+  footerSection: {
+    appPromo: {
+      title: 'Experience a New Digital World.',
+      subtitle: 'Mobile banking application with new & exciting features',
+      playstoreText: 'Download on playstore',
+      appstoreText: 'Download on App Store',
+    },
+    columns: [
+      {
+        title: 'Loans',
+        links: [
+          'Home Loan',
+          'Personal Loan',
+          'Vehicle Loan',
+          'Education Loan',
+          'Gold Loan',
+          'Low Interest',
+          'Our All Cards',
+        ],
+      },
+      {
+        title: 'Rates & Charges',
+        links: [
+          'About Us',
+          'Testimonials',
+          'Careers',
+          'Career Detail',
+          "Faq's",
+          'List View',
+          'Get In Touch',
+        ],
+      },
+      {
+        title: 'About Us',
+        links: [
+          'About Us',
+          'Board of Directors',
+          'Careers',
+          'Career Detail',
+          'Business',
+          "Faq's",
+          'Testimonials',
+        ],
+      },
+      {
+        title: 'Services',
+        links: [
+          'All Accounts',
+          'Savings Account',
+          'Current Account',
+          'Fixed Deposit Account',
+          'Salary Account',
+          'Recuring Deposit Account',
+          'NRI Account',
+        ],
+      },
+    ],
+    contact: {
+      phone: '(800) 123 456 78',
+      phoneLabel: 'Customer Care',
+      hours: 'Mon – Fri: 9.00am to 5.00pm',
+      hoursLabel: 'Banking Hours',
+      copyright: 'Copyright © 2026 NemiCapital International Bank. Licensed by the Central Bank of United States.',
+    },
+    actionBoxes: [
+      {
+        title: 'Download Forms',
+        type: 'forms',
+      },
+      {
+        title: 'Register Your Complaint',
+        type: 'complaint',
+      },
+    ],
+    subFooterLinks: ['About Us', 'All Accounts', 'Secured', 'NRI Account'],
+  },
+
   contact: {
     phone: '+1 (800) 555-NEMI',
     email: 'contact@nemicapital.com',

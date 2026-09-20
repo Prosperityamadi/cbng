@@ -7,4 +7,8 @@ export * from './CardPetalBackdrop';
 export * from './EmergencyServicesSection';
 export * from './PersonalizeCardSection';
 export * from './ForexRatesSection';
+export * from './QuestionsAnswersSection';
+export * from './EmiCalculatorSection';
+export * from './MoneyProtectionSection';
+export * from './FooterSection';
 export * from './ScrollToTopButton';

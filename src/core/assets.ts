@@ -20,10 +20,17 @@ import CostumerImg from '@/assets/icons/costumer.png';
 import CalendarImg from '@/assets/icons/calendar.png';
 import BranchImg from '@/assets/icons/branch.png';
 import GoalImg from '@/assets/icons/goal.png';
+import CarLoanImg from '@/assets/icons/car-loan.png';
 import CustomerRepImg from '@/assets/images/customer-rep-image.jpg';
 import CreditCard1Img from '@/assets/images/credit-card-1.jpg';
 import BankingNeedsBg from '@/assets/images/banking-needs-bg.jpg';
 import ForexBgImg from '@/assets/images/forex-bg.jpg';
+import QuestionImg from '@/assets/images/question.jpg';
+import HouseLoanImg from '@/assets/images/house-loan.jpg';
+import MoneyProtectionImg from '@/assets/images/money-protection.jpg';
+import MobileAppBgImg from '@/assets/images/mobile-app-bg.jpg';
+import PlaystoreImg from '@/assets/icons/playstore.png';
+import AppstoreImg from '@/assets/icons/appstore.png';
 
 /**
  * Core Assets Reference
@@ -48,6 +55,10 @@ export const ASSETS = {
   images: {
     customerRep: CustomerRepImg,
     creditCard1: CreditCard1Img,
+    question: QuestionImg,
+    houseLoan: HouseLoanImg,
+    moneyProtection: MoneyProtectionImg,
+    mobileAppBg: MobileAppBgImg,
   },
   icons: {
     binoculars: BinocularsImg,
@@ -66,6 +77,9 @@ export const ASSETS = {
     calendar: CalendarImg,
     branch: BranchImg,
     goal: GoalImg,
+    carLoan: CarLoanImg,
+    playstore: PlaystoreImg,
+    appstore: AppstoreImg,
     check: '/icons/custom-check.svg',
   }
 } as const;
