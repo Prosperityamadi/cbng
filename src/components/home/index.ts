@@ -12,3 +12,4 @@ export * from './EmiCalculatorSection';
 export * from './MoneyProtectionSection';
 export * from './FooterSection';
 export * from './ScrollToTopButton';
+export * from './useInView';

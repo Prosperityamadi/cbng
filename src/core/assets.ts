@@ -36,6 +36,20 @@ import MoneyImg from '@/assets/images/money.jpg';
 import PiggyvestImg from '@/assets/images/piggyvest.jpg';
 import CouplesSmilingImg from '@/assets/images/couples-smiling.jpg';
 import NemiCapitalAppHandsImg from '@/assets/images/nemicapital-app-hands.jpg';
+import CorporateCreditCardManImg from '@/assets/images/corporate-credit-card-man.jpg';
+import LoanCallbackManImg from '@/assets/images/loan-callback-man.jpg';
+import LoanCouplePlanningImg from '@/assets/images/loan-couple-planning.jpg';
+import BankBuildingImg from '@/assets/images/bank-building.jpg';
+import LadyStandingImg from '@/assets/images/lady-standing.jpg';
+import BankTeamImg from '@/assets/images/bank-team.jpg';
+import AboutMissionImg from '@/assets/images/about-mission.jpg';
+import AboutVisionImg from '@/assets/images/about-vision.jpg';
+import AboutCoreValueImg from '@/assets/images/about-core-value.jpg';
+import BankIcon from '@/assets/icons/bank.png';
+import EmployeeIcon from '@/assets/icons/employee.png';
+import AwardIcon from '@/assets/icons/award.png';
+import BankStatsBgImg from '@/assets/images/bank-stats-bg.jpg';
+import BankingAwardTrophyImg from '@/assets/images/banking-award-trophy.jpg';
 import SavingFinancialIcon from '@/assets/icons/saving-financial.png';
 import TradingIcon from '@/assets/icons/trading.png';
 import GoldIcon from '@/assets/icons/gold.png';
@@ -43,6 +57,9 @@ import DocumentIcon from '@/assets/icons/document.png';
 import GuidanceIcon from '@/assets/icons/guidance.png';
 import KycIcon from '@/assets/icons/kyc.png';
 import RetirementPlanningIcon from '@/assets/icons/retirement-planning.png';
+import CommunitiesIcon from '@/assets/icons/communities.png';
+import CommitmentIcon from '@/assets/icons/commitment.png';
+import ConsistencyIcon from '@/assets/icons/consistency.png';
 
 /**
  * Core Assets Reference
@@ -76,8 +93,22 @@ export const ASSETS = {
     piggyvest: PiggyvestImg,
     couplesSmiling: CouplesSmilingImg,
     nemicapitalAppHands: NemiCapitalAppHandsImg,
+    corporateCreditCardMan: CorporateCreditCardManImg,
+    loanCallbackMan: LoanCallbackManImg,
+    loanCouplePlanning: LoanCouplePlanningImg,
+    bankBuilding: BankBuildingImg,
+    ladyStanding: LadyStandingImg,
+    bankTeam: BankTeamImg,
+    aboutMission: AboutMissionImg,
+    aboutVision: AboutVisionImg,
+    aboutCoreValue: AboutCoreValueImg,
+    bankStatsBg: BankStatsBgImg,
+    bankingAwardTrophy: BankingAwardTrophyImg,
   },
   icons: {
+    award: AwardIcon,
+    bank: BankIcon,
+    employee: EmployeeIcon,
     binoculars: BinocularsImg,
     microphone: MicrophoneImg,
     coin: CoinImg,
@@ -104,6 +135,9 @@ export const ASSETS = {
     guidance: GuidanceIcon,
     kyc: KycIcon,
     retirementPlanning: RetirementPlanningIcon,
+    communities: CommunitiesIcon,
+    commitment: CommitmentIcon,
+    consistency: ConsistencyIcon,
     check: '/icons/custom-check.svg',
   }
 } as const;

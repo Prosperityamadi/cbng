@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { SITE_CONFIG, ASSETS } from '@/core';
-import { FooterSection } from '@/components/home/FooterSection';
+import { FooterSection, useInView } from '@/components/home';
 
 const FAQS = [
   {
@@ -190,6 +190,13 @@ export default function AccountsPage() {
   const [activeSpecialtyTab, setActiveSpecialtyTab] = useState<'trading' | 'tax' | 'gold'>('gold');
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
+  // Unique IntersectionObserver hooks for scroll animations across sections
+  const { ref: showcaseRef, isInView: isShowcaseInView } = useInView<HTMLElement>({ threshold: 0.15 });
+  const { ref: specialtyRef, isInView: isSpecialtyInView } = useInView<HTMLElement>({ threshold: 0.15 });
+  const { ref: stepsRef, isInView: isStepsInView } = useInView<HTMLElement>({ threshold: 0.15 });
+  const { ref: appRef, isInView: isAppInView } = useInView<HTMLElement>({ threshold: 0.15 });
+  const { ref: faqRef, isInView: isFaqInView } = useInView<HTMLElement>({ threshold: 0.15 });
+
   const currentSpecialty = SPECIALTY_TABS.find(t => t.id === activeSpecialtyTab) || SPECIALTY_TABS[2];
 
   return (
@@ -253,17 +260,16 @@ export default function AccountsPage() {
 
       {/* =========================================================================
           2. SHOWCASE ACCOUNTS SECTION (Matches User Screenshot)
-             - Pure White Background (bg-white)
-             - Centered header with text extracted from second screenshot
-             - 3 Interactive Cards with designated images
-             - Default: All cards are clean white box, grayscale images
-             - Hover ONLY: Hovered card gets dark box (#1A1818), crimson title (#B81446), red arrow →
-             - No "view all accounts" link
+             - Scroll animation: Header drops down smoothly, cards rise with unique 3D tilt & pop
           ========================================================================= */}
-      <section className="w-full bg-white pt-20 sm:pt-24 pb-20 sm:pb-24 border-b border-[#EDE5DF]">
+      <section ref={showcaseRef} className="w-full bg-white pt-20 sm:pt-24 pb-20 sm:pb-24 border-b border-[#EDE5DF] overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Centered Header */}
-          <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
+          {/* Centered Header with downward slide & fade */}
+          <div
+            className={`text-center max-w-3xl mx-auto mb-12 sm:mb-16 transition-all duration-700 ease-out ${
+              isShowcaseInView ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-8'
+            }`}
+          >
             <div className="inline-flex items-center justify-center gap-2.5 mb-3">
               <span className="w-5 h-[2px] bg-[#B81446]" />
               <span className="font-poppins font-bold text-xs uppercase tracking-[0.2em] text-[#B81446]">
@@ -278,17 +284,26 @@ export default function AccountsPage() {
             </p>
           </div>
 
-          {/* 3 Showcase Cards in a Row */}
+          {/* 3 Showcase Cards in a Row: Staggered 3D Tilt & Pop Rise */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 max-w-5xl mx-auto">
-            {SHOWCASE_CARDS.map(card => {
+            {SHOWCASE_CARDS.map((card, idx) => {
               const isHovered = hoveredCardId === card.id;
+
+              // Unique animation styles for each card
+              const animationClass = idx === 0
+                ? (isShowcaseInView ? 'opacity-100 translate-y-0 rotate-0' : 'opacity-0 translate-y-16 -rotate-2')
+                : idx === 1
+                ? (isShowcaseInView ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-20 scale-95')
+                : (isShowcaseInView ? 'opacity-100 translate-y-0 rotate-0' : 'opacity-0 translate-y-16 rotate-2');
+
+              const delayClass = idx === 0 ? 'delay-100' : idx === 1 ? 'delay-200' : 'delay-350';
 
               return (
                 <div
                   key={card.id}
                   onMouseEnter={() => setHoveredCardId(card.id)}
                   onMouseLeave={() => setHoveredCardId(null)}
-                  className="group relative flex flex-col cursor-pointer transition-transform duration-300 hover:-translate-y-1.5"
+                  className={`group relative flex flex-col cursor-pointer transition-all duration-700 ease-out hover:-translate-y-2 ${animationClass} ${delayClass}`}
                 >
                   {/* Top Image Container with Grayscale Effect */}
                   <div className="relative w-full aspect-[4/3] sm:aspect-square overflow-hidden bg-gray-100 shadow-md">
@@ -350,16 +365,13 @@ export default function AccountsPage() {
 
       {/* =========================================================================
           3. SPECIALTY ACCOUNTS SPLIT BANNER & TABS (Matches User Screenshot)
-             - Left: Grayscale Photo of Couple Smiling with Tablet (couples-smiling.jpg)
-             - Right: Dark background, Eyebrow, Heading, Description, Red Checkmarks
-             - Bottom Tabs:
-               1. Trading & Demat a/c (trading.png)
-               2. Tax Savings a/c (saving-financial.png)
-               3. Gold Savings a/c (gold.png)
+             - Scroll animation: Left image zooms in with cinematic unveil,
+               right panel slides in with checkmark domino cascade,
+               and bottom tabs rise with glow.
           ========================================================================= */}
-      <section className="w-full bg-[#161616] text-white relative overflow-hidden">
+      <section ref={specialtyRef} className="w-full bg-[#161616] text-white relative overflow-hidden">
         <div className="flex flex-col lg:flex-row min-h-[500px] lg:min-h-[540px]">
-          {/* Left Column: Image with gradient blend into dark side */}
+          {/* Left Column: Image with cinematic zoom and gradient blend */}
           <div className="w-full lg:w-1/2 relative min-h-[340px] sm:min-h-[420px] lg:min-h-full overflow-hidden">
             <Image
               src={ASSETS.images.couplesSmiling}
@@ -367,15 +379,21 @@ export default function AccountsPage() {
               fill
               priority
               unoptimized
-              className="object-cover object-[center_35%] grayscale contrast-[112%] brightness-[85%]"
+              className={`object-cover object-[center_35%] grayscale contrast-[112%] brightness-[85%] transition-transform duration-1000 ease-out ${
+                isSpecialtyInView ? 'scale-100' : 'scale-110'
+              }`}
             />
             {/* Smooth dark vignette fading to the right into the black content */}
             <div className="absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-r from-transparent via-black/40 to-[#161616]" />
             <div className="absolute inset-0 bg-black/20 pointer-events-none" />
           </div>
 
-          {/* Right Column: Content */}
-          <div className="w-full lg:w-1/2 flex flex-col justify-between p-8 sm:p-12 lg:p-14 xl:p-16 relative z-10 bg-[#161616]">
+          {/* Right Column: Content with slide-in from right */}
+          <div
+            className={`w-full lg:w-1/2 flex flex-col justify-between p-8 sm:p-12 lg:p-14 xl:p-16 relative z-10 bg-[#161616] transition-all duration-800 ease-out ${
+              isSpecialtyInView ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12'
+            }`}
+          >
             <div>
               {/* Active Tab Eyebrow in Crimson Red */}
               <div className="font-poppins font-bold text-xs uppercase tracking-[0.2em] text-[#B81446] mb-2">
@@ -392,10 +410,16 @@ export default function AccountsPage() {
                 {currentSpecialty.description}
               </p>
 
-              {/* 6 Bullet Points with Red Checkmarks */}
+              {/* 6 Bullet Points with Staggered Cascading Checkmarks */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2.5 mt-6 pt-5 border-t border-white/10 max-w-xl">
                 {currentSpecialty.bullets.map((bullet, idx) => (
-                  <div key={idx} className="flex items-center gap-2.5 text-xs text-gray-300">
+                  <div
+                    key={idx}
+                    style={{ transitionDelay: `${(idx + 1) * 70}ms` }}
+                    className={`flex items-center gap-2.5 text-xs text-gray-300 transition-all duration-500 ease-out ${
+                      isSpecialtyInView ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'
+                    }`}
+                  >
                     <span className="text-[#B81446] font-bold text-sm flex-shrink-0">&#10003;</span>
                     <span className="truncate">{bullet}</span>
                   </div>
@@ -403,8 +427,12 @@ export default function AccountsPage() {
               </div>
             </div>
 
-            {/* Bottom 3 Interactive Tabs */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-0 mt-8 pt-6 border-t border-white/10 lg:border-t-0">
+            {/* Bottom 3 Interactive Tabs with slide-up reveal */}
+            <div
+              className={`grid grid-cols-1 sm:grid-cols-3 gap-0 mt-8 pt-6 border-t border-white/10 lg:border-t-0 transition-all duration-700 delay-300 ease-out ${
+                isSpecialtyInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+              }`}
+            >
               {SPECIALTY_TABS.map(tab => {
                 const isActive = activeSpecialtyTab === tab.id;
 
@@ -448,16 +476,17 @@ export default function AccountsPage() {
 
       {/* =========================================================================
           4. YOUR ACCOUNT IN EASY STEPS (Matches User Screenshot)
-             - Pure White Background
-             - Centered Title: "Your Account In Easy Steps"
-             - Centered Subtitle: "We show our value by serving faithfully."
-             - 4 Color Gradient Cards with Diagonal Ribbon (STEP 01 - 04)
-             - Icons: Guidance, Document, KYC, Retirement Planning
+             - Scroll animation: Sequential wave cascade where each step card
+               pops up with a unique spring lift and diagonal ribbon shine.
           ========================================================================= */}
-      <section className="w-full bg-white py-20 sm:py-24 border-b border-[#EDE5DF]">
+      <section ref={stepsRef} className="w-full bg-white py-20 sm:py-24 border-b border-[#EDE5DF] overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Centered Header */}
-          <div className="text-center max-w-2xl mx-auto mb-14 sm:mb-16">
+          {/* Centered Header with zoom pop */}
+          <div
+            className={`text-center max-w-2xl mx-auto mb-14 sm:mb-16 transition-all duration-700 ease-out ${
+              isStepsInView ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
+            }`}
+          >
             <h2 className="font-poppins text-2xl sm:text-3xl lg:text-[34px] font-bold text-[#1A1818] tracking-tight leading-tight">
               Your Account In Easy Steps
             </h2>
@@ -466,63 +495,68 @@ export default function AccountsPage() {
             </p>
           </div>
 
-          {/* 4 Cards Grid */}
+          {/* 4 Cards Grid with sequential domino wave */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
-            {ACCOUNT_STEPS.map((step, idx) => (
-              <div
-                key={idx}
-                className={`relative overflow-hidden ${step.bgGradient} p-6 sm:p-7 pt-9 shadow-md hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 flex flex-col justify-between min-h-[260px] group`}
-              >
-                {/* Top-Right Diagonal Ribbon for STEP 01 - 04 */}
-                <div className="absolute top-0 right-0 w-24 h-24 overflow-hidden pointer-events-none">
-                  <div className="absolute transform rotate-45 bg-white text-[#1A1818] text-[9px] font-poppins font-bold uppercase tracking-widest py-1 -right-8 top-4 w-32 text-center shadow-sm">
-                    {step.stepNumber}
-                  </div>
-                </div>
-
-                <div>
-                  {/* Step Icon */}
-                  <div className="w-12 h-12 flex items-center justify-start mb-6">
-                    <Image
-                      src={step.icon}
-                      alt={step.title}
-                      width={40}
-                      height={40}
-                      unoptimized
-                      priority
-                      className="w-10 h-10 object-contain brightness-0 invert"
-                    />
+            {ACCOUNT_STEPS.map((step, idx) => {
+              const delays = ['delay-100', 'delay-200', 'delay-300', 'delay-400'];
+              return (
+                <div
+                  key={idx}
+                  className={`relative overflow-hidden ${step.bgGradient} p-6 sm:p-7 pt-9 shadow-md hover:shadow-2xl transition-all duration-700 ease-out hover:-translate-y-2 flex flex-col justify-between min-h-[260px] group ${delays[idx]} ${
+                    isStepsInView ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-16 scale-95'
+                  }`}
+                >
+                  {/* Top-Right Diagonal Ribbon for STEP 01 - 04 */}
+                  <div className="absolute top-0 right-0 w-24 h-24 overflow-hidden pointer-events-none">
+                    <div className="absolute transform rotate-45 bg-white text-[#1A1818] text-[9px] font-poppins font-bold uppercase tracking-widest py-1 -right-8 top-4 w-32 text-center shadow-sm">
+                      {step.stepNumber}
+                    </div>
                   </div>
 
-                  {/* Title */}
-                  <h3 className="font-poppins font-bold text-base sm:text-[17px] text-white leading-snug mb-3">
-                    {step.title}
-                  </h3>
+                  <div>
+                    {/* Step Icon */}
+                    <div className="w-12 h-12 flex items-center justify-start mb-6 transition-transform duration-300 group-hover:scale-110">
+                      <Image
+                        src={step.icon}
+                        alt={step.title}
+                        width={40}
+                        height={40}
+                        unoptimized
+                        priority
+                        className="w-10 h-10 object-contain brightness-0 invert"
+                      />
+                    </div>
 
-                  {/* Description */}
-                  <p className="font-roboto text-xs text-white/85 leading-relaxed">
-                    {step.description}
-                  </p>
+                    {/* Title */}
+                    <h3 className="font-poppins font-bold text-base sm:text-[17px] text-white leading-snug mb-3">
+                      {step.title}
+                    </h3>
+
+                    {/* Description */}
+                    <p className="font-roboto text-xs text-white/85 leading-relaxed">
+                      {step.description}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
 
       {/* =========================================================================
           5. OPEN YOUR ACCOUNT IN 5 MINS (Matches User Screenshot)
-             - Light warm cream background (#FAF7F3)
-             - Centered Title: "Open Your Account In 5 Mins"
-             - Centered Subtitle: "Imagine reaching your goals faster with the help of our banking tools."
-             - 3D Illustration: Hands holding horizontal smartphone with NemiCapital UI
-             - Available for Android and iOS
-             - Dual CTA Buttons: [Download] and [Contact Us]
+             - Scroll animation: 3D perspective floating rise of the smartphone,
+               with Google Play & App Store buttons sliding in from opposite sides.
           ========================================================================= */}
-      <section className="w-full bg-[#FAF7F3] py-20 sm:py-24 border-b border-[#EDE5DF] overflow-hidden">
+      <section ref={appRef} className="w-full bg-[#FAF7F3] py-20 sm:py-24 border-b border-[#EDE5DF] overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           {/* Centered Heading & Subtitle */}
-          <div className="max-w-2xl mx-auto mb-10 sm:mb-12">
+          <div
+            className={`max-w-2xl mx-auto mb-10 sm:mb-12 transition-all duration-700 ease-out ${
+              isAppInView ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-6'
+            }`}
+          >
             <h2 className="font-poppins text-2xl sm:text-3xl lg:text-[38px] font-bold text-[#1A1818] tracking-tight leading-tight">
               Open Your Account In 5 Mins
             </h2>
@@ -531,9 +565,13 @@ export default function AccountsPage() {
             </p>
           </div>
 
-          {/* 3D Centerpiece: Cartoon Hands Holding Smartphone */}
+          {/* 3D Centerpiece: Smartphone with Floating Levitation Entrance */}
           <div className="relative max-w-2xl sm:max-w-3xl lg:max-w-4xl mx-auto mb-8 sm:mb-10 px-2 sm:px-4">
-            <div className="relative aspect-[16/9] w-full overflow-hidden rounded-2xl shadow-xl hover:shadow-2xl transition-transform duration-500 hover:scale-[1.01]">
+            <div
+              className={`relative aspect-[16/9] w-full overflow-hidden rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-1000 ease-out hover:scale-[1.01] ${
+                isAppInView ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-16 scale-90'
+              }`}
+            >
               <Image
                 src={ASSETS.images.nemicapitalAppHands}
                 alt="Open NemiCapital Account in 5 Mins on Mobile App"
@@ -545,19 +583,21 @@ export default function AccountsPage() {
             </div>
           </div>
 
-          {/* Footnote & Action Buttons */}
+          {/* Footnote & Action Buttons sliding in from left and right */}
           <div className="flex flex-col items-center justify-center gap-4">
             <p className="font-roboto text-xs sm:text-sm text-[#777777] font-medium">
               Available for Android and iOS.
             </p>
 
             <div className="flex items-center justify-center gap-4 sm:gap-5 flex-wrap">
-              {/* Google Play Store Badge Button */}
+              {/* Google Play Store Badge: Slides in from left */}
               <a
                 href="https://play.google.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group flex items-center gap-3.5 px-6 py-3.5 bg-white hover:bg-[#F9FAFB] text-[#111827] border border-[#E5E7EB] shadow-md hover:shadow-xl transition-all duration-200 hover:-translate-y-0.5 min-w-[220px]"
+                className={`group flex items-center gap-3.5 px-6 py-3.5 bg-white hover:bg-[#F9FAFB] text-[#111827] border border-[#E5E7EB] shadow-md hover:shadow-xl transition-all duration-700 ease-out hover:-translate-y-0.5 min-w-[220px] ${
+                  isAppInView ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-12'
+                }`}
               >
                 <div className="w-7 h-7 relative flex-shrink-0 flex items-center justify-center">
                   <Image
@@ -578,12 +618,14 @@ export default function AccountsPage() {
                 </div>
               </a>
 
-              {/* Apple App Store Badge Button */}
+              {/* Apple App Store Badge: Slides in from right */}
               <a
                 href="https://apple.com/app-store"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group flex items-center gap-3.5 px-6 py-3.5 bg-[#B81446] hover:bg-[#9E113B] text-white shadow-md hover:shadow-xl transition-all duration-200 hover:-translate-y-0.5 min-w-[220px]"
+                className={`group flex items-center gap-3.5 px-6 py-3.5 bg-[#B81446] hover:bg-[#9E113B] text-white shadow-md hover:shadow-xl transition-all duration-700 ease-out hover:-translate-y-0.5 min-w-[220px] ${
+                  isAppInView ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12'
+                }`}
               >
                 <div className="w-7 h-7 relative flex-shrink-0 flex items-center justify-center">
                   <Image
@@ -609,11 +651,16 @@ export default function AccountsPage() {
       </section>
 
       {/* =========================================================================
-          5. FREQUENTLY ASKED QUESTIONS ACCORDION
+          6. FREQUENTLY ASKED QUESTIONS ACCORDION
+             - Scroll animation: Accordion items reveal in a cascading downward sequence.
           ========================================================================= */}
-      <section className="w-full bg-white py-16 sm:py-20 border-t border-[#EDE5DB]/70">
+      <section ref={faqRef} className="w-full bg-white py-16 sm:py-20 border-t border-[#EDE5DB]/70 overflow-hidden">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-10">
+          <div
+            className={`text-center mb-10 transition-all duration-700 ease-out ${
+              isFaqInView ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-6'
+            }`}
+          >
             <span className="font-poppins font-bold text-xs uppercase tracking-[0.2em] text-[#B81446]">
               Frequently Asked Questions
             </span>
@@ -628,12 +675,15 @@ export default function AccountsPage() {
               return (
                 <div
                   key={idx}
-                  className="bg-white border border-[#E7DFD4] shadow-sm hover:shadow-md transition-all overflow-hidden"
+                  style={{ transitionDelay: `${(idx + 1) * 80}ms` }}
+                  className={`bg-white border border-[#E7DFD4] shadow-sm hover:shadow-md transition-all duration-600 ease-out overflow-hidden ${
+                    isFaqInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+                  }`}
                 >
                   <button
                     type="button"
                     onClick={() => setOpenFaq(isOpen ? null : idx)}
-                    className="w-full px-6 py-5 text-left flex items-center justify-between gap-4 focus:outline-none"
+                    className="w-full px-6 py-5 text-left flex items-center justify-between gap-4 focus:outline-none cursor-pointer"
                   >
                     <span className="font-poppins font-semibold text-base sm:text-lg text-[#1A1818]">
                       {faq.question}
