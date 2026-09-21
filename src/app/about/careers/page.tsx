@@ -4,24 +4,24 @@ import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ASSETS } from '@/core';
-import { WhoWeAreOverviewSection, MissionVisionSection, InterestingNumbersSection, AwardsSection } from '@/components/about';
+import { CareerNewsletterSection, NoOpenPositionsSection } from '@/components/about';
 import { FooterSection } from '@/components/home/FooterSection';
 
-export default function WhoWeArePage() {
+export default function CareersPage() {
   return (
     <main className="w-full min-h-screen bg-white flex flex-col select-none">
       {/* =========================================================================
           1. HERO HEADER BANNER (Matches user screenshot)
-             - Background Photography with Grayscale & Contrast
-             - Overlapping White Card with Crimson Top Border: "Who We Are"
-             - Breadcrumbs on the right: "Home > Who We Are"
+             - Background Photography with Grayscale & Contrast (Customer Support Rep with Headset)
+             - Overlapping White Card with Crimson Top Border: "Careers"
+             - Breadcrumbs on the right: "Home > Careers"
           ========================================================================= */}
       <section className="relative w-full h-[240px] sm:h-[280px] md:h-[300px] lg:h-[320px] bg-[#1A1818] z-20">
         {/* Background Photography with Grayscale & Contrast (clipped to section) */}
         <div className="absolute inset-0 z-0 overflow-hidden">
           <Image
             src={ASSETS.images.customerRep}
-            alt="NemiCapital Bank - Who We Are"
+            alt="NemiCapital Bank - Careers"
             fill
             priority
             unoptimized
@@ -35,10 +35,10 @@ export default function WhoWeArePage() {
         {/* Content Container aligned at the bottom */}
         <div className="relative z-10 max-w-7xl mx-auto h-full px-4 sm:px-6 lg:px-8 flex items-end justify-between">
           
-          {/* Overlapping White Box with Crimson Top Border: "Who We Are" */}
+          {/* Overlapping White Box with Crimson Top Border: "Careers" */}
           <div className="bg-white border-t-4 border-[#B81446] px-6 sm:px-10 md:px-12 pt-4 pb-4 sm:pt-5 sm:pb-5 md:pt-6 md:pb-6 shadow-2xl relative -mb-5 sm:-mb-6 z-30 animate-fadeInUp transition-all">
             <h1 className="font-poppins font-bold text-2xl sm:text-3xl md:text-[34px] text-[#1A1818] tracking-tight leading-snug pb-1 whitespace-nowrap block">
-              Who We Are
+              Careers
             </h1>
           </div>
 
@@ -51,31 +51,22 @@ export default function WhoWeArePage() {
               Home
             </Link>
             <span className="text-white/40">&gt;</span>
-            <span className="text-white font-semibold">Who We Are</span>
+            <span className="text-white font-semibold">Careers</span>
           </div>
 
         </div>
       </section>
 
       {/* =========================================================================
-          2. WHO WE ARE OVERVIEW & PILLARS SECTION (Combined single section)
+          2. NO OPEN POSITIONS AT THE MOMENT (With special Nano illustration)
           ========================================================================= */}
-      <WhoWeAreOverviewSection />
+      <NoOpenPositionsSection />
 
       {/* =========================================================================
-          3. MISSION, VISION, CORE VALUE & MISSION STATEMENT SECTION
+          3. CAREER UPDATES NEWSLETTER SUBSCRIPTION SECTION (Matches user screenshot)
           ========================================================================= */}
-      <MissionVisionSection />
+      <CareerNewsletterSection />
 
-      {/* =========================================================================
-          4. FEW INTERESTING NUMBERS SECTION
-          ========================================================================= */}
-      <InterestingNumbersSection />
-
-      {/* =========================================================================
-          5. AWARDS & MAJOR ACHIEVEMENTS SECTION
-          ========================================================================= */}
-      <AwardsSection />
 
       {/* Global Brand Footer */}
       <FooterSection />

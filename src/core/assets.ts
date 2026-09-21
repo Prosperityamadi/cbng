@@ -50,6 +50,14 @@ import EmployeeIcon from '@/assets/icons/employee.png';
 import AwardIcon from '@/assets/icons/award.png';
 import BankStatsBgImg from '@/assets/images/bank-stats-bg.jpg';
 import BankingAwardTrophyImg from '@/assets/images/banking-award-trophy.jpg';
+import Team1CeoImg from '@/assets/images/team-1-ceo.jpg';
+import Team2CooImg from '@/assets/images/team-2-coo.jpg';
+import Team3CfoImg from '@/assets/images/team-3-cfo.jpg';
+import Team4CroImg from '@/assets/images/team-4-cro.jpg';
+import Team5WealthImg from '@/assets/images/team-5-wealth.jpg';
+import Team6MarketsImg from '@/assets/images/team-6-markets.jpg';
+import Team7CtoImg from '@/assets/images/team-7-cto.jpg';
+import Team8DigitalImg from '@/assets/images/team-8-digital.jpg';
 import SavingFinancialIcon from '@/assets/icons/saving-financial.png';
 import TradingIcon from '@/assets/icons/trading.png';
 import GoldIcon from '@/assets/icons/gold.png';
@@ -60,6 +68,8 @@ import RetirementPlanningIcon from '@/assets/icons/retirement-planning.png';
 import CommunitiesIcon from '@/assets/icons/communities.png';
 import CommitmentIcon from '@/assets/icons/commitment.png';
 import ConsistencyIcon from '@/assets/icons/consistency.png';
+import NewsletterEmailImg from '@/assets/icons/newsletter-email-transparent.png';
+import NoOpenPositionsImg from '@/assets/icons/no-open-positions-transparent.png';
 
 /**
  * Core Assets Reference
@@ -104,8 +114,20 @@ export const ASSETS = {
     aboutCoreValue: AboutCoreValueImg,
     bankStatsBg: BankStatsBgImg,
     bankingAwardTrophy: BankingAwardTrophyImg,
+    team1Ceo: Team1CeoImg,
+    team2Coo: Team2CooImg,
+    team3Cfo: Team3CfoImg,
+    team4Cro: Team4CroImg,
+    team5Wealth: Team5WealthImg,
+    team6Markets: Team6MarketsImg,
+    team7Cto: Team7CtoImg,
+    team8Digital: Team8DigitalImg,
+    newsletterEmail: NewsletterEmailImg,
+    noOpenPositions: NoOpenPositionsImg,
   },
   icons: {
+    noOpenPositions: NoOpenPositionsImg,
+    newsletterEmail: NewsletterEmailImg,
     award: AwardIcon,
     bank: BankIcon,
     employee: EmployeeIcon,
