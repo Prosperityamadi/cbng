@@ -3,10 +3,14 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { ASSETS } from '@/core';
+import { useInView } from '@/components/home';
 
 export const MarketNewsletterSection: React.FC = () => {
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
+
+  // Scroll View Observer for Dark Vault Reveal
+  const { ref, isInView } = useInView<HTMLElement>({ threshold: 0.15 });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,17 +23,33 @@ export const MarketNewsletterSection: React.FC = () => {
   };
 
   return (
-    <section className="w-full bg-[#141212] text-white py-16 sm:py-20 relative overflow-hidden select-none border-t border-stone-800">
+    <section ref={ref} className="w-full bg-[#141212] text-white py-16 sm:py-20 relative overflow-hidden select-none border-t border-stone-800">
       {/* Ambient Crimson Background Shimmer */}
-      <div className="absolute top-0 right-0 w-96 h-96 bg-[#B81446]/15 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#800A2C]/20 rounded-full blur-3xl pointer-events-none" />
+      <div
+        className={`absolute top-0 right-0 w-96 h-96 bg-[#B81446]/15 rounded-full blur-3xl pointer-events-none transition-all duration-1000 ease-out ${
+          isInView ? 'scale-100 opacity-100' : 'scale-50 opacity-0'
+        }`}
+      />
+      <div
+        className={`absolute bottom-0 left-0 w-96 h-96 bg-[#800A2C]/20 rounded-full blur-3xl pointer-events-none transition-all duration-1000 ease-out ${
+          isInView ? 'scale-100 opacity-100' : 'scale-50 opacity-0'
+        }`}
+      />
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="bg-[#1A1818]/90 backdrop-blur-md border border-stone-800 p-8 sm:p-12 lg:p-14 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-8 sm:gap-10">
+        <div
+          className={`bg-[#1A1818]/90 backdrop-blur-md border border-stone-800 p-8 sm:p-12 lg:p-14 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-8 sm:gap-10 transition-all duration-800 ease-out ${
+            isInView ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 translate-y-8'
+          }`}
+        >
           
-          {/* Left: Custom Newsletter Email Icon with Floating Bounce */}
+          {/* Left: Custom Newsletter Email Icon with 3D Pop & Floating Bounce */}
           <div className="flex-shrink-0 text-center md:text-left">
-            <div className="relative w-24 h-24 sm:w-28 sm:h-28 mx-auto md:mx-0 animate-bounce duration-1000">
+            <div
+              className={`relative w-24 h-24 sm:w-28 sm:h-28 mx-auto md:mx-0 animate-bounce duration-1000 transition-all duration-700 ease-out delay-200 ${
+                isInView ? 'scale-100 rotate-0 opacity-100' : 'scale-50 -rotate-12 opacity-0'
+              }`}
+            >
               <Image
                 src={ASSETS.icons.newsletterEmail}
                 alt="Institutional Market Newsletter"
@@ -39,8 +59,12 @@ export const MarketNewsletterSection: React.FC = () => {
             </div>
           </div>
 
-          {/* Right: Copy & Form */}
-          <div className="flex-1 text-center md:text-left space-y-4">
+          {/* Right: Copy & Form with Slide Entrance */}
+          <div
+            className={`flex-1 text-center md:text-left space-y-4 transition-all duration-700 ease-out delay-300 ${
+              isInView ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-8'
+            }`}
+          >
             <div>
               <span className="text-[11px] uppercase tracking-[0.2em] text-[#B81446] font-semibold block mb-1">
                 Direct Institutional Intelligence

@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Image, { StaticImageData } from 'next/image';
 import Link from 'next/link';
 import { ASSETS } from '@/core';
+import { useInView } from '@/components/home';
 
 interface InsightArticle {
   id: string;
@@ -112,6 +113,10 @@ const CATEGORIES = [
 export const MarketInsightsGridSection: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('All Insights');
 
+  // Scroll View Observers for Header Tabs & 3D Staggered Cards Grid
+  const { ref: headerRef, isInView: isHeaderInView } = useInView<HTMLDivElement>({ threshold: 0.15 });
+  const { ref: gridRef, isInView: isGridInView } = useInView<HTMLDivElement>({ threshold: 0.08 });
+
   const filteredArticles = selectedCategory === 'All Insights'
     ? INSIGHTS_CATALOG
     : INSIGHTS_CATALOG.filter((item) => item.category === selectedCategory);
@@ -121,11 +126,20 @@ export const MarketInsightsGridSection: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Heading & Category Filter Tabs */}
-        <div className="space-y-6 sm:space-y-8 mb-10 sm:mb-12">
+        <div
+          ref={headerRef}
+          className={`space-y-6 sm:space-y-8 mb-10 sm:mb-12 transition-all duration-700 ease-out ${
+            isHeaderInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
+          }`}
+        >
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
             <div>
               <div className="inline-flex items-center gap-2.5 mb-2">
-                <span className="w-5 sm:w-6 h-[2.5px] bg-[#B81446] inline-block flex-shrink-0" />
+                <span
+                  className={`h-[2.5px] bg-[#B81446] inline-block flex-shrink-0 transition-all duration-700 ease-out ${
+                    isHeaderInView ? 'w-5 sm:w-6' : 'w-0'
+                  }`}
+                />
                 <span className="font-poppins font-semibold text-xs uppercase tracking-[0.2em] text-[#B81446]">
                   Research Library
                 </span>
@@ -140,16 +154,21 @@ export const MarketInsightsGridSection: React.FC = () => {
             </span>
           </div>
 
-          {/* Interactive Category Filter Pills */}
+          {/* Interactive Category Filter Pills with Staggered Entrance */}
           <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2">
-            {CATEGORIES.map((cat) => {
+            {CATEGORIES.map((cat, idx) => {
               const isActive = selectedCategory === cat;
               return (
                 <button
                   key={cat}
                   type="button"
                   onClick={() => setSelectedCategory(cat)}
-                  className={`px-4 py-2 text-xs font-poppins font-semibold rounded-xs transition-all duration-300 whitespace-nowrap cursor-pointer ${
+                  style={{
+                    transitionDelay: isHeaderInView ? `${idx * 40 + 150}ms` : '0ms',
+                  }}
+                  className={`px-4 py-2 text-xs font-poppins font-semibold rounded-xs transition-all duration-400 whitespace-nowrap cursor-pointer ${
+                    isHeaderInView ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-3'
+                  } ${
                     isActive
                       ? 'bg-[#B81446] text-white shadow-md scale-105'
                       : 'bg-[#FAF7F2] text-stone-600 border border-stone-200/80 hover:bg-stone-200/60 hover:text-[#1A1818]'
@@ -162,12 +181,17 @@ export const MarketInsightsGridSection: React.FC = () => {
           </div>
         </div>
 
-        {/* 3-Column Articles Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10">
-          {filteredArticles.map((article) => (
+        {/* 3-Column Articles Grid (3D Staggered Cascade Wave) */}
+        <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10">
+          {filteredArticles.map((article, idx) => (
             <article
               key={article.id}
-              className="bg-white border border-stone-200/80 shadow-xs hover:shadow-xl transition-all duration-500 group flex flex-col justify-between overflow-hidden hover:-translate-y-1.5"
+              style={{
+                transitionDelay: isGridInView ? `${(idx % 6) * 110 + 100}ms` : '0ms',
+              }}
+              className={`bg-white border border-stone-200/80 shadow-xs hover:shadow-xl transition-all duration-700 ease-out group flex flex-col justify-between overflow-hidden hover:-translate-y-2 ${
+                isGridInView ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-12 scale-[0.96]'
+              }`}
             >
               <div>
                 {/* Image Container with Zoom on Hover */}

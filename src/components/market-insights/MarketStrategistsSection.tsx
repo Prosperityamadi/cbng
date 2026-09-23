@@ -3,6 +3,7 @@
 import React from 'react';
 import Image, { StaticImageData } from 'next/image';
 import { ASSETS } from '@/core';
+import { useInView } from '@/components/home';
 
 interface Strategist {
   name: string;
@@ -44,14 +45,27 @@ const STRATEGISTS: Strategist[] = [
 ];
 
 export const MarketStrategistsSection: React.FC = () => {
+  // Scroll View Observers for Header and Pedestal Pop Cards
+  const { ref: headerRef, isInView: isHeaderInView } = useInView<HTMLDivElement>({ threshold: 0.15 });
+  const { ref: cardsRef, isInView: isCardsInView } = useInView<HTMLDivElement>({ threshold: 0.1 });
+
   return (
     <section className="w-full bg-white py-16 sm:py-20 lg:py-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Section Header */}
-        <div className="max-w-3xl mx-auto text-center mb-14 sm:mb-16">
+        {/* Section Header (Expanding Dash & Upward Reveal) */}
+        <div
+          ref={headerRef}
+          className={`max-w-3xl mx-auto text-center mb-14 sm:mb-16 transition-all duration-700 ease-out ${
+            isHeaderInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
+          }`}
+        >
           <div className="inline-flex items-center justify-center gap-2.5 mb-3">
-            <span className="w-5 sm:w-6 h-[2.5px] bg-[#B81446] inline-block flex-shrink-0" />
+            <span
+              className={`h-[2.5px] bg-[#B81446] inline-block flex-shrink-0 transition-all duration-700 ease-out ${
+                isHeaderInView ? 'w-5 sm:w-6' : 'w-0'
+              }`}
+            />
             <span className="font-poppins font-semibold text-xs uppercase tracking-[0.2em] text-[#B81446]">
               Executive Research Leadership
             </span>
@@ -65,12 +79,17 @@ export const MarketStrategistsSection: React.FC = () => {
           </p>
         </div>
 
-        {/* 4 Strategist Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+        {/* 4 Strategist Cards (Executive Spotlight Pedestal Pop) */}
+        <div ref={cardsRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
           {STRATEGISTS.map((item, idx) => (
             <div
               key={idx}
-              className="bg-white border border-stone-200/80 shadow-xs hover:shadow-xl transition-all duration-300 hover:-translate-y-1.5 group flex flex-col justify-between overflow-hidden"
+              style={{
+                transitionDelay: isCardsInView ? `${idx * 140 + 100}ms` : '0ms',
+              }}
+              className={`bg-white border border-stone-200/80 shadow-xs hover:shadow-xl transition-all duration-700 ease-out hover:-translate-y-2 group flex flex-col justify-between overflow-hidden ${
+                isCardsInView ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-16 scale-90'
+              }`}
             >
               <div>
                 {/* Photo with Smooth Zoom */}
@@ -83,8 +102,12 @@ export const MarketStrategistsSection: React.FC = () => {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
 
-                  {/* Publications Badge */}
-                  <div className="absolute bottom-3 right-3 bg-white/95 px-2.5 py-1 shadow-sm">
+                  {/* Publications Badge with Elastic Pop */}
+                  <div
+                    className={`absolute bottom-3 right-3 bg-white/95 px-2.5 py-1 shadow-sm transition-transform duration-500 delay-300 ${
+                      isCardsInView ? 'scale-100 opacity-100' : 'scale-0 opacity-0'
+                    }`}
+                  >
                     <span className="text-[10px] font-poppins font-semibold text-[#B81446]">
                       {item.publicationsCount} Papers
                     </span>
@@ -108,7 +131,7 @@ export const MarketStrategistsSection: React.FC = () => {
               {/* Bottom Card Link */}
               <div className="px-6 pb-6 pt-3 border-t border-stone-100 flex items-center justify-between">
                 <span className="text-[11px] text-stone-400 font-medium">NemiCapital Global Desk</span>
-                <span className="text-xs font-semibold text-[#B81446] group-hover:translate-x-1 transition-transform">
+                <span className="text-xs font-semibold text-[#B81446] group-hover:translate-x-1.5 transition-transform">
                   &rarr;
                 </span>
               </div>

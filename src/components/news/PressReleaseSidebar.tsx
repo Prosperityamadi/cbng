@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ASSETS } from '@/core';
 import { BrandLogo } from '@/components/navigation';
+import { useInView } from '@/components/home';
 
 interface PopularPostItem {
   id: string;
@@ -59,6 +60,13 @@ export const PressReleaseSidebar: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTag, setActiveTag] = useState<string | null>(null);
 
+  // Scroll View Observers for Unique Sidebar Choreography
+  const { ref: searchRef, isInView: isSearchInView } = useInView<HTMLDivElement>({ threshold: 0.1 });
+  const { ref: categoriesRef, isInView: isCategoriesInView } = useInView<HTMLDivElement>({ threshold: 0.1 });
+  const { ref: popularRef, isInView: isPopularInView } = useInView<HTMLDivElement>({ threshold: 0.1 });
+  const { ref: tagsRef, isInView: isTagsInView } = useInView<HTMLDivElement>({ threshold: 0.1 });
+  const { ref: promoRef, isInView: isPromoInView } = useInView<HTMLDivElement>({ threshold: 0.1 });
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (!searchQuery.trim()) return;
@@ -68,9 +76,14 @@ export const PressReleaseSidebar: React.FC = () => {
   return (
     <aside className="w-full space-y-10 sm:space-y-12">
       {/* =========================================================================
-          1. SEARCH WIDGET
+          1. SEARCH WIDGET (Top-Down Drop)
           ========================================================================= */}
-      <div>
+      <div
+        ref={searchRef}
+        className={`transition-all duration-700 ease-out ${
+          isSearchInView ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-6'
+        }`}
+      >
         <div className="flex items-center gap-2 mb-4">
           <span className="text-[#B81446] text-xs">▶</span>
           <h3 className="font-poppins font-semibold text-lg text-[#1A1818] tracking-tight">
@@ -103,21 +116,31 @@ export const PressReleaseSidebar: React.FC = () => {
       </div>
 
       {/* =========================================================================
-          2. CATEGORIES WIDGET
+          2. CATEGORIES WIDGET (Vertical Accordion Cascade)
           ========================================================================= */}
-      <div>
+      <div
+        ref={categoriesRef}
+        className={`transition-all duration-700 ease-out ${
+          isCategoriesInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
+        }`}
+      >
         <div className="flex items-center gap-2 mb-4">
           <span className="text-[#B81446] text-xs">▶</span>
           <h3 className="font-poppins font-semibold text-lg text-[#1A1818] tracking-tight">
             Categories
           </h3>
         </div>
-        <div className="bg-white border border-stone-100 shadow-[0_4px_20px_rgba(0,0,0,0.03)] divide-y divide-stone-100">
-          {CATEGORIES.map((cat) => (
+        <div className="bg-white border border-stone-100 shadow-[0_4px_20px_rgba(0,0,0,0.03)] divide-y divide-stone-100 overflow-hidden">
+          {CATEGORIES.map((cat, idx) => (
             <Link
               key={cat.name}
               href={cat.href}
-              className={`group flex items-center justify-between px-5 py-3.5 text-xs sm:text-sm font-medium transition-all duration-300 ${
+              style={{
+                transitionDelay: isCategoriesInView ? `${idx * 60 + 100}ms` : '0ms',
+              }}
+              className={`group flex items-center justify-between px-5 py-3.5 text-xs sm:text-sm font-medium transition-all duration-500 ease-out ${
+                isCategoriesInView ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-6'
+              } ${
                 cat.active
                   ? 'text-[#B81446] bg-[#FAF7F2]/60 font-semibold'
                   : 'text-[#555555] hover:text-[#B81446] hover:bg-[#FAF7F2]/40 hover:pl-6'
@@ -139,9 +162,14 @@ export const PressReleaseSidebar: React.FC = () => {
       </div>
 
       {/* =========================================================================
-          3. POPULAR POST WIDGET
+          3. POPULAR POST WIDGET (Lateral Image Sweep)
           ========================================================================= */}
-      <div>
+      <div
+        ref={popularRef}
+        className={`transition-all duration-700 ease-out ${
+          isPopularInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
+        }`}
+      >
         <div className="flex items-center gap-2 mb-4">
           <span className="text-[#B81446] text-xs">▶</span>
           <h3 className="font-poppins font-semibold text-lg text-[#1A1818] tracking-tight">
@@ -149,11 +177,16 @@ export const PressReleaseSidebar: React.FC = () => {
           </h3>
         </div>
         <div className="space-y-5">
-          {POPULAR_POSTS.map((post) => (
+          {POPULAR_POSTS.map((post, idx) => (
             <Link
               key={post.id}
               href={post.href}
-              className="group block space-y-2.5"
+              style={{
+                transitionDelay: isPopularInView ? `${idx * 150 + 100}ms` : '0ms',
+              }}
+              className={`group block space-y-2.5 transition-all duration-600 ease-out ${
+                isPopularInView ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-8'
+              }`}
             >
               {/* Thumbnail with smooth zoom hover */}
               <div className="relative w-full aspect-[16/9] overflow-hidden bg-stone-100 border border-stone-200/50">
@@ -181,9 +214,14 @@ export const PressReleaseSidebar: React.FC = () => {
       </div>
 
       {/* =========================================================================
-          4. POPULAR TAGS WIDGET
+          4. POPULAR TAGS WIDGET (Pop Matrix Pill Wave)
           ========================================================================= */}
-      <div>
+      <div
+        ref={tagsRef}
+        className={`transition-all duration-700 ease-out ${
+          isTagsInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
+        }`}
+      >
         <div className="flex items-center gap-2 mb-4">
           <span className="text-[#B81446] text-xs">▶</span>
           <h3 className="font-poppins font-semibold text-lg text-[#1A1818] tracking-tight">
@@ -191,14 +229,19 @@ export const PressReleaseSidebar: React.FC = () => {
           </h3>
         </div>
         <div className="flex flex-wrap gap-2">
-          {POPULAR_TAGS.map((tag) => {
+          {POPULAR_TAGS.map((tag, idx) => {
             const isSelected = activeTag === tag;
             return (
               <button
                 key={tag}
                 type="button"
                 onClick={() => setActiveTag(isSelected ? null : tag)}
-                className={`text-xs px-3.5 py-1.5 border transition-all duration-300 ${
+                style={{
+                  transitionDelay: isTagsInView ? `${idx * 40}ms` : '0ms',
+                }}
+                className={`text-xs px-3.5 py-1.5 border transition-all duration-400 ease-out ${
+                  isTagsInView ? 'opacity-100 scale-100' : 'opacity-0 scale-75'
+                } ${
                   isSelected
                     ? 'bg-[#B81446] text-white border-[#B81446] shadow-sm'
                     : 'bg-[#FAF7F2] text-stone-600 border-stone-200/80 hover:bg-[#B81446] hover:text-white hover:border-[#B81446] hover:-translate-y-0.5 hover:shadow-sm'
@@ -212,9 +255,14 @@ export const PressReleaseSidebar: React.FC = () => {
       </div>
 
       {/* =========================================================================
-          5. PROMOTIONAL SUPPORT CARD (Matches user design with Nano BG & Company Logo)
+          5. PROMOTIONAL SUPPORT CARD (Dark Holographic Lift & Crimson Checkmark Cascade)
           ========================================================================= */}
-      <div className="relative overflow-hidden bg-[#141212] text-white p-7 sm:p-8 text-center sm:text-left border border-stone-800 shadow-xl group">
+      <div
+        ref={promoRef}
+        className={`relative overflow-hidden bg-[#141212] text-white p-7 sm:p-8 text-center sm:text-left border border-stone-800 shadow-xl group transition-all duration-800 ease-out ${
+          isPromoInView ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 translate-y-8'
+        }`}
+      >
         {/* Background Nano Photography / Geometric Texture (Matches user design) */}
         <div className="absolute inset-0 z-0 overflow-hidden">
           <Image
@@ -229,22 +277,38 @@ export const PressReleaseSidebar: React.FC = () => {
 
         {/* Content Container (z-10 above background) */}
         <div className="relative z-10">
-          {/* Official Company Logo */}
-          <div className="mb-6 flex justify-center sm:justify-start">
+          {/* Official Company Logo with Glow */}
+          <div
+            className={`mb-6 flex justify-center sm:justify-start transition-all duration-700 ease-out delay-150 ${
+              isPromoInView ? 'opacity-100 scale-100' : 'opacity-0 scale-90'
+            }`}
+          >
             <BrandLogo compact />
           </div>
 
-          <h4 className="font-poppins font-bold text-lg sm:text-xl text-white mb-4 leading-snug">
+          <h4
+            className={`font-poppins font-bold text-lg sm:text-xl text-white mb-4 leading-snug transition-all duration-700 ease-out delay-200 ${
+              isPromoInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+            }`}
+          >
             Small Steps to Your Better Future.
           </h4>
 
-          {/* Feature List with Crimson Checkmarks */}
+          {/* Feature List with Crimson Checkmarks Cascade */}
           <ul className="space-y-2.5 text-xs text-stone-200 mb-6">
-            <li className="flex items-center gap-2">
+            <li
+              className={`flex items-center gap-2 transition-all duration-500 ease-out delay-300 ${
+                isPromoInView ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'
+              }`}
+            >
               <span className="text-[#B81446] font-bold text-sm">✓</span>
               <span>The well master-builder</span>
             </li>
-            <li className="flex items-center gap-2">
+            <li
+              className={`flex items-center gap-2 transition-all duration-500 ease-out delay-450 ${
+                isPromoInView ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'
+              }`}
+            >
               <span className="text-[#B81446] font-bold text-sm">✓</span>
               <span>On the other hand</span>
             </li>
