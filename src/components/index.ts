@@ -3,3 +3,5 @@ export * from './home';
 export * from './cards';
 export * from './loans';
 export * from './about';
+export * from './news';
+export * from './market-insights';

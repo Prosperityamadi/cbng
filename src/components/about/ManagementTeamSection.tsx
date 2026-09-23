@@ -51,8 +51,8 @@ export const MANAGEMENT_MEMBERS: ManagementMember[] = [
 
   // ROW 2: Mid-Career Leaders (40s, Departmental / Divisional Leadership with Unique Titles)
   {
-    id: 'marcus-adebayo',
-    name: 'Marcus Adebayo',
+    id: 'h.e-mohammed-al-shaibani',
+    name: 'H.E Mohammed Al-Shaibani',
     role: 'HEAD OF WEALTH MANAGEMENT',
     image: ASSETS.images.team5Wealth,
     tier: 'management',
@@ -108,32 +108,29 @@ export const ManagementTeamSection: React.FC = () => {
   return (
     <section ref={ref} className="w-full bg-white py-16 sm:py-20 lg:py-24 relative overflow-hidden select-none">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto mb-14 sm:mb-16">
           {/* Eyebrow Pill */}
           <div
-            className={`inline-flex items-center justify-center gap-2 mb-3 transition-all duration-700 ease-out ${
-              isInView ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'
-            }`}
+            className={`inline-flex items-center justify-center gap-2 mb-3 transition-all duration-700 ease-out ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'
+              }`}
           >
-            <span className="w-2 h-2 rounded-full bg-[#B81446] animate-pulse" />
+            <span className="w-5 sm:w-6 h-[2.5px] bg-[#B81446] inline-block flex-shrink-0" />
             <span className="font-poppins font-semibold text-xs uppercase tracking-[0.2em] text-[#B81446]">
               Executive Leadership
             </span>
           </div>
 
           <h2
-            className={`font-poppins font-bold text-3xl sm:text-4xl lg:text-[40px] text-[#1A1818] tracking-tight leading-tight transition-all duration-800 delay-100 ease-out ${
-              isInView ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-6'
-            }`}
+            className={`font-poppins font-bold text-3xl sm:text-4xl lg:text-[40px] text-[#1A1818] tracking-tight leading-tight transition-all duration-800 delay-100 ease-out ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-6'
+              }`}
           >
             Our Management Team
           </h2>
           <p
-            className={`font-roboto text-sm sm:text-base text-gray-500 mt-2.5 sm:mt-3 font-normal transition-all duration-800 delay-200 ease-out ${
-              isInView ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'
-            }`}
+            className={`font-roboto text-sm sm:text-base text-gray-500 mt-2.5 sm:mt-3 font-normal transition-all duration-800 delay-200 ease-out ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'
+              }`}
           >
             Team of diverse and talented leaders.
           </p>
@@ -152,9 +149,8 @@ export const ManagementTeamSection: React.FC = () => {
                 style={{
                   transitionDelay: isInView ? `${delay}ms` : '0ms',
                 }}
-                className={`group flex flex-col cursor-pointer transition-all duration-800 ease-out ${
-                  isInView ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-16 scale-[0.93]'
-                }`}
+                className={`group flex flex-col cursor-pointer transition-all duration-800 ease-out ${isInView ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-16 scale-[0.93]'
+                  }`}
                 onClick={() => setSelectedMember(member)}
               >
                 {/* Photo Container */}

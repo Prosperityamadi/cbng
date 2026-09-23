@@ -71,6 +71,33 @@ import ConsistencyIcon from '@/assets/icons/consistency.png';
 import NewsletterEmailImg from '@/assets/icons/newsletter-email-transparent.png';
 import NoOpenPositionsImg from '@/assets/icons/no-open-positions-transparent.png';
 
+// Press Release & News Images
+import PressAtmCardImg from '@/assets/images/press-atm-card.jpg';
+import NewsQrScannerImg from '@/assets/images/news-qr-scanner.jpg';
+import NewsTradingChartsImg from '@/assets/images/news-trading-charts.jpg';
+import AuthorPaulAndersonImg from '@/assets/images/author-paul-anderson.jpg';
+import CommenterStevenRichImg from '@/assets/images/commenter-steven-rich.jpg';
+import CommenterClaireVanceImg from '@/assets/images/commenter-claire-vance.jpg';
+import SupportPromoBgImg from '@/assets/images/support-promo-bg.jpg';
+import CompanyLogoFullImg from '@/assets/icons/NemiCapital-International-Bank-logo.png';
+
+// Market Insights Nano Photography
+import MarketLeadTradingFloorImg from '@/assets/images/market-lead-trading-floor.jpg';
+import MarketCentralBankMacroImg from '@/assets/images/market-central-bank-macro.jpg';
+import MarketEnergyCommoditiesImg from '@/assets/images/market-energy-commodities.jpg';
+import MarketTechAiBankingImg from '@/assets/images/market-tech-ai-banking.jpg';
+
+// Exclusive Custom User Icons
+import FacebookIcon from '@/assets/icons/facebook.png';
+import InstagramIcon from '@/assets/icons/instagram.png';
+import ReplyIcon from '@/assets/icons/reply.png';
+import SearchIcon from '@/assets/icons/seach.png';
+import ShareIcon from '@/assets/icons/share.png';
+import TwitterIcon from '@/assets/icons/twitter.png';
+import YoutubeIcon from '@/assets/icons/youtube.png';
+import UptrendIcon from '@/assets/icons/uptrend.png';
+import DowntrendIcon from '@/assets/icons/downtrend.png';
+
 /**
  * Core Assets Reference
  * Maps all brand visual assets, hero slides, and icons for easy imports.
@@ -78,6 +105,7 @@ import NoOpenPositionsImg from '@/assets/icons/no-open-positions-transparent.png
 export const ASSETS = {
   logos: {
     main: BankLogoImg,
+    full: CompanyLogoFullImg,
     altText: 'NemiCapital International Bank Logo',
   },
   heroSlides: {
@@ -124,10 +152,30 @@ export const ASSETS = {
     team8Digital: Team8DigitalImg,
     newsletterEmail: NewsletterEmailImg,
     noOpenPositions: NoOpenPositionsImg,
+    pressAtmCard: PressAtmCardImg,
+    newsQrScanner: NewsQrScannerImg,
+    newsTradingCharts: NewsTradingChartsImg,
+    authorPaulAnderson: AuthorPaulAndersonImg,
+    commenterStevenRich: CommenterStevenRichImg,
+    commenterClaireVance: CommenterClaireVanceImg,
+    supportPromoBg: SupportPromoBgImg,
+    marketLeadTradingFloor: MarketLeadTradingFloorImg,
+    marketCentralBankMacro: MarketCentralBankMacroImg,
+    marketEnergyCommodities: MarketEnergyCommoditiesImg,
+    marketTechAiBanking: MarketTechAiBankingImg,
   },
   icons: {
     noOpenPositions: NoOpenPositionsImg,
     newsletterEmail: NewsletterEmailImg,
+    facebook: FacebookIcon,
+    instagram: InstagramIcon,
+    reply: ReplyIcon,
+    search: SearchIcon,
+    share: ShareIcon,
+    twitter: TwitterIcon,
+    youtube: YoutubeIcon,
+    uptrend: UptrendIcon,
+    downtrend: DowntrendIcon,
     award: AwardIcon,
     bank: BankIcon,
     employee: EmployeeIcon,
