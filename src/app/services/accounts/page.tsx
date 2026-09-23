@@ -243,6 +243,13 @@ export default function AccountsPage() {
               Home
             </Link>
             <span className="text-white/40">&gt;</span>
+            <Link
+              href="/services"
+              className="text-white/80 hover:text-white transition-colors"
+            >
+              Services
+            </Link>
+            <span className="text-white/40">&gt;</span>
             <span className="text-white font-semibold">All Accounts</span>
           </div>
 
@@ -253,6 +260,8 @@ export default function AccountsPage() {
       <div className="sm:hidden w-full bg-[#FAF7F3] border-b border-[#EFE8DF] px-4 pt-8 pb-3">
         <div className="flex items-center gap-2 text-xs text-[#756D67]">
           <Link href="/" className="hover:text-[#B81446]">Home</Link>
+          <span>&gt;</span>
+          <Link href="/services" className="hover:text-[#B81446]">Services</Link>
           <span>&gt;</span>
           <span className="text-[#1A1818] font-semibold">All Accounts</span>
         </div>

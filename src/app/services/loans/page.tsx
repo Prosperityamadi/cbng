@@ -51,6 +51,13 @@ export default function LoansPage() {
               Home
             </Link>
             <span className="text-white/40">&gt;</span>
+            <Link
+              href="/services"
+              className="text-white/80 hover:text-white transition-colors"
+            >
+              Services
+            </Link>
+            <span className="text-white/40">&gt;</span>
             <span className="text-white font-semibold">Loan</span>
           </div>
 

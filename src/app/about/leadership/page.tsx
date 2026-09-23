@@ -51,6 +51,13 @@ export default function LeadershipPage() {
               Home
             </Link>
             <span className="text-white/40">&gt;</span>
+            <Link
+              href="/about/leadership"
+              className="text-white/80 hover:text-white transition-colors"
+            >
+              About
+            </Link>
+            <span className="text-white/40">&gt;</span>
             <span className="text-white font-semibold">Management Team</span>
           </div>
 

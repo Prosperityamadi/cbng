@@ -51,6 +51,13 @@ export default function WhoWeArePage() {
               Home
             </Link>
             <span className="text-white/40">&gt;</span>
+            <Link
+              href="/about/who-we-are"
+              className="text-white/80 hover:text-white transition-colors"
+            >
+              About
+            </Link>
+            <span className="text-white/40">&gt;</span>
             <span className="text-white font-semibold">Who We Are</span>
           </div>
 
