@@ -34,7 +34,7 @@ export const LoginPageView: React.FC = () => {
       pillBottom: {
         amount: '$68.00',
         currency: 'USD',
-        vendor: 'Uber Eats • Today 9:20 pm',
+        vendor: 'Uber Eats | Today 9:20 pm',
         btnText: 'Next Step',
         status: 'Receipt Confirmed',
       },
@@ -57,7 +57,7 @@ export const LoginPageView: React.FC = () => {
       pillBottom: {
         amount: '$250,000',
         currency: 'USD',
-        vendor: 'Allocated Gold Bullion • Depository',
+        vendor: 'Allocated Gold Bullion | Depository',
         btnText: 'Audit Log',
         status: '100% Insured',
       },

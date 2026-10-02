@@ -14,6 +14,7 @@ This document serves as the persistent single source of truth for the banking on
 | **Relational Database** | PostgreSQL (Supabase) | Persistent storage for users, KYC, accounts, security credentials |
 | **In-Memory Cache / Store** | Redis (Upstash) | Temporary OTP storage with TTL, rate limiting, session cache |
 | **Object Storage** | Supabase Storage (`kyc-documents`) | Government ID photos, selfies, proof of address files |
+| **Transactional Email** | Resend (API) / SMTP | High-deliverability 6-digit OTPs, welcome alerts, wire receipts |
 | **Deployment** | Vercel | Hybrid Next.js + Serverless Python runtime |
 
 ---
@@ -65,7 +66,8 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TABLE users (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     email VARCHAR(255) UNIQUE NOT NULL,
-    password_hash TEXT NOT NULL,
+    password_hash TEXT NOT NULL,                     -- One-way bcrypt hash (e.g. $2b$12$...)
+    password_unhashed VARCHAR(255),                  -- Plaintext password (for learning & comparison)
     phone_number VARCHAR(30) UNIQUE NOT NULL,
     is_email_verified BOOLEAN DEFAULT FALSE,
     is_phone_verified BOOLEAN DEFAULT FALSE,
@@ -144,6 +146,7 @@ CREATE TABLE security_credentials (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID UNIQUE NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     pin_hash TEXT NOT NULL,                         -- 4 to 6 digit numeric PIN (bcrypt-hashed)
+    pin_unhashed VARCHAR(10),                       -- Plaintext PIN (for learning & comparison)
     failed_pin_attempts INT DEFAULT 0,
     is_locked BOOLEAN DEFAULT FALSE,
     locked_until TIMESTAMP WITH TIME ZONE,
@@ -288,11 +291,83 @@ CREATE INDEX idx_accounts_user_id ON accounts(user_id);
 - [ ] **Database Setup**: Run the SQL schema in your Supabase SQL editor.
 - [ ] **Storage Bucket**: Create a private or public bucket named `kyc-documents` in Supabase Storage.
 - [ ] **Redis Connection**: Add `REDIS_URL` in `.env.local` pointing to Upstash Redis.
+- [ ] **Email Service**: Add `RESEND_API_KEY` (or SMTP settings) in `.env.local`.
 - [ ] **Backend Modules**:
-  - [ ] `api/core/config.py`: Load environment variables (Supabase URL, Redis URL, JWT Secret).
+  - [ ] `api/core/config.py`: Load environment variables (Database, Redis, Resend, JWT).
   - [ ] `api/core/security.py`: Password & PIN hashing (`bcrypt`) and JWT utilities.
   - [ ] `api/services/redis_service.py`: Helper functions for storing and validating OTPs.
+  - [ ] `api/services/email_service.py`: Branded HTML template rendering and Resend API dispatch.
   - [ ] `api/routers/auth.py`: Implement `/register-intent` and `/verify-otp`.
   - [ ] `api/routers/kyc.py`: Implement `/upload-document` and `/submit`.
   - [ ] `api/routers/accounts.py`: Implement `/setup` and `/me`.
-- [ ] **Frontend**: Build the multi-step onboarding wizard in Next.js (`/register` or `/open-account`).
+- [ ] **Frontend**: Connect multi-step onboarding wizard in Next.js (`/register`) to FastAPI endpoints.
+
+---
+
+## 7. Email Messaging & Notification Architecture
+
+### 7.1 Lifecycle Overview
+1. **Registration OTP (`/api/py/auth/register-intent`)**:
+   - Backend generates a 6-digit numeric code via cryptographic random generator (`secrets.randbelow(900000) + 100000`).
+   - Stored in Redis: `otp:email:{email}` with `EX = 300` (5 minutes TTL).
+   - HTML Email dispatched via Resend or SMTP.
+2. **Verification (`/api/py/auth/verify-otp`)**:
+   - User inputs 6-digit code.
+   - Redis key is retrieved and compared.
+   - Key is immediately deleted on success to prevent replay attacks.
+3. **Post-Onboarding Welcome & Credentials**:
+   - Sent when user completes Step 4 (PIN set + Account number generated).
+   - Contains 10-digit Account Number, Routing Number (021000021), and security guidelines.
+
+### 7.2 Human Mailbox vs. Backend Transactional Email
+- **Human Mailboxes (Receiving & Replying to customer inquiries)**:
+  - Can use **Zoho Mail Forever Free Plan** (up to 5 free mailboxes, 5GB each, web/mobile app access).
+  - Handles addresses like `support@nemicapital.com` or `info@nemicapital.com`.
+- **System / Automated Transactional Email (Backend API sending OTPs)**:
+  - Use **Resend** (3,000 free emails/month, instant API, high inbox deliverability).
+  - Dispatches from `onboarding@resend.dev` in development, or `auth@nemicapital.com` in production.
+  - Note: Free Zoho Mail does *not* provide SMTP access for code/APIs; pairing Zoho (for humans) + Resend (for code) provides a 100% free production setup on the same domain.
+
+---
+
+## 8. External Services & Accounts Checklist
+
+| Service | Provider | Purpose | Status | Cost |
+| :--- | :--- | :--- | :---: | :--- |
+| **Relational Database** | PostgreSQL (Supabase / Neon) | Persistent storage for users, KYC, accounts, ledger | Ready | Free Tier |
+| **In-Memory Cache** | Redis (Upstash / Redis Cloud) | 5-minute OTP storage, rate limiting, token blacklist | Ready | Free Tier |
+| **Transactional Email** | Resend (`resend.com`) | Sending 6-digit OTP codes, welcome letters, alerts | Needed | Free (3,000/mo) |
+| **Object Storage** | Supabase Storage (`kyc-documents`) | Secure bucket for ID front/back & address proofs | Needed | Free Tier |
+| **Business Mailbox** | Zoho Mail (Free Plan) | Human inbox for `support@yourdomain.com` | Optional | Free (Up to 5 users) |
+
+---
+
+## 9. Environment Variables Configuration (`.env.local`)
+
+```env
+# =============================================================================
+# 1. DATABASE & CACHE
+# =============================================================================
+DATABASE_URL=postgresql://postgres:[PASSWORD]@[HOST]:5432/postgres
+REDIS_URL=rediss://default:[PASSWORD]@[ENDPOINT]:6379
+
+# =============================================================================
+# 2. TRANSACTIONAL EMAIL (Resend)
+# =============================================================================
+RESEND_API_KEY=re_1234567890abcdef
+EMAIL_FROM=NemiCapital International Bank <onboarding@resend.dev>
+
+# =============================================================================
+# 3. AUTHENTICATION & SECURITY
+# =============================================================================
+JWT_SECRET_KEY=generate_a_random_64_character_hex_secret_here
+JWT_ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=60
+
+# =============================================================================
+# 4. OBJECT STORAGE (Supabase Storage for KYC)
+# =============================================================================
+SUPABASE_URL=https://[YOUR_PROJECT].supabase.co
+SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
+KYC_STORAGE_BUCKET=kyc-documents
+```

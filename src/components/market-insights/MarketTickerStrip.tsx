@@ -28,7 +28,9 @@ export const MarketTickerStrip: React.FC = () => {
         
         {/* Label Badge */}
         <div className="hidden md:flex items-center gap-2 pr-6 border-r border-stone-800 flex-shrink-0">
-          <span className="w-2 h-2 rounded-full bg-[#B81446] animate-pulse" />
+          <svg className="w-3.5 h-3.5 text-[#B81446] flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+          </svg>
           <span className="font-poppins font-bold text-[11px] uppercase tracking-[0.2em] text-[#B81446]">
             Live Benchmarks
           </span>

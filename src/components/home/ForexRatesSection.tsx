@@ -278,13 +278,13 @@ export const ForexRatesSection: React.FC = () => {
               isInView ? 'opacity-100 scale-100' : 'opacity-0 scale-75'
             }`}
           >
-            <span
-              className={`w-2 h-2 rounded-full ${
-                isLiveRates ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'
-              }`}
-            />
+            {isLiveRates && (
+              <svg className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+            )}
             <span className="font-roboto text-xs text-gray-300 font-normal">
-              {isLiveRates ? `Live Market Rates • Updated ${lastUpdated}` : 'Bank Spot Exchange Rates'}
+              {isLiveRates ? `Live Market Rates | Updated ${lastUpdated}` : 'Bank Spot Exchange Rates'}
             </span>
           </div>
         </div>

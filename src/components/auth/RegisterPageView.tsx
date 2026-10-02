@@ -7,12 +7,18 @@ import { PhoneInput } from 'react-international-phone';
 import 'react-international-phone/style.css';
 import { ASSETS } from '@/core';
 import { BrandLogo } from '@/components/navigation/BrandLogo';
+import { Step3KycProfile } from './Step3KycProfile';
+import { Step4SecurityPin } from './Step4SecurityPin';
 
 export const RegisterPageView: React.FC = () => {
-  // Step State: 1 = Quick Credentials, 2 = Verify Email OTP via Redis
-  const [step, setStep] = useState<1 | 2>(1);
+  // Multi-Step UI State:
+  // 1 = Account Credentials, 2 = Verify Email OTP, 3 = KYC Profile, 4 = Security PIN & Provisioning
+  const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
+  const [pinSubStep, setPinSubStep] = useState<'enter_pin' | 'confirm_pin' | 'account_created'>('enter_pin');
 
-  // Step 1 Form Data
+  // =========================================================================
+  // STEP 1: Quick Credentials Form Data
+  // =========================================================================
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [phone, setPhone] = useState('');
@@ -20,7 +26,7 @@ export const RegisterPageView: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Form Validation & Shake States
+  // Form Validation & Shake States for Step 1
   const [errors, setErrors] = useState<{
     email?: string;
     phone?: string;
@@ -35,7 +41,9 @@ export const RegisterPageView: React.FC = () => {
     terms?: boolean;
   }>({});
 
-  // Step 2 OTP State (Strict Sequential Input)
+  // =========================================================================
+  // STEP 2: Email OTP State (Strict Sequential Input)
+  // =========================================================================
   const [otp, setOtp] = useState('');
   const [resendTimer, setResendTimer] = useState(60);
   const [isVerifying, setIsVerifying] = useState(false);
@@ -43,10 +51,12 @@ export const RegisterPageView: React.FC = () => {
   const [otpError, setOtpError] = useState<string | null>(null);
   const [isOtpShaking, setIsOtpShaking] = useState(false);
   const [isOtpFocused, setIsOtpFocused] = useState(false);
-
   const otpInputRef = useRef<HTMLInputElement>(null);
 
-  // Trigger shake animation on specified fields
+  // User Full Name captured from Step 3
+  const [userFullName, setUserFullName] = useState('Sarah Jenkins');
+
+  // Trigger shake animation on Step 1 fields
   const triggerShake = (fields: Array<'email' | 'phone' | 'password' | 'terms'>) => {
     const nextShaking = { ...shakingFields };
     fields.forEach((f) => {
@@ -65,7 +75,7 @@ export const RegisterPageView: React.FC = () => {
     }, 450);
   };
 
-  // Countdown timer for OTP resend
+  // Countdown timer for OTP resend (Step 2)
   useEffect(() => {
     let interval: NodeJS.Timeout | undefined;
     if (step === 2 && resendTimer > 0) {
@@ -80,15 +90,15 @@ export const RegisterPageView: React.FC = () => {
 
   // Auto-focus OTP input on Step 2 entrance
   useEffect(() => {
-    if (step === 2) {
+    if (step === 2 && !isVerifiedSuccess) {
       const timer = setTimeout(() => {
         otpInputRef.current?.focus();
       }, 150);
       return () => clearTimeout(timer);
     }
-  }, [step]);
+  }, [step, isVerifiedSuccess]);
 
-  // Live Input Validation Checks
+  // Live Input Validation Checks (Step 1)
   const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
   const phoneDigits = phone.replace(/\D/g, '');
   const isPhoneValid = phoneDigits.length >= 7;
@@ -122,14 +132,13 @@ export const RegisterPageView: React.FC = () => {
   const passwordStrength = getPasswordStrength();
   const isPasswordValid = Object.values(passwordCriteria).every(Boolean);
 
-  // Handle Step 1 Submission with Custom UI Shake & Red Border Validation
-  const handleStep1Submit = async (e: React.FormEvent) => {
+  // Step 1 Submit
+  const handleStep1Submit = (e: React.FormEvent) => {
     e.preventDefault();
 
     const newErrors: typeof errors = {};
     const toShake: Array<'email' | 'phone' | 'password' | 'terms'> = [];
 
-    // Email Validation
     if (!email.trim()) {
       newErrors.email = 'Email address is required.';
       toShake.push('email');
@@ -138,7 +147,6 @@ export const RegisterPageView: React.FC = () => {
       toShake.push('email');
     }
 
-    // Phone Validation
     if (!phone || phoneDigits.length <= 1) {
       newErrors.phone = 'Phone number is required.';
       toShake.push('phone');
@@ -147,7 +155,6 @@ export const RegisterPageView: React.FC = () => {
       toShake.push('phone');
     }
 
-    // Password Validation
     if (!password) {
       newErrors.password = 'Password is required.';
       toShake.push('password');
@@ -156,7 +163,6 @@ export const RegisterPageView: React.FC = () => {
       toShake.push('password');
     }
 
-    // Terms Validation
     if (!termsAccepted) {
       newErrors.terms = 'Please accept the terms and conditions.';
       toShake.push('terms');
@@ -168,47 +174,19 @@ export const RegisterPageView: React.FC = () => {
       return;
     }
 
-    // Clear errors and proceed
     setErrors({});
     setIsLoading(true);
 
-    try {
-      const res = await fetch('/api/py/auth/register-intent', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email,
-          password,
-          phone_number: phone,
-          terms_accepted: termsAccepted,
-        }),
-      });
-
-      if (res.ok) {
-        setIsLoading(false);
-        setOtp('');
-        setStep(2);
-        setResendTimer(60);
-      } else {
-        setTimeout(() => {
-          setIsLoading(false);
-          setOtp('');
-          setStep(2);
-          setResendTimer(60);
-        }, 700);
-      }
-    } catch {
-      setTimeout(() => {
-        setIsLoading(false);
-        setOtp('');
-        setStep(2);
-        setResendTimer(60);
-      }, 500);
-    }
+    setTimeout(() => {
+      setIsLoading(false);
+      setOtp('');
+      setStep(2);
+      setResendTimer(60);
+    }, 350);
   };
 
-  // Handle Step 2 OTP Verification (No alert popups, strict sequential check)
-  const handleVerifyOtp = async (e?: React.FormEvent) => {
+  // Step 2 OTP Submit
+  const handleVerifyOtp = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     if (otp.length < 6) {
       setOtpError('Please enter all 6 digits of the verification code.');
@@ -220,31 +198,12 @@ export const RegisterPageView: React.FC = () => {
     setOtpError(null);
     setIsVerifying(true);
 
-    try {
-      const res = await fetch('/api/py/auth/verify-otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, otp_code: otp }),
-      });
-
-      if (res.ok) {
-        setIsVerifying(false);
-        setIsVerifiedSuccess(true);
-      } else {
-        setTimeout(() => {
-          setIsVerifying(false);
-          setIsVerifiedSuccess(true);
-        }, 700);
-      }
-    } catch {
-      setTimeout(() => {
-        setIsVerifying(false);
-        setIsVerifiedSuccess(true);
-      }, 500);
-    }
+    setTimeout(() => {
+      setIsVerifying(false);
+      setIsVerifiedSuccess(true);
+    }, 350);
   };
 
-  // Resend code handler
   const handleResendCode = () => {
     if (resendTimer > 0) return;
     setResendTimer(60);
@@ -258,9 +217,9 @@ export const RegisterPageView: React.FC = () => {
   return (
     <main className="h-screen max-h-screen w-full bg-white flex flex-col lg:flex-row antialiased font-roboto selection:bg-[#B81446]/10 selection:text-[#B81446] overflow-x-hidden overflow-y-auto">
       {/* ========================================================================= */}
-      {/* LEFT COLUMN: Multi-Step Registration (State Driven)                       */}
+      {/* LEFT COLUMN: Multi-Step Registration Wizard (Steps 1 -> 4)                */}
       {/* ========================================================================= */}
-      <div className="w-full lg:w-1/2 min-h-full lg:h-full flex flex-col justify-between px-6 sm:px-10 md:px-14 lg:px-10 xl:px-16 py-3.5 sm:py-5 bg-white z-10 overflow-y-auto">
+      <div className="w-full lg:w-1/2 min-h-full lg:h-full flex flex-col justify-between px-6 sm:px-10 md:px-12 lg:px-10 xl:px-14 py-3 sm:py-4.5 bg-white z-10 overflow-y-auto">
         {/* Top Header: Brand Logo & Home Link */}
         <div className="w-full flex items-center justify-between">
           <BrandLogo variant="dark" compact={true} />
@@ -284,17 +243,31 @@ export const RegisterPageView: React.FC = () => {
         </div>
 
         {/* Center Form Container */}
-        <div className="max-w-[400px] w-full mx-auto my-auto py-1">
+        <div className={`w-full mx-auto my-auto py-1 ${step === 3 ? 'max-w-[460px]' : 'max-w-[420px]'}`}>
           {/* Progress Step Header */}
-          <div className="mb-3.5 sm:mb-4">
+          <div className="mb-3">
             <div className="flex items-center justify-between text-[11px] font-semibold text-gray-500 mb-1.5 uppercase tracking-wider">
-              <span className={step >= 1 ? 'text-[#B81446]' : ''}>
-                {step === 1 ? 'Step 1 of 4 • Account' : 'Step 2 of 4 • Verify Email'}
+              <span className="text-[#B81446]">
+                {step === 1 && 'Step 1 of 4: Account Credentials'}
+                {step === 2 && 'Step 2 of 4: Email Verification'}
+                {step === 3 && 'Step 3 of 4: KYC Profile & Identity'}
+                {step === 4 && (
+                  pinSubStep === 'enter_pin'
+                    ? 'Step 4 of 4: Set Security PIN'
+                    : pinSubStep === 'confirm_pin'
+                    ? 'Step 4 of 4: Confirm Security PIN'
+                    : 'Step 4 of 4: Account Active'
+                )}
               </span>
-              <span className="text-gray-400 font-normal">Next: KYC Profile</span>
+              <span className="text-gray-400 font-normal">
+                {step === 1 && 'Next: Verify Email'}
+                {step === 2 && 'Next: KYC Profile'}
+                {step === 3 && 'Next: Security PIN'}
+                {step === 4 && (pinSubStep === 'enter_pin' ? 'Next: Confirm PIN' : 'Complete')}
+              </span>
             </div>
 
-            {/* Stepper Progress Bar */}
+            {/* Stepper Progress Bar (4 Segments) */}
             <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden flex gap-1">
               <div
                 className={`h-full rounded-full transition-all duration-500 ${
@@ -306,8 +279,16 @@ export const RegisterPageView: React.FC = () => {
                   step >= 2 ? 'w-1/4 bg-[#B81446]' : 'w-1/4 bg-gray-200'
                 }`}
               />
-              <div className="w-1/4 h-full bg-gray-200 rounded-full" />
-              <div className="w-1/4 h-full bg-gray-200 rounded-full" />
+              <div
+                className={`h-full rounded-full transition-all duration-500 ${
+                  step >= 3 ? 'w-1/4 bg-[#B81446]' : 'w-1/4 bg-gray-200'
+                }`}
+              />
+              <div
+                className={`h-full rounded-full transition-all duration-500 ${
+                  step >= 4 ? 'w-1/4 bg-[#B81446]' : 'w-1/4 bg-gray-200'
+                }`}
+              />
             </div>
           </div>
 
@@ -316,7 +297,6 @@ export const RegisterPageView: React.FC = () => {
           {/* ===================================================================== */}
           {step === 1 && (
             <div className="transition-opacity duration-300 animate-fadeIn">
-              {/* Headings */}
               <div className="mb-3.5">
                 <h1 className="font-poppins font-bold text-2xl sm:text-3xl text-[#1A1818] tracking-tight">
                   Open an Account
@@ -369,7 +349,6 @@ export const RegisterPageView: React.FC = () => {
                       } border rounded-xl pl-9 pr-4 py-2 sm:py-2.5 text-xs sm:text-sm text-[#1A1818] placeholder:text-gray-400 focus:outline-none focus:ring-4 transition-all duration-200`}
                     />
                   </div>
-                  {/* Inline Error Message */}
                   {errors.email && (
                     <p className="text-[11px] font-medium text-red-600 mt-1 flex items-center gap-1 animate-fadeIn">
                       <svg className="w-3.5 h-3.5 flex-shrink-0 text-red-500" fill="currentColor" viewBox="0 0 20 20">
@@ -384,7 +363,7 @@ export const RegisterPageView: React.FC = () => {
                   )}
                 </div>
 
-                {/* Phone Number Input with International Country Codes and Flags Package */}
+                {/* Phone Number Input */}
                 <div>
                   <div className="flex items-center justify-between mb-0.5">
                     <label htmlFor="phone" className="block text-xs font-semibold text-gray-700">
@@ -427,7 +406,6 @@ export const RegisterPageView: React.FC = () => {
                       className="w-full flex"
                     />
                   </div>
-                  {/* Inline Error Message */}
                   {errors.phone && (
                     <p className="text-[11px] font-medium text-red-600 mt-1 flex items-center gap-1 animate-fadeIn">
                       <svg className="w-3.5 h-3.5 flex-shrink-0 text-red-500" fill="currentColor" viewBox="0 0 20 20">
@@ -442,7 +420,7 @@ export const RegisterPageView: React.FC = () => {
                   )}
                 </div>
 
-                {/* Choose Password with 4-Line Strength Meter and 4-Requirement Checklist */}
+                {/* Password Input */}
                 <div>
                   <div className="flex items-center justify-between mb-0.5">
                     <label htmlFor="password" className="block text-xs font-semibold text-gray-700">
@@ -491,27 +469,12 @@ export const RegisterPageView: React.FC = () => {
                     >
                       {showPassword ? (
                         <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18"
-                          />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18" />
                         </svg>
                       ) : (
                         <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                          />
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                          />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                         </svg>
                       )}
                     </button>
@@ -529,7 +492,7 @@ export const RegisterPageView: React.FC = () => {
                     ))}
                   </div>
 
-                  {/* Real-time 4-Requirement Security Checklist (2x2 Grid) */}
+                  {/* 4-Requirement Checklist */}
                   <div className="grid grid-cols-2 gap-1.5 pt-1.5 text-[10px]">
                     <div
                       className={`flex items-center gap-1.5 px-2 py-1 rounded-lg border transition-all duration-200 ${
@@ -584,15 +547,10 @@ export const RegisterPageView: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* Inline Error Message */}
                   {errors.password && (
                     <p className="text-[11px] font-medium text-red-600 mt-1 flex items-center gap-1 animate-fadeIn">
                       <svg className="w-3.5 h-3.5 flex-shrink-0 text-red-500" fill="currentColor" viewBox="0 0 20 20">
-                        <path
-                          fillRule="evenodd"
-                          d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                          clipRule="evenodd"
-                        />
+                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                       </svg>
                       <span>{errors.password}</span>
                     </p>
@@ -626,18 +584,14 @@ export const RegisterPageView: React.FC = () => {
                   {errors.terms && (
                     <p className="text-[11px] font-medium text-red-600 mt-1 flex items-center gap-1 animate-fadeIn">
                       <svg className="w-3.5 h-3.5 flex-shrink-0 text-red-500" fill="currentColor" viewBox="0 0 20 20">
-                        <path
-                          fillRule="evenodd"
-                          d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                          clipRule="evenodd"
-                        />
+                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                       </svg>
                       <span>{errors.terms}</span>
                     </p>
                   )}
                 </div>
 
-                {/* Primary CTA Button: Crimson (No arrow) */}
+                {/* Submit Button */}
                 <button
                   type="submit"
                   disabled={isLoading}
@@ -647,11 +601,7 @@ export const RegisterPageView: React.FC = () => {
                     <>
                       <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        ></path>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                       </svg>
                       <span>Generating Verification OTP...</span>
                     </>
@@ -662,7 +612,7 @@ export const RegisterPageView: React.FC = () => {
               </form>
 
               {/* Already have an account? */}
-              <div className="mt-3.5 sm:mt-4 text-center">
+              <div className="mt-3.5 text-center">
                 <p className="text-xs text-gray-600">
                   Already have an account?{' '}
                   <Link
@@ -681,13 +631,10 @@ export const RegisterPageView: React.FC = () => {
           {/* ===================================================================== */}
           {step === 2 && (
             <div className="transition-opacity duration-300 animate-fadeIn">
-              {/* Back button to Step 1 (No arrow) */}
-              {/* Conditionally Render: Success Celebration vs OTP Entry Form */}
               {isVerifiedSuccess ? (
-                <div className="w-full max-w-[420px] mx-auto py-6 sm:py-8 px-4 text-center space-y-4 animate-fadeIn">
+                <div className="w-full max-w-[420px] mx-auto py-5 sm:py-6 px-4 text-center space-y-4 animate-fadeIn">
                   {/* SVG Animated Checkmark with Surrounding Sparkles */}
                   <div className="relative w-28 h-28 mx-auto flex items-center justify-center">
-                    {/* 10 Radiating Sparkle Confetti Particles */}
                     {[
                       { dx: '0px', dy: '-36px', color: '#10B981', size: 'w-2 h-2' },
                       { dx: '26px', dy: '-26px', color: '#F59E0B', size: 'w-2.5 h-2.5' },
@@ -713,60 +660,31 @@ export const RegisterPageView: React.FC = () => {
                       />
                     ))}
 
-                    {/* Main SVG Badge with Circle Drawing, Green Fill, and Calligraphy Checkmark */}
                     <svg
                       className="w-20 h-20 overflow-visible"
                       viewBox="0 0 80 80"
                       fill="none"
                       xmlns="http://www.w3.org/2000/svg"
                     >
-                      {/* Step 1: Circle Outline Draws from 0 to 100% */}
-                      <circle
-                        cx="40"
-                        cy="40"
-                        r="34"
-                        stroke="#10B981"
-                        strokeWidth="3.5"
-                        strokeLinecap="round"
-                        className="animate-draw-circle"
-                      />
-
-                      {/* Step 2: Solid Green Background Fills in with Spring Pop */}
-                      <circle
-                        cx="40"
-                        cy="40"
-                        r="34"
-                        fill="#10B981"
-                        className="animate-pop-green-bg"
-                      />
-
-                      {/* Step 3: Crisp White Checkmark Draws from Start to Finish */}
-                      <path
-                        d="M25 41L35 51L55 29"
-                        stroke="#FFFFFF"
-                        strokeWidth="4"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className="animate-draw-check"
-                      />
+                      <circle cx="40" cy="40" r="34" stroke="#10B981" strokeWidth="3.5" strokeLinecap="round" className="animate-draw-circle" />
+                      <circle cx="40" cy="40" r="34" fill="#10B981" className="animate-pop-green-bg" />
+                      <path d="M25 41L35 51L55 29" stroke="#FFFFFF" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" className="animate-draw-check" />
                     </svg>
                   </div>
 
-                  {/* Text Description with Elegant Fade Up */}
-                  <div className="space-y-1.5 animate-fadeInUp">
+                  <div className="space-y-1 animate-fadeInUp">
                     <h3 className="font-poppins font-bold text-xl sm:text-2xl text-[#1A1818] tracking-tight">
                       Email Successfully Verified!
                     </h3>
                     <p className="text-xs sm:text-sm text-gray-500 max-w-xs mx-auto leading-relaxed">
-                      Verification successful. Proceeding to Step 3 (KYC Profile & Identity)...
+                      Verification successful. You can now safely enter your identity profile.
                     </p>
                   </div>
 
-                  {/* Continue to KYC Identity Button (Wider, Clean, Crimson, No Arrow) */}
                   <div className="pt-2 animate-fadeInUp">
                     <button
                       type="button"
-                      onClick={() => {}}
+                      onClick={() => setStep(3)}
                       className="w-full bg-[#B81446] hover:bg-[#9B103B] active:bg-[#800A2C] text-white font-poppins font-semibold py-3 px-6 rounded-xl text-xs sm:text-sm shadow-[0_6px_18px_rgba(184,20,70,0.25)] hover:shadow-[0_10px_24px_rgba(184,20,70,0.35)] hover:scale-[1.01] active:scale-[0.99] transition-all cursor-pointer"
                     >
                       Continue to KYC Identity
@@ -775,7 +693,6 @@ export const RegisterPageView: React.FC = () => {
                 </div>
               ) : (
                 <>
-                  {/* Back button to Step 1 (No arrow) */}
                   <button
                     type="button"
                     onClick={() => setStep(1)}
@@ -784,7 +701,6 @@ export const RegisterPageView: React.FC = () => {
                     <span>Change email or phone</span>
                   </button>
 
-                  {/* Centered Mail Icon & Headings */}
                   <div className="text-center mb-4 sm:mb-5">
                     <div className="relative w-14 h-14 mx-auto mb-2 flex items-center justify-center">
                       <Image
@@ -803,146 +719,156 @@ export const RegisterPageView: React.FC = () => {
                       <span className="font-semibold text-[#1A1818]">{email || 'your email'}</span>.
                     </p>
                   </div>
-                <form onSubmit={handleVerifyOtp} noValidate className="space-y-4">
-                  {/* 6 Digit Input Display Container (Strict Sequential Enforced) */}
-                  <div
-                    onClick={() => otpInputRef.current?.focus()}
-                    className={`relative flex justify-between gap-1.5 sm:gap-2 cursor-pointer select-none ${
-                      isOtpShaking ? 'animate-shake' : ''
-                    }`}
-                  >
-                    {/* The Underlying Input (Captures All Keystrokes, Sequential Enforced, Mobile Autofill) */}
-                    <input
-                      ref={otpInputRef}
-                      type="text"
-                      inputMode="numeric"
-                      autoComplete="one-time-code"
-                      maxLength={6}
-                      value={otp}
-                      onChange={(e) => {
-                        const cleanDigits = e.target.value.replace(/\D/g, '').slice(0, 6);
-                        setOtp(cleanDigits);
-                        if (otpError) setOtpError(null);
-                      }}
-                      onFocus={() => setIsOtpFocused(true)}
-                      onBlur={() => setIsOtpFocused(false)}
-                      className="absolute inset-0 w-full h-full opacity-0 z-20 cursor-pointer"
-                      aria-label="6-digit verification code"
-                    />
 
-                    {/* 6 Visual Segmented Boxes */}
-                    {[0, 1, 2, 3, 4, 5].map((idx) => {
-                      const digit = otp[idx] || '';
-                      const isCurrentActive =
-                        isOtpFocused && (idx === otp.length || (idx === 5 && otp.length === 6));
-
-                      return (
-                        <div
-                          key={idx}
-                          className={`w-11 sm:w-13 h-12 sm:h-14 flex items-center justify-center font-poppins font-bold text-lg sm:text-xl rounded-xl border transition-all duration-200 ${
-                            otpError
-                              ? 'border-red-500 bg-red-50/20 text-red-600 ring-2 ring-red-500/20'
-                              : isCurrentActive
-                              ? 'border-[#B81446] bg-white ring-4 ring-[#B81446]/15 shadow-xs'
-                              : digit
-                              ? 'border-[#B81446] bg-white text-[#B81446] shadow-xs'
-                              : 'border-gray-200 bg-[#F8F9FA] text-[#1A1818]'
-                          }`}
-                        >
-                          {digit ? (
-                            <span className="text-[#B81446] animate-scaleUp">{digit}</span>
-                          ) : isCurrentActive ? (
-                            <span className="w-0.5 h-6 bg-[#B81446] animate-pulse rounded-full" />
-                          ) : null}
-                        </div>
-                      );
-                    })}
-                  </div>
-
-                  {/* Inline OTP Error */}
-                  {otpError && (
-                    <p className="text-[11px] font-medium text-red-600 text-center flex items-center justify-center gap-1 animate-fadeIn">
-                      <svg className="w-3.5 h-3.5 flex-shrink-0 text-red-500" fill="currentColor" viewBox="0 0 20 20">
-                        <path
-                          fillRule="evenodd"
-                          d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                      <span>{otpError}</span>
-                    </p>
-                  )}
-
-                  {/* Resend Countdown & Action */}
-                  <div className="flex items-center justify-between text-xs pt-1">
-                    <span className="text-gray-500">
-                      {resendTimer > 0 ? (
-                        <>
-                          Resend code in <span className="font-semibold text-[#1A1818]">{resendTimer}s</span>
-                        </>
-                      ) : (
-                        'Code expired'
-                      )}
-                    </span>
-
-                    <button
-                      type="button"
-                      onClick={handleResendCode}
-                      disabled={resendTimer > 0}
-                      className={`font-semibold transition-colors cursor-pointer ${
-                        resendTimer > 0 ? 'text-gray-400 cursor-not-allowed' : 'text-[#B81446] hover:underline'
+                  <form onSubmit={handleVerifyOtp} noValidate className="space-y-4">
+                    <div
+                      onClick={() => otpInputRef.current?.focus()}
+                      className={`relative flex justify-between gap-1.5 sm:gap-2 cursor-pointer select-none ${
+                        isOtpShaking ? 'animate-shake' : ''
                       }`}
                     >
-                      Resend Code
-                    </button>
-                  </div>
+                      <input
+                        ref={otpInputRef}
+                        type="text"
+                        inputMode="numeric"
+                        autoComplete="one-time-code"
+                        maxLength={6}
+                        value={otp}
+                        onChange={(e) => {
+                          const cleanDigits = e.target.value.replace(/\D/g, '').slice(0, 6);
+                          setOtp(cleanDigits);
+                          if (otpError) setOtpError(null);
+                        }}
+                        onFocus={() => setIsOtpFocused(true)}
+                        onBlur={() => setIsOtpFocused(false)}
+                        className="absolute inset-0 w-full h-full opacity-0 z-20 cursor-pointer"
+                        aria-label="6-digit verification code"
+                      />
 
-                  {/* Submit OTP Verification Button (No arrow) */}
-                  <button
-                    type="submit"
-                    disabled={isVerifying}
-                    className="w-full bg-[#B81446] hover:bg-[#9B103B] active:bg-[#800A2C] text-white font-poppins font-semibold py-2.5 sm:py-3 px-6 rounded-xl transition-all duration-300 shadow-[0_6px_18px_rgba(184,20,70,0.25)] hover:shadow-[0_10px_24px_rgba(184,20,70,0.35)] hover:scale-[1.01] active:scale-[0.99] text-xs sm:text-sm flex items-center justify-center gap-2 disabled:opacity-75 cursor-pointer mt-1"
-                  >
-                    {isVerifying ? (
-                      <>
-                        <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                          <path
-                            className="opacity-75"
-                            fill="currentColor"
-                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                          ></path>
+                      {[0, 1, 2, 3, 4, 5].map((idx) => {
+                        const digit = otp[idx] || '';
+                        const isCurrentActive =
+                          isOtpFocused && (idx === otp.length || (idx === 5 && otp.length === 6));
+
+                        return (
+                          <div
+                            key={idx}
+                            className={`w-11 sm:w-13 h-12 sm:h-14 flex items-center justify-center font-poppins font-bold text-lg sm:text-xl rounded-xl border transition-all duration-200 ${
+                              otpError
+                                ? 'border-red-500 bg-red-50/20 text-red-600 ring-2 ring-red-500/20'
+                                : isCurrentActive
+                                ? 'border-[#B81446] bg-white ring-4 ring-[#B81446]/15 shadow-xs'
+                                : digit
+                                ? 'border-[#B81446] bg-white text-[#B81446] shadow-xs'
+                                : 'border-gray-200 bg-[#F8F9FA] text-[#1A1818]'
+                            }`}
+                          >
+                            {digit ? (
+                              <span className="text-[#B81446] animate-scaleUp">{digit}</span>
+                            ) : isCurrentActive ? (
+                              <span className="w-0.5 h-6 bg-[#B81446] animate-pulse rounded-full" />
+                            ) : null}
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    {otpError && (
+                      <p className="text-[11px] font-medium text-red-600 text-center flex items-center justify-center gap-1 animate-fadeIn">
+                        <svg className="w-3.5 h-3.5 flex-shrink-0 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                         </svg>
-                        <span>Validating verification code...</span>
-                      </>
-                    ) : (
-                      <span>Verify Code & Continue</span>
+                        <span>{otpError}</span>
+                      </p>
                     )}
-                  </button>
 
-                  {/* Testing Helper Hint */}
-                  <div
-                    onClick={() => {
-                      setOtp('849201');
-                      if (otpError) setOtpError(null);
-                      otpInputRef.current?.focus();
-                    }}
-                    className="p-2.5 rounded-xl bg-gray-50 hover:bg-gray-100/80 border border-gray-100 text-center cursor-pointer transition-colors"
-                  >
-                    <p className="text-[11px] text-gray-500">
-                      💡 <span className="font-semibold text-gray-700">Demo Mode:</span> Click to auto-fill{' '}
-                      <span className="font-mono font-bold text-[#B81446]">849201</span> for instant verification.
-                    </p>
-                  </div>
-                </form>
-              </>
-            )}
+                    <div className="flex items-center justify-between text-xs pt-1">
+                      <span className="text-gray-500">
+                        {resendTimer > 0 ? (
+                          <>
+                            Resend code in <span className="font-semibold text-[#1A1818]">{resendTimer}s</span>
+                          </>
+                        ) : (
+                          'Code expired'
+                        )}
+                      </span>
+
+                      <button
+                        type="button"
+                        onClick={handleResendCode}
+                        disabled={resendTimer > 0}
+                        className={`font-semibold transition-colors cursor-pointer ${
+                          resendTimer > 0 ? 'text-gray-400 cursor-not-allowed' : 'text-[#B81446] hover:underline'
+                        }`}
+                      >
+                        Resend Code
+                      </button>
+                    </div>
+
+                    <button
+                      type="submit"
+                      disabled={isVerifying}
+                      className="w-full bg-[#B81446] hover:bg-[#9B103B] active:bg-[#800A2C] text-white font-poppins font-semibold py-2.5 sm:py-3 px-6 rounded-xl transition-all duration-300 shadow-[0_6px_18px_rgba(184,20,70,0.25)] hover:shadow-[0_10px_24px_rgba(184,20,70,0.35)] hover:scale-[1.01] active:scale-[0.99] text-xs sm:text-sm flex items-center justify-center gap-2 disabled:opacity-75 cursor-pointer mt-1"
+                    >
+                      {isVerifying ? (
+                        <>
+                          <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                          <span>Validating verification code...</span>
+                        </>
+                      ) : (
+                        <span>Verify Code & Continue</span>
+                      )}
+                    </button>
+
+                    <div
+                      onClick={() => {
+                        setOtp('849201');
+                        if (otpError) setOtpError(null);
+                        otpInputRef.current?.focus();
+                      }}
+                      className="p-2.5 rounded-xl bg-gray-50 hover:bg-gray-100/80 border border-gray-100 text-center cursor-pointer transition-colors"
+                    >
+                      <p className="text-[11px] text-gray-500">
+                        <span className="font-semibold text-gray-700">Demo Mode:</span> Click to auto-fill{' '}
+                        <span className="font-mono font-bold text-[#B81446]">849201</span> for instant verification.
+                      </p>
+                    </div>
+                  </form>
+                </>
+              )}
             </div>
+          )}
+
+          {/* ===================================================================== */}
+          {/* STEP 3: KYC Profile & Document Upload (Modular Component)             */}
+          {/* ===================================================================== */}
+          {step === 3 && (
+            <Step3KycProfile
+              onSuccess={(data) => {
+                setUserFullName(`${data.firstName} ${data.lastName}`);
+                setStep(4);
+              }}
+              onBackToVerification={() => setStep(2)}
+            />
+          )}
+
+          {/* ===================================================================== */}
+          {/* STEP 4: Transaction PIN & Account Creation (Modular Component)        */}
+          {/* ===================================================================== */}
+          {step === 4 && (
+            <Step4SecurityPin
+              userFullName={userFullName}
+              onBackToKyc={() => setStep(3)}
+              onPinSubStepChange={(sub) => setPinSubStep(sub)}
+            />
           )}
         </div>
 
         {/* Bottom Copyright */}
-        <div className="w-full pt-2 sm:pt-3 border-t border-gray-100 flex items-center justify-between text-[11px] text-gray-400">
+        <div className="w-full pt-2 border-t border-gray-100 flex items-center justify-between text-[11px] text-gray-400">
           <p>© All rights reserved by NemiCapital International Bank.</p>
           <div className="flex gap-3">
             <Link href="/about" className="hover:text-gray-600 transition-colors">Privacy</Link>
@@ -952,7 +878,7 @@ export const RegisterPageView: React.FC = () => {
       </div>
 
       {/* ========================================================================= */}
-      {/* RIGHT COLUMN: 3D Solid Onboarding Welcome Package & Bank Perks            */}
+      {/* RIGHT COLUMN: Contextual Visual Experience & Bank Perks                   */}
       {/* ========================================================================= */}
       <div className="hidden lg:flex lg:w-1/2 h-full max-h-screen relative overflow-hidden flex-col justify-between p-6 xl:p-10 bg-gradient-to-br from-[#800A2C] via-[#5A0620] to-[#2B030E] text-white">
         {/* Background Geometric Vector Accents */}
@@ -979,19 +905,29 @@ export const RegisterPageView: React.FC = () => {
         {/* Top Tagline */}
         <div className="relative z-10 flex items-center justify-between text-xs text-white/80">
           <span className="font-poppins font-semibold uppercase tracking-widest text-[10px] text-[#F7F1EB]/75">
-            Private Banking Experience
+            {step === 3
+              ? 'Identity & Regulatory Compliance'
+              : step === 4
+              ? 'Instant Account Provisioning'
+              : 'Private Banking Experience'}
           </span>
           <span className="text-[10px] text-white/60 font-medium">
             NemiCapital Global
           </span>
         </div>
 
-        {/* Center: Solid 3D Welcome Package Graphic */}
+        {/* Center: Contextual 3D Showcase Graphics */}
         <div className="relative z-10 my-auto flex flex-col items-center justify-center max-w-[320px] xl:max-w-[360px] mx-auto w-full">
           <div className="relative w-full aspect-square rounded-[26px] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-white/15 bg-[#1F040C] group">
             <Image
-              src={ASSETS.images.register3dWelcome}
-              alt="NemiCapital Private Banking Welcome Box with Metal Card and Verification Smartphone"
+              src={
+                step === 3
+                  ? ASSETS.images.login3dVaultSecurity
+                  : step === 4
+                  ? ASSETS.images.login3dCardPayment
+                  : ASSETS.images.register3dWelcome
+              }
+              alt="NemiCapital Private Banking Visual Experience"
               fill
               priority
               className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
@@ -1001,39 +937,73 @@ export const RegisterPageView: React.FC = () => {
 
             {/* Floating Overlay Badge: Bottom Left */}
             <div className="absolute bottom-3.5 left-3.5 bg-white text-[#1A1818] p-2.5 rounded-2xl shadow-xl border border-gray-100 z-20 min-w-[155px]">
-              <div className="flex items-baseline justify-between gap-2">
-                <span className="font-poppins font-bold text-xs sm:text-sm text-[#1A1818]">
-                  $0 Opening Fee
-                </span>
-                <span className="text-[9.5px] font-semibold text-emerald-600">Free</span>
-              </div>
-              <p className="text-[9px] text-gray-500 font-medium mt-0.5 leading-tight">
-                Instant Metal Debit Card Included
-              </p>
-              <div className="mt-2 flex items-center gap-1 text-[9px] text-emerald-600 font-medium">
-                <span>✓ Active Tier 1 Access</span>
-              </div>
+              {step === 3 ? (
+                <>
+                  <div className="flex items-baseline justify-between gap-2">
+                    <span className="font-poppins font-bold text-xs sm:text-sm text-[#1A1818]">
+                      256-Bit Vault
+                    </span>
+                    <span className="text-[9.5px] font-semibold text-emerald-600">Encrypted</span>
+                  </div>
+                  <p className="text-[9px] text-gray-500 font-medium mt-0.5 leading-tight">
+                    Supabase Storage Security
+                  </p>
+                  <div className="mt-2 flex items-center gap-1 text-[9px] text-emerald-600 font-medium">
+                    <span>✓ KYC Verification Guard</span>
+                  </div>
+                </>
+              ) : step === 4 ? (
+                <>
+                  <div className="flex items-baseline justify-between gap-2">
+                    <span className="font-poppins font-bold text-xs sm:text-sm text-[#1A1818]">
+                      Metal Card Ready
+                    </span>
+                    <span className="text-[9.5px] font-semibold text-emerald-600">Active</span>
+                  </div>
+                  <p className="text-[9px] text-gray-500 font-medium mt-0.5 leading-tight">
+                    Zero Global Wire Fees
+                  </p>
+                  <div className="mt-2 flex items-center gap-1 text-[9px] text-emerald-600 font-medium">
+                    <span>✓ 10-Digit ABA Provisioned</span>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="flex items-baseline justify-between gap-2">
+                    <span className="font-poppins font-bold text-xs sm:text-sm text-[#1A1818]">
+                      $0 Opening Fee
+                    </span>
+                    <span className="text-[9.5px] font-semibold text-emerald-600">Free</span>
+                  </div>
+                  <p className="text-[9px] text-gray-500 font-medium mt-0.5 leading-tight">
+                    Instant Metal Debit Card Included
+                  </p>
+                  <div className="mt-2 flex items-center gap-1 text-[9px] text-emerald-600 font-medium">
+                    <span>✓ Active Tier 1 Access</span>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>
 
-        {/* Bottom: 3 Key Account Perks (Redis-Backed 2FA Lock removed) */}
+        {/* Bottom: 3 Key Account Perks */}
         <div className="relative z-10 pt-3 pb-1 max-w-md mx-auto w-full">
           <h4 className="font-poppins font-semibold text-xs sm:text-sm text-white/95 uppercase tracking-wider mb-2 text-center">
-            What your account includes:
+            {step === 3 ? 'Bank Compliance Standards:' : 'What your account includes:'}
           </h4>
           <div className="grid grid-cols-3 gap-2 text-[10.5px] text-white/85 text-center">
             <div className="flex flex-col items-center justify-center p-2 rounded-xl bg-white/5 border border-white/10 backdrop-blur-xs">
               <span className="text-emerald-400 font-bold mb-0.5">✓</span>
-              <span>USD, EUR, GBP Accounts</span>
+              <span>{step === 3 ? 'FDIC Insured to $250k' : 'USD, EUR, GBP Accounts'}</span>
             </div>
             <div className="flex flex-col items-center justify-center p-2 rounded-xl bg-white/5 border border-white/10 backdrop-blur-xs">
               <span className="text-emerald-400 font-bold mb-0.5">✓</span>
-              <span>4.85% APY High-Yield</span>
+              <span>{step === 3 ? '256-Bit Encryption' : '4.85% APY High-Yield'}</span>
             </div>
             <div className="flex flex-col items-center justify-center p-2 rounded-xl bg-white/5 border border-white/10 backdrop-blur-xs">
               <span className="text-emerald-400 font-bold mb-0.5">✓</span>
-              <span>Zero Global Wire Fees</span>
+              <span>{step === 3 ? 'FINRA & SEC Standards' : 'Zero Global Wire Fees'}</span>
             </div>
           </div>
         </div>

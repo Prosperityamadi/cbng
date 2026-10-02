@@ -495,7 +495,7 @@ export const PressReleaseArticle: React.FC = () => {
                     <h5 className="font-poppins font-semibold text-sm sm:text-base text-[#1A1818]">
                       {c.name}
                     </h5>
-                    <span className="text-stone-300">•</span>
+                    <span className="text-stone-300">|</span>
                     <span className="font-poppins text-xs uppercase tracking-wide text-stone-400">
                       {c.date}
                     </span>
