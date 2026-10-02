@@ -139,7 +139,7 @@ export const TopUtilityBar: React.FC = () => {
   };
 
   const pathname = usePathname();
-  if (pathname === '/login') {
+  if (pathname === '/login' || pathname === '/register') {
     return null;
   }
 

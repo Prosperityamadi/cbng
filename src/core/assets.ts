@@ -90,6 +90,7 @@ import LoginFinanceShowcaseImg from '@/assets/images/login-finance-showcase.jpg'
 import Login3dCardPaymentImg from '@/assets/images/login-3d-card-payment.jpg';
 import Login3dVaultSecurityImg from '@/assets/images/login-3d-vault-security.jpg';
 import Login3dGrowthAnalyticsImg from '@/assets/images/login-3d-growth-analytics.jpg';
+import Register3dWelcomeImg from '@/assets/images/register-3d-welcome.jpg';
 
 // Exclusive Custom User Icons
 import FacebookIcon from '@/assets/icons/facebook.png';
@@ -102,6 +103,7 @@ import YoutubeIcon from '@/assets/icons/youtube.png';
 import UptrendIcon from '@/assets/icons/uptrend.png';
 import DowntrendIcon from '@/assets/icons/downtrend.png';
 import HomeIcon from '@/assets/icons/home.png';
+import MailIcon from '@/assets/icons/mail.png';
 
 /**
  * Core Assets Reference
@@ -172,6 +174,7 @@ export const ASSETS = {
     login3dCardPayment: Login3dCardPaymentImg,
     login3dVaultSecurity: Login3dVaultSecurityImg,
     login3dGrowthAnalytics: Login3dGrowthAnalyticsImg,
+    register3dWelcome: Register3dWelcomeImg,
   },
   icons: {
     noOpenPositions: NoOpenPositionsImg,
@@ -218,6 +221,7 @@ export const ASSETS = {
     commitment: CommitmentIcon,
     consistency: ConsistencyIcon,
     home: HomeIcon,
+    mail: MailIcon,
     check: '/icons/custom-check.svg',
   }
 } as const;

@@ -17,8 +17,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="h-full antialiased">
-      <body className="min-h-full flex flex-col font-roboto bg-white text-[#1A1818]">
+    <html lang="en" className="h-full antialiased" suppressHydrationWarning>
+      <body className="min-h-full flex flex-col font-roboto bg-white text-[#1A1818]" suppressHydrationWarning>
         {/* Very Top Utility Navigation Bar (Looking, Branch locator, FAQs, Search, Language) */}
         <TopUtilityBar />
 

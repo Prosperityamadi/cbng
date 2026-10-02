@@ -301,7 +301,7 @@ export const LoginPageView: React.FC = () => {
             <p className="text-xs text-gray-600">
               Not member yet?{' '}
               <Link
-                href="/services/accounts"
+                href="/register"
                 className="font-semibold text-[#1A1818] hover:text-[#B81446] underline underline-offset-4 transition-colors"
               >
                 Create an account
