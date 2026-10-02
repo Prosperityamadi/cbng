@@ -86,6 +86,10 @@ import MarketLeadTradingFloorImg from '@/assets/images/market-lead-trading-floor
 import MarketCentralBankMacroImg from '@/assets/images/market-central-bank-macro.jpg';
 import MarketEnergyCommoditiesImg from '@/assets/images/market-energy-commodities.jpg';
 import MarketTechAiBankingImg from '@/assets/images/market-tech-ai-banking.jpg';
+import LoginFinanceShowcaseImg from '@/assets/images/login-finance-showcase.jpg';
+import Login3dCardPaymentImg from '@/assets/images/login-3d-card-payment.jpg';
+import Login3dVaultSecurityImg from '@/assets/images/login-3d-vault-security.jpg';
+import Login3dGrowthAnalyticsImg from '@/assets/images/login-3d-growth-analytics.jpg';
 
 // Exclusive Custom User Icons
 import FacebookIcon from '@/assets/icons/facebook.png';
@@ -97,6 +101,7 @@ import TwitterIcon from '@/assets/icons/twitter.png';
 import YoutubeIcon from '@/assets/icons/youtube.png';
 import UptrendIcon from '@/assets/icons/uptrend.png';
 import DowntrendIcon from '@/assets/icons/downtrend.png';
+import HomeIcon from '@/assets/icons/home.png';
 
 /**
  * Core Assets Reference
@@ -163,6 +168,10 @@ export const ASSETS = {
     marketCentralBankMacro: MarketCentralBankMacroImg,
     marketEnergyCommodities: MarketEnergyCommoditiesImg,
     marketTechAiBanking: MarketTechAiBankingImg,
+    loginFinanceShowcase: LoginFinanceShowcaseImg,
+    login3dCardPayment: Login3dCardPaymentImg,
+    login3dVaultSecurity: Login3dVaultSecurityImg,
+    login3dGrowthAnalytics: Login3dGrowthAnalyticsImg,
   },
   icons: {
     noOpenPositions: NoOpenPositionsImg,
@@ -208,6 +217,7 @@ export const ASSETS = {
     communities: CommunitiesIcon,
     commitment: CommitmentIcon,
     consistency: ConsistencyIcon,
+    home: HomeIcon,
     check: '/icons/custom-check.svg',
   }
 } as const;

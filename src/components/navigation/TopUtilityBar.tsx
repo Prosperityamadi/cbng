@@ -3,6 +3,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 import { SITE_CONFIG, ASSETS } from '@/core';
 
 declare global {
@@ -136,6 +137,11 @@ export const TopUtilityBar: React.FC = () => {
       window.location.reload();
     }
   };
+
+  const pathname = usePathname();
+  if (pathname === '/login') {
+    return null;
+  }
 
   return (
     <div className="w-full bg-white border-b border-[#EDE3D7] text-[#5C5652] text-xs font-roboto relative z-[60]">

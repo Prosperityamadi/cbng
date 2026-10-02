@@ -29,8 +29,10 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
         className={`relative flex-shrink-0 ${
           compact
             ? 'w-8 h-8 sm:w-9 sm:h-9 ring-1'
-            : 'w-12 h-12 md:w-14 md:h-14 ring-2'
-        } rounded-full bg-white/95 p-1 shadow-md ring-white/30 transition-all duration-300 group-hover:scale-105`}
+            : 'w-11 h-11 md:w-13 md:h-13 ring-2'
+        } rounded-full bg-white p-1 shadow-md ${
+          variant === 'dark' ? 'ring-gray-200 shadow-sm' : 'ring-white/30'
+        } transition-all duration-300 group-hover:scale-105`}
       >
         <Image
           src={ASSETS.logos.main}
@@ -49,7 +51,9 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
             <span
               className={`font-poppins ${
                 compact ? 'text-base sm:text-lg' : 'text-xl md:text-2xl'
-              } font-bold tracking-normal text-white leading-tight transition-all duration-300`}
+              } font-bold tracking-normal ${
+                variant === 'dark' ? 'text-[#1A1818]' : 'text-white'
+              } leading-tight transition-all duration-300`}
             >
               {SITE_CONFIG.brand.shortName}
             </span>
@@ -57,12 +61,18 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
           <span
             className={`${
               compact ? 'text-[8.5px] sm:text-[9px]' : 'text-[10px] md:text-[11px]'
-            } font-semibold tracking-wider text-[#F7F1EB]/90 uppercase leading-none mt-0.5 transition-all duration-300`}
+            } font-semibold tracking-wider ${
+              variant === 'dark' ? 'text-[#B81446]' : 'text-[#F7F1EB]/90'
+            } uppercase leading-none mt-0.5 transition-all duration-300`}
           >
             {compact ? SITE_CONFIG.brand.tagline : 'International Bank'}
           </span>
           {!compact && (
-            <span className="text-[8px] md:text-[9px] font-medium tracking-widest text-[#F7F1EB]/60 uppercase leading-none mt-1">
+            <span
+              className={`text-[8px] md:text-[9px] font-medium tracking-widest ${
+                variant === 'dark' ? 'text-[#777777]' : 'text-[#F7F1EB]/60'
+              } uppercase leading-none mt-1`}
+            >
               {SITE_CONFIG.brand.tagline}
             </span>
           )}
