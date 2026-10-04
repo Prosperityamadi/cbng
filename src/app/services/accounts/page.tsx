@@ -48,21 +48,21 @@ const SHOWCASE_CARDS: ShowcaseCard[] = [
     title: 'Savings Account',
     description: 'Open account now and earn upto 8%',
     image: ASSETS.images.piggyvest,
-    href: '/apply/account?type=savings',
+    href: '#',
   },
   {
     id: 'current',
     title: 'Current Account',
     description: 'Open account now and earn upto 5%',
     image: ASSETS.images.manTypingOnLaptop,
-    href: '/apply/account?type=current',
+    href: '#',
   },
   {
     id: 'fixed',
     title: 'Fixed Deposit Account',
     description: 'Open account now and earn upto 10%',
     image: ASSETS.images.money,
-    href: '/apply/account?type=fixed',
+    href: '#',
   },
 ];
 
@@ -99,7 +99,7 @@ const SPECIALTY_TABS: SpecialtyTab[] = [
       'Perfectly simple & easy',
     ],
     ctaText: 'Open Trading Account',
-    ctaHref: '/apply/account?type=trading',
+    ctaHref: '/register',
     bgTabClass: 'bg-[#009FB7]',
   },
   {
@@ -120,7 +120,7 @@ const SPECIALTY_TABS: SpecialtyTab[] = [
       'Perfectly simple & easy',
     ],
     ctaText: 'Open Tax Savings Account',
-    ctaHref: '/apply/account?type=tax-savings',
+    ctaHref: '/register',
     bgTabClass: 'bg-[#008A9B]',
   },
   {
@@ -141,7 +141,7 @@ const SPECIALTY_TABS: SpecialtyTab[] = [
       'Perfectly simple & easy',
     ],
     ctaText: 'Open Gold Account',
-    ctaHref: '/apply/account?type=gold',
+    ctaHref: '/register',
     bgTabClass: 'bg-[#181818]',
   },
 ];
@@ -312,7 +312,7 @@ export default function AccountsPage() {
                   key={card.id}
                   onMouseEnter={() => setHoveredCardId(card.id)}
                   onMouseLeave={() => setHoveredCardId(null)}
-                  className={`group relative flex flex-col cursor-pointer transition-all duration-700 ease-out hover:-translate-y-2 ${animationClass} ${delayClass}`}
+                  className={`group relative flex flex-col transition-all duration-700 ease-out hover:-translate-y-2 select-none ${animationClass} ${delayClass}`}
                 >
                   {/* Top Image Container with Grayscale Effect */}
                   <div className="relative w-full aspect-[4/3] sm:aspect-square overflow-hidden bg-gray-100 shadow-md">
@@ -333,8 +333,7 @@ export default function AccountsPage() {
                   </div>
 
                   {/* Overlapping Content Box (Dark & Red arrow ONLY on hover, White on default) */}
-                  <Link
-                    href={card.href}
+                  <div
                     className={`relative -mt-10 sm:-mt-12 mx-3 sm:mx-4 p-5 sm:p-6 transition-all duration-300 shadow-xl ${
                       isHovered
                         ? 'bg-[#1A1818] text-white shadow-2xl ring-1 ring-white/10'
@@ -364,7 +363,7 @@ export default function AccountsPage() {
                     >
                       {card.description}
                     </p>
-                  </Link>
+                  </div>
                 </div>
               );
             })}
@@ -600,11 +599,12 @@ export default function AccountsPage() {
 
             <div className="flex items-center justify-center gap-4 sm:gap-5 flex-wrap">
               {/* Google Play Store Badge: Slides in from left */}
-              <a
-                href="https://play.google.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`group flex items-center gap-3.5 px-6 py-3.5 bg-white hover:bg-[#F9FAFB] text-[#111827] border border-[#E5E7EB] shadow-md hover:shadow-xl transition-all duration-700 ease-out hover:-translate-y-0.5 min-w-[220px] ${
+              <button
+                type="button"
+                onClick={() => {
+                  if (typeof window !== 'undefined') window.location.reload();
+                }}
+                className={`group flex items-center gap-3.5 px-6 py-3.5 bg-white hover:bg-[#F9FAFB] text-[#111827] border border-[#E5E7EB] shadow-md hover:shadow-xl transition-all duration-700 ease-out hover:-translate-y-0.5 min-w-[220px] cursor-pointer text-left ${
                   isAppInView ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-12'
                 }`}
               >
@@ -625,14 +625,15 @@ export default function AccountsPage() {
                     Download on playstore
                   </span>
                 </div>
-              </a>
+              </button>
 
               {/* Apple App Store Badge: Slides in from right */}
-              <a
-                href="https://apple.com/app-store"
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`group flex items-center gap-3.5 px-6 py-3.5 bg-[#B81446] hover:bg-[#9E113B] text-white shadow-md hover:shadow-xl transition-all duration-700 ease-out hover:-translate-y-0.5 min-w-[220px] ${
+              <button
+                type="button"
+                onClick={() => {
+                  if (typeof window !== 'undefined') window.location.reload();
+                }}
+                className={`group flex items-center gap-3.5 px-6 py-3.5 bg-[#B81446] hover:bg-[#9E113B] text-white shadow-md hover:shadow-xl transition-all duration-700 ease-out hover:-translate-y-0.5 min-w-[220px] cursor-pointer text-left ${
                   isAppInView ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12'
                 }`}
               >
@@ -653,7 +654,7 @@ export default function AccountsPage() {
                     Download on App Store
                   </span>
                 </div>
-              </a>
+              </button>
             </div>
           </div>
         </div>

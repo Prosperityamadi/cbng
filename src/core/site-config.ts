@@ -35,9 +35,9 @@ export const SITE_CONFIG = {
     },
     utilityLinks: [
       { label: 'Careers', href: '/careers' },
-      { label: "Faq's", href: '/faqs' },
-      { label: 'Offers', href: '/offers' },
-      { label: 'Calendar', href: '/calendar' },
+      { label: "Faq's", href: '#' },
+      { label: 'Offers', href: '#' },
+      { label: 'Calendar', href: '#' },
     ],
     search: {
       label: 'Search',
@@ -55,7 +55,7 @@ export const SITE_CONFIG = {
     },
     openAccount: {
       label: 'Open an Account',
-      href: '/apply/account',
+      href: '/register',
     },
   },
 
@@ -71,12 +71,12 @@ export const SITE_CONFIG = {
     {
       id: 'payment',
       label: 'Make Payment',
-      href: '/services/payments',
+      href: '/login',
     },
     {
       id: 'enquiry',
       label: 'Make an Enquiry',
-      href: '/contact/enquiry',
+      href: '/contact',
     },
   ],
 
@@ -87,7 +87,7 @@ export const SITE_CONFIG = {
       title: 'Bank with the Happiest Customers in the World',
       subtitle: 'On the other hand, we denounce with righteous indignation and dislike men who are so beguiled.',
       ctaText: 'Make An Appointment',
-      ctaHref: '/contact/appointment',
+      ctaHref: '/',
     },
     {
       id: 'slide-2',
@@ -95,7 +95,7 @@ export const SITE_CONFIG = {
       title: 'Empowering Your Global Financial Future',
       subtitle: 'Personalized wealth management strategies and corporate solutions designed to scale across international borders.',
       ctaText: 'Explore Private Wealth',
-      ctaHref: '/services/wealth',
+      ctaHref: '/',
     },
     {
       id: 'slide-3',
@@ -103,7 +103,7 @@ export const SITE_CONFIG = {
       title: 'Seamless Digital Banking at Your Fingertips',
       subtitle: 'Manage your portfolio, transfer funds across 45+ currencies with real-time biometric security.',
       ctaText: 'Discover Online Banking',
-      ctaHref: '/services/online-banking',
+      ctaHref: '/',
     },
     {
       id: 'slide-4',
@@ -111,7 +111,7 @@ export const SITE_CONFIG = {
       title: 'Tailored Financing for Growing Enterprises',
       subtitle: 'Flexible commercial loans, trade finance, and institutional treasury support built for sustainable growth.',
       ctaText: 'Corporate Solutions',
-      ctaHref: '/services/corporate',
+      ctaHref: '/',
     },
   ] satisfies readonly HeroSlide[],
 
@@ -126,7 +126,7 @@ export const SITE_CONFIG = {
         title: 'Fixed Returns with Peace of Mind',
         description: 'Grow your surplus capital with guaranteed returns and flexible investment tenures.',
         actionText: 'Read More +',
-        href: '/services/accounts',
+        href: '#',
       },
       {
         number: '02',
@@ -134,7 +134,7 @@ export const SITE_CONFIG = {
         title: 'Banking Solutions for a Business',
         description: 'Seamless corporate transactions, high cash handling limits, and digital treasury tools.',
         actionText: 'Read More +',
-        href: '/services/corporate',
+        href: '#',
       },
       {
         number: '03',
@@ -142,7 +142,7 @@ export const SITE_CONFIG = {
         title: 'Our Strategies for Better Returns',
         description: 'Diversify across international equities, fixed income securities, and curated index funds.',
         actionText: 'Read More +',
-        href: '/services/wealth',
+        href: '#',
       },
     ],
   },
@@ -197,7 +197,7 @@ export const SITE_CONFIG = {
     title: 'Banking For Your Needs',
     subtitle: 'The bank that builds better relationships.',
     viewAllText: 'View All Services',
-    viewAllHref: '/services',
+    viewAllHref: '/',
     tabs: [
       {
         id: 'individuals',
@@ -218,7 +218,7 @@ export const SITE_CONFIG = {
           title: 'Savings & CDs',
           description: 'Tier-1 interest rates with instant liquidity whenever you need it for long-term growth.',
           footnote: '* Interest rate up to 5% p.a',
-          href: '/services/savings',
+          href: '/',
         },
         {
           id: 'digital',
@@ -226,7 +226,7 @@ export const SITE_CONFIG = {
           title: 'Online & Mobile',
           description: 'Biometric authorization, multi-currency wallets, and round-the-clock seamless transfers.',
           footnote: '* Terms & Conditions',
-          href: '/services/digital',
+          href: '/',
         },
         {
           id: 'loans',
@@ -234,7 +234,7 @@ export const SITE_CONFIG = {
           title: 'Consumer Loans',
           description: 'Transparent interest rates, zero hidden prepayment fees, and rapid personal approval.',
           footnote: "* Check today's Interest Rates",
-          href: '/services/loans',
+          href: '/',
         },
       ],
       companies: [
@@ -244,7 +244,7 @@ export const SITE_CONFIG = {
           title: 'Corporate Accounts & CDs',
           description: 'Maximize yields on surplus business cash with high-yield institutional accounts & CDs.',
           footnote: '* Flexible institutional terms',
-          href: '/services/corporate-accounts',
+          href: '/',
         },
         {
           id: 'commercial-tech',
@@ -252,7 +252,7 @@ export const SITE_CONFIG = {
           title: 'Commercial Banking & API',
           description: 'Automated payroll, enterprise treasury management, and direct ERP banking integrations.',
           footnote: '* 24/7 Dedicated Treasury Desk',
-          href: '/services/commercial',
+          href: '/',
         },
         {
           id: 'commercial-loans',
@@ -260,7 +260,7 @@ export const SITE_CONFIG = {
           title: 'Working Capital & Credit',
           description: 'Flexible revolving credit lines, trade financing, and tailored commercial equipment loans.',
           footnote: '* Competitive enterprise margins',
-          href: '/services/credit',
+          href: '/',
         },
       ],
     },
@@ -277,10 +277,10 @@ export const SITE_CONFIG = {
         labelLine1: 'Credit / Debit Card',
         labelLine2: 'Related',
         requests: [
-          { title: 'Block Debit / ATM Card', href: '/services/emergency/block-card' },
-          { title: 'Generate Debit Card Pin Number', href: '/services/emergency/generate-pin' },
-          { title: 'Unlock Debit / ATM Card', href: '/services/emergency/unlock-card' },
-          { title: 'Reissue Lost Debit / ATM Card', href: '/services/emergency/reissue-card' },
+          { title: 'Block Debit / ATM Card', href: '#' },
+          { title: 'Generate Debit Card Pin Number', href: '#' },
+          { title: 'Unlock Debit / ATM Card', href: '#' },
+          { title: 'Reissue Lost Debit / ATM Card', href: '#' },
         ],
       },
       {
@@ -289,10 +289,10 @@ export const SITE_CONFIG = {
         labelLine1: 'Mobile / Internet',
         labelLine2: 'Banking',
         requests: [
-          { title: 'Register for Internet Banking', href: '/services/emergency/register-netbanking' },
-          { title: 'Reset NetBanking Password', href: '/services/emergency/reset-password' },
-          { title: 'Enable International Transactions', href: '/services/emergency/international-tx' },
-          { title: 'Update Mobile Banking App Access', href: '/services/emergency/app-access' },
+          { title: 'Register for Internet Banking', href: '#' },
+          { title: 'Reset NetBanking Password', href: '#' },
+          { title: 'Enable International Transactions', href: '#' },
+          { title: 'Update Mobile Banking App Access', href: '#' },
         ],
       },
       {
@@ -301,10 +301,10 @@ export const SITE_CONFIG = {
         labelLine1: 'Account Details',
         labelLine2: 'Changing',
         requests: [
-          { title: 'Update Registered Mobile Number', href: '/services/emergency/update-mobile' },
-          { title: 'Change Communication Address', href: '/services/emergency/change-address' },
-          { title: 'Update Email Address', href: '/services/emergency/update-email' },
-          { title: 'Link PAN Card / Update KYC', href: '/services/emergency/kyc-update' },
+          { title: 'Update Registered Mobile Number', href: '#' },
+          { title: 'Change Communication Address', href: '#' },
+          { title: 'Update Email Address', href: '#' },
+          { title: 'Link PAN Card / Update KYC', href: '#' },
         ],
       },
       {
@@ -313,10 +313,10 @@ export const SITE_CONFIG = {
         labelLine1: 'Cheque Book / DD',
         labelLine2: 'Related',
         requests: [
-          { title: 'Request New Cheque Book', href: '/services/emergency/request-chequebook' },
-          { title: 'Stop Cheque Payment', href: '/services/emergency/stop-cheque' },
-          { title: 'Check Cheque Clearing Status', href: '/services/emergency/cheque-status' },
-          { title: 'Demand Draft (DD) Cancellation', href: '/services/emergency/dd-cancellation' },
+          { title: 'Request New Cheque Book', href: '#' },
+          { title: 'Stop Cheque Payment', href: '#' },
+          { title: 'Check Cheque Clearing Status', href: '#' },
+          { title: 'Demand Draft (DD) Cancellation', href: '#' },
         ],
       },
     ],
@@ -445,11 +445,11 @@ export const SITE_CONFIG = {
     subtitle: 'Find answers to all your queries about our service.',
     searchLabel: 'Help You to Find',
     searchPlaceholder: 'Related Keyword...',
-    helperText: "Didn't get, Click below button to more answers or",
+    helperText: "Didn't get. Click below button to more answers or",
     contactText: 'contact us',
     contactHref: '/contact',
     ctaText: 'Grab Your Deals',
-    ctaHref: '/offers',
+    ctaHref: '/contact',
     items: [
       {
         id: 'faq-1',
@@ -488,7 +488,7 @@ export const SITE_CONFIG = {
   emiCalculatorSection: {
     title: 'Flexible EMI Calculator Online',
     subtitle: 'Easily calculate your equated monthly instalment online.',
-    applyHref: '/apply/loan',
+    applyHref: '/contact',
     loanTypes: [
       {
         id: 'home',
@@ -556,20 +556,20 @@ export const SITE_CONFIG = {
         number: '1',
         title: 'Investor Alerts',
         description: 'Keep informed about new or complex products, scams and other investing issues.',
-        href: '/security/alerts',
+        href: '#',
       },
       {
         number: '2',
         title: 'Ask and Check',
         description: 'Learn how to check out sellers and investments and what questions to ask.',
-        href: '/security/verification',
+        href: '#',
       },
       {
         number: '3',
         title: 'Protect Your Identity',
         description:
           "Identity theft can devastate your credit rating and derail financial security. Here's how you can protect yourself.",
-        href: '/security/identity',
+        href: '#',
       },
     ],
   },
@@ -584,51 +584,61 @@ export const SITE_CONFIG = {
     },
     columns: [
       {
-        title: 'Loans',
+        title: 'Home',
+        href: '/',
         links: [
-          'Home Loan',
-          'Personal Loan',
-          'Vehicle Loan',
-          'Education Loan',
-          'Gold Loan',
-          'Low Interest',
-          'Our All Cards',
-        ],
-      },
-      {
-        title: 'Rates & Charges',
-        links: [
-          'About Us',
-          'Testimonials',
-          'Careers',
-          'Career Detail',
-          "Faq's",
-          'List View',
-          'Get In Touch',
-        ],
-      },
-      {
-        title: 'About Us',
-        links: [
-          'About Us',
-          'Board of Directors',
-          'Careers',
-          'Career Detail',
-          'Business',
-          "Faq's",
-          'Testimonials',
+          { label: 'Better Tomorrow', href: '/#better-tomorrow' },
+          { label: 'Why Choose Us', href: '/#why-choose-us' },
+          { label: 'Banking Needs', href: '/#banking-needs' },
+          { label: 'Emergency Services', href: '/#emergency-services' },
+          { label: 'Personalize Card', href: '/#personalize-card' },
+          { label: 'Forex Rates', href: '/#forex-rates' },
+          { label: 'Questions & Answers', href: '/#faqs' },
+          { label: 'EMI Calculator', href: '/#emi-calculator' },
+          { label: 'Money Protection', href: '/#money-protection' },
         ],
       },
       {
         title: 'Services',
+        href: '/services/accounts',
         links: [
-          'All Accounts',
-          'Savings Account',
-          'Current Account',
-          'Fixed Deposit Account',
-          'Salary Account',
-          'Recuring Deposit Account',
-          'NRI Account',
+          { label: 'Accounts', href: '/services/accounts' },
+          { label: 'Cards', href: '/services/cards' },
+          { label: 'Loans', href: '/services/loans' },
+          { label: 'Investments', href: '/services/accounts' },
+        ],
+      },
+      {
+        title: 'About',
+        href: '/about/who-we-are',
+        links: [
+          { label: 'Who We Are', href: '/about/who-we-are' },
+          { label: 'Leadership', href: '/about/leadership' },
+          { label: 'Careers', href: '/about/careers' },
+        ],
+      },
+      {
+        title: 'News',
+        href: '/news/press-releases',
+        links: [
+          { label: 'Press Releases', href: '/news/press-releases' },
+          { label: 'Market Insights', href: '/news/market-insights' },
+        ],
+      },
+      {
+        title: 'Apply Now',
+        href: '/register',
+        links: [
+          { label: 'Open an Account', href: '/register' },
+        ],
+      },
+      {
+        title: 'Get In Touch',
+        href: '/contact',
+        links: [
+          { label: 'Contact Us', href: '/contact' },
+          { label: 'Branch & ATM Locator', href: '/contact#branch-locator' },
+          { label: 'Support Desk', href: 'mailto:support@nemicapital.com' },
         ],
       },
     ],
@@ -649,7 +659,13 @@ export const SITE_CONFIG = {
         type: 'complaint',
       },
     ],
-    subFooterLinks: ['About Us', 'All Accounts', 'Secured', 'NRI Account'],
+    subFooterLinks: [
+      { label: 'About Us', href: '/about/who-we-are' },
+      { label: 'All Accounts', href: '/services/accounts' },
+      { label: 'Get In Touch', href: '/contact' },
+      { label: 'Open Account', href: '/register' },
+    ],
+
   },
 
   contact: {

@@ -131,7 +131,10 @@ export const WhoWeAreOverviewSection: React.FC = () => {
             <div className="mt-8 sm:mt-10 grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
               {/* Card 1: Our Journey */}
               <div
-                className={`group cursor-pointer transition-all duration-700 delay-300 ease-out ${
+                onClick={() => {
+                  if (typeof window !== 'undefined') window.location.reload();
+                }}
+                className={`group cursor-pointer transition-all duration-700 delay-300 ease-out select-none ${
                   isTopRowInView ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-8 scale-95'
                 }`}
               >
@@ -159,7 +162,10 @@ export const WhoWeAreOverviewSection: React.FC = () => {
 
               {/* Card 2: Our Team */}
               <div
-                className={`group cursor-pointer transition-all duration-700 delay-450 ease-out ${
+                onClick={() => {
+                  if (typeof window !== 'undefined') window.location.reload();
+                }}
+                className={`group cursor-pointer transition-all duration-700 delay-450 ease-out select-none ${
                   isTopRowInView ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-8 scale-95'
                 }`}
               >

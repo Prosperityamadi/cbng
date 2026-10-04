@@ -91,6 +91,7 @@ import Login3dCardPaymentImg from '@/assets/images/login-3d-card-payment.jpg';
 import Login3dVaultSecurityImg from '@/assets/images/login-3d-vault-security.jpg';
 import Login3dGrowthAnalyticsImg from '@/assets/images/login-3d-growth-analytics.jpg';
 import Register3dWelcomeImg from '@/assets/images/register-3d-welcome.jpg';
+import BranchMapSnapshotImg from '@/assets/images/branch-map-snapshot.jpg';
 
 // Exclusive Custom User Icons
 import FacebookIcon from '@/assets/icons/facebook.png';
@@ -178,6 +179,7 @@ export const ASSETS = {
     login3dVaultSecurity: Login3dVaultSecurityImg,
     login3dGrowthAnalytics: Login3dGrowthAnalyticsImg,
     register3dWelcome: Register3dWelcomeImg,
+    branchMapSnapshot: BranchMapSnapshotImg,
   },
   icons: {
     noOpenPositions: NoOpenPositionsImg,

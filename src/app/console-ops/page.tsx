@@ -269,7 +269,7 @@ export default function AdminDashboardPage() {
     localStorage.removeItem('access_token');
     localStorage.removeItem('admin_role');
     localStorage.removeItem('admin_email');
-    router.push('/admin/login');
+    router.push('/console-ops/login');
   };
 
   return (
@@ -297,7 +297,7 @@ export default function AdminDashboardPage() {
 
         <div className="flex items-center gap-3 flex-wrap">
           <Link
-            href="/admin/users/create"
+            href="/console-ops/users/create"
             className="bg-[#B81446] hover:bg-[#9B103B] active:scale-95 text-white font-poppins font-semibold text-xs sm:text-sm px-5 py-2.5 rounded-xl shadow-md transition-all flex items-center gap-2 cursor-pointer"
           >
             <span className="text-base font-bold">+</span>

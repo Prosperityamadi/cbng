@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
 import { SITE_CONFIG, ASSETS } from '@/core';
 import { useInView } from './useInView';
 
@@ -123,10 +122,11 @@ export const EmergencyServicesSection: React.FC = () => {
             }`}
           >
             {selectedCategoryData.requests.map((request, index) => (
-              <Link
+              <button
                 key={`${selectedCategoryData.id}-${index}`}
-                href={request.href}
-                className="group flex items-stretch justify-between transition-colors duration-150 hover:bg-[#FAF7F3]"
+                type="button"
+                onClick={(e) => e.preventDefault()}
+                className="group w-full text-left flex items-stretch justify-between transition-colors duration-150 hover:bg-[#FAF7F3] cursor-pointer select-none"
               >
                 {/* Request Title */}
                 <div className="flex-1 px-5 sm:px-6 py-4 sm:py-4.5 flex items-center">
@@ -151,7 +151,7 @@ export const EmergencyServicesSection: React.FC = () => {
                     />
                   </svg>
                 </div>
-              </Link>
+              </button>
             ))}
           </div>
 

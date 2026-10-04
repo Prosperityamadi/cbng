@@ -304,14 +304,23 @@ class EmailService:
         sender_email: str,
         subject: str,
         message: str,
-        inquiry_id: Optional[str] = None
+        inquiry_id: Optional[str] = None,
+        phone: Optional[str] = None,
+        delivery_destination: str = "support@nemicapital.com"
     ) -> dict:
         """
-        Dispatches a high-priority Private Wealth Concierge inquiry directly to info@nemicapbank.com.
-        Reply-To is configured to the client's direct email for rapid institutional response.
+        Dispatches a high-priority Client Support inquiry directly to support@nemicapital.com.
+        Reply-To is configured to the client's direct email for rapid response.
         """
-        email_subject = f"[Concierge Inquiry] {subject} — {sender_name}"
-        delivery_destination = "info@nemicapbank.com"
+        email_subject = f"[Support Inquiry] {subject} — {sender_name}"
+
+        phone_html = f"""
+                <tr>
+                  <td style="padding: 10px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.06);">
+                    <div style="font-size: 10px; color: #777777; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 2px;">PHONE NUMBER</div>
+                    <div style="font-size: 14px; font-weight: 600; color: #FFFFFF;">{phone}</div>
+                  </td>
+                </tr>""" if phone else ""
 
         html_content = f"""
 <!DOCTYPE html>
@@ -330,10 +339,10 @@ class EmailService:
           <tr>
             <td style="padding: 32px 36px; border-bottom: 1px solid rgba(255, 255, 255, 0.06);">
               <div style="font-size: 11px; font-weight: 700; letter-spacing: 0.2em; color: #B81446; text-transform: uppercase; margin-bottom: 6px;">
-                PRIVATE WEALTH CONCIERGE DESK
+                NEMICAPITAL CLIENT SUPPORT
               </div>
               <div style="font-size: 20px; font-weight: 800; color: #FFFFFF;">
-                New Institutional Client Inquiry
+                New Customer Support Inquiry
               </div>
             </td>
           </tr>
@@ -347,7 +356,7 @@ class EmailService:
                     <div style="font-size: 10px; color: #777777; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 2px;">CLIENT SENDER</div>
                     <div style="font-size: 15px; font-weight: 700; color: #FFFFFF;">{sender_name}</div>
                   </td>
-                </tr>
+                </tr>{phone_html}
                 <tr>
                   <td style="padding: 10px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.06);">
                     <div style="font-size: 10px; color: #777777; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 2px;">REPLY-TO EMAIL</div>
@@ -363,6 +372,7 @@ class EmailService:
               </table>
             </td>
           </tr>
+
 
           <!-- Message Body -->
           <tr>

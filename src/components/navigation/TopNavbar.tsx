@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { NAV_ITEMS, SITE_CONFIG, ASSETS, NavItem } from '@/core';
 import { BrandLogo } from './BrandLogo';
+import { MobileDrawer } from './MobileDrawer';
 
 export const TopNavbar: React.FC = () => {
   const pathname = usePathname();
@@ -13,14 +14,11 @@ export const TopNavbar: React.FC = () => {
   // State for Primary (Static) Top Navbar
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
-  const [mobileExpandedItem, setMobileExpandedItem] = useState<string | null>(null);
   const primaryNavRef = useRef<HTMLDivElement>(null);
 
   // State for Secondary (Sticky Pop-Down) Navbar
   const [showStickyNav, setShowStickyNav] = useState(false);
   const [stickyDropdown, setStickyDropdown] = useState<string | null>(null);
-  const [stickyMobileOpen, setStickyMobileOpen] = useState(false);
-  const [stickyMobileExpanded, setStickyMobileExpanded] = useState<string | null>(null);
   const stickyNavRef = useRef<HTMLDivElement>(null);
 
   // Scroll listener: activates the secondary pop-down navbar when scrolled down
@@ -32,7 +30,6 @@ export const TopNavbar: React.FC = () => {
       } else {
         setShowStickyNav(false);
         setStickyDropdown(null);
-        setStickyMobileOpen(false);
       }
     };
 
@@ -60,22 +57,14 @@ export const TopNavbar: React.FC = () => {
     setMobileMenuOpen(false);
     setActiveDropdown(null);
     setStickyDropdown(null);
-    setStickyMobileOpen(false);
   }, [pathname]);
-
-  const toggleMobileExpanded = (label: string) => {
-    setMobileExpandedItem(prev => (prev === label ? null : label));
-  };
-
-  const toggleStickyMobileExpanded = (label: string) => {
-    setStickyMobileExpanded(prev => (prev === label ? null : label));
-  };
 
   if (
     pathname === '/login' ||
     pathname === '/register' ||
     pathname?.startsWith('/dashboard') ||
-    pathname?.startsWith('/admin')
+    pathname?.startsWith('/admin') ||
+    pathname?.startsWith('/console-ops')
   ) {
     return null;
   }
@@ -211,37 +200,24 @@ export const TopNavbar: React.FC = () => {
                 </Link>
               </div>
 
-              {/* Mobile Hamburger Button */}
-              <div className="flex lg:hidden items-center gap-2 ml-auto">
-                <Link
-                  href={SITE_CONFIG.headerActions.openAccount.href}
-                  className="hidden sm:inline-flex px-3.5 py-1.5 rounded-none text-xs font-semibold text-white bg-gradient-to-r from-[#B81446] to-[#5A0620] transition-all"
-                >
-                  {SITE_CONFIG.headerActions.openAccount.label}
-                </Link>
+              {/* Mobile Hamburger Button (Right aligned, matching Screenshot 1) */}
+              <div className="flex lg:hidden items-center ml-auto pr-2 sm:pr-4">
                 <button
                   type="button"
-                  onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                  className="p-2.5 rounded-none text-[#1A1818] hover:text-[#B81446] hover:bg-[#EDE3D7]/60 transition-colors focus:outline-none focus:ring-2 focus:ring-[#B81446]"
-                  aria-label="Toggle Navigation Menu"
-                  aria-expanded={mobileMenuOpen}
+                  onClick={() => setMobileMenuOpen(true)}
+                  className="p-2.5 text-[#B81446] hover:opacity-80 transition-opacity focus:outline-none flex flex-col items-end justify-center gap-1.5 cursor-pointer"
+                  aria-label="Open Navigation Menu"
                 >
-                  {mobileMenuOpen ? (
-                    <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  ) : (
-                    <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-                    </svg>
-                  )}
+                  <span className="w-6 h-[2.5px] bg-[#B81446] rounded-full" />
+                  <span className="w-4.5 h-[2.5px] bg-[#B81446] rounded-full" />
+                  <span className="w-3.5 h-[2.5px] bg-[#B81446] rounded-full" />
                 </button>
               </div>
 
             </div>
 
-            {/* Updates Banner (Horizontal Two-Tone Gradient) */}
-            <div className="w-full bg-primary-horizontal text-white flex items-center justify-between text-xs sm:text-sm shadow-inner relative z-10 border-t border-white/10 py-2.5 px-4 sm:px-6">
+            {/* Updates Banner (Horizontal Two-Tone Gradient - Desktop only) */}
+            <div className="hidden lg:flex w-full bg-primary-horizontal text-white items-center justify-between text-xs sm:text-sm shadow-inner relative z-10 border-t border-white/10 py-2.5 px-4 sm:px-6">
               <div className="flex items-center gap-2.5 flex-wrap overflow-hidden text-ellipsis">
                 <div className="relative w-4 h-4 flex-shrink-0">
                   <Image
@@ -278,81 +254,6 @@ export const TopNavbar: React.FC = () => {
 
           </div>
         </div>
-
-        {/* Mobile Drawer Navigation for Primary Navbar */}
-        {mobileMenuOpen && (
-          <div className="lg:hidden border-t border-[#EDE3D7] bg-[#F7F1EB] px-4 py-5 space-y-3 shadow-xl animate-in slide-in-from-top duration-200">
-            <div className="grid grid-cols-2 gap-2 pb-3 border-b border-[#EDE3D7]">
-              <Link
-                href={SITE_CONFIG.headerActions.login.href}
-                className="flex items-center justify-center gap-2 py-2.5 rounded-none bg-[#1A1818] text-white text-xs font-semibold shadow-sm"
-              >
-                <span>{SITE_CONFIG.headerActions.login.label}</span>
-              </Link>
-              <Link
-                href={SITE_CONFIG.headerActions.openAccount.href}
-                className="flex items-center justify-center gap-2 py-2.5 rounded-none bg-white text-[#1A1818] border border-[#DDD6CE] text-xs font-semibold shadow-sm"
-              >
-                <span>{SITE_CONFIG.headerActions.openAccount.label}</span>
-              </Link>
-            </div>
-
-            {NAV_ITEMS.map(item => {
-              const isExpanded = mobileExpandedItem === item.label;
-
-              if (!item.hasDropdown) {
-                return (
-                  <div key={item.label} className="border-b border-[#EDE3D7]/60 pb-2">
-                    <Link
-                      href={item.href}
-                      className="block py-2 text-base font-medium text-[#1A1818] hover:text-[#B81446] transition-colors"
-                    >
-                      {item.label}
-                    </Link>
-                  </div>
-                );
-              }
-
-              return (
-                <div key={item.label} className="border-b border-[#EDE3D7]/60 pb-2">
-                  <button
-                    type="button"
-                    onClick={() => toggleMobileExpanded(item.label)}
-                    className="w-full flex items-center justify-between py-2 text-base font-medium text-[#1A1818] hover:text-[#B81446] transition-colors"
-                  >
-                    <span>{item.label}</span>
-                    <svg
-                      className={`w-4 h-4 transition-transform duration-200 ${isExpanded ? 'rotate-180 text-[#B81446]' : 'opacity-60'}`}
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </button>
-
-                  {item.subItems && isExpanded && (
-                    <div className="pl-4 pr-2 py-2 space-y-1 bg-white/70 rounded-md mt-1 border border-[#EDE3D7]/60">
-                      {item.subItems.map(subItem => (
-                        <Link
-                          key={subItem.label}
-                          href={subItem.href}
-                          onClick={() => setMobileMenuOpen(false)}
-                          className="block py-2 px-2 text-sm text-[#666666] hover:text-[#B81446] hover:bg-[#F7F1EB] rounded transition-colors"
-                        >
-                          {subItem.label}
-                        </Link>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        )}
       </header>
 
       {/* =========================================================================
@@ -470,84 +371,21 @@ export const TopNavbar: React.FC = () => {
           <div className="lg:hidden absolute right-4 flex items-center">
             <button
               type="button"
-              onClick={() => setStickyMobileOpen(!stickyMobileOpen)}
-              className="p-2 rounded-none text-[#1A1818] hover:text-[#B81446] hover:bg-gray-100 transition-colors focus:outline-none"
-              aria-label="Toggle Sticky Mobile Menu"
+              onClick={() => setMobileMenuOpen(true)}
+              className="p-2 text-[#B81446] hover:opacity-80 transition-opacity focus:outline-none flex flex-col items-end justify-center gap-1.5 cursor-pointer"
+              aria-label="Open Navigation Menu"
             >
-              {stickyMobileOpen ? (
-                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              ) : (
-                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-              )}
+              <span className="w-6 h-[2.5px] bg-[#B81446] rounded-full" />
+              <span className="w-4.5 h-[2.5px] bg-[#B81446] rounded-full" />
+              <span className="w-3.5 h-[2.5px] bg-[#B81446] rounded-full" />
             </button>
           </div>
 
         </div>
-
-        {/* Mobile Drawer Navigation for Sticky Navbar */}
-        {stickyMobileOpen && (
-          <div className="lg:hidden border-t border-gray-200 bg-white px-4 py-4 space-y-2 shadow-xl animate-in slide-in-from-top duration-200">
-            {NAV_ITEMS.map(item => {
-              const isExpanded = stickyMobileExpanded === item.label;
-
-              if (!item.hasDropdown) {
-                return (
-                  <div key={item.label} className="border-b border-gray-100 pb-2">
-                    <Link
-                      href={item.href}
-                      className="block py-2 text-base font-medium text-[#1A1818] hover:text-[#B81446] transition-colors"
-                    >
-                      {item.label}
-                    </Link>
-                  </div>
-                );
-              }
-
-              return (
-                <div key={item.label} className="border-b border-gray-100 pb-2">
-                  <button
-                    type="button"
-                    onClick={() => toggleStickyMobileExpanded(item.label)}
-                    className="w-full flex items-center justify-between py-2 text-base font-medium text-[#1A1818] hover:text-[#B81446] transition-colors"
-                  >
-                    <span>{item.label}</span>
-                    <svg
-                      className={`w-4 h-4 transition-transform duration-200 ${isExpanded ? 'rotate-180 text-[#B81446]' : 'opacity-60'}`}
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </button>
-
-                  {item.subItems && isExpanded && (
-                    <div className="pl-4 pr-2 py-2 space-y-1 bg-gray-50 rounded-md mt-1 border border-gray-100">
-                      {item.subItems.map(subItem => (
-                        <Link
-                          key={subItem.label}
-                          href={subItem.href}
-                          onClick={() => setStickyMobileOpen(false)}
-                          className="block py-2 px-2 text-sm text-[#666666] hover:text-[#B81446] hover:bg-white rounded transition-colors"
-                        >
-                          {subItem.label}
-                        </Link>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        )}
       </div>
+
+      {/* Mobile Navigation Drawer with Layered Swipe Animation */}
+      <MobileDrawer isOpen={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)} />
     </>
   );
 };

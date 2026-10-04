@@ -101,7 +101,7 @@ export default function CardsPage() {
             {/* Apply Now Button */}
             <div className="mt-7 sm:mt-9">
               <Link
-                href="/apply/card?type=corporate"
+                href="/contact"
                 className="inline-flex items-center justify-center px-8 py-3.5 bg-white text-[#1A1818] hover:bg-[#B81446] hover:text-white font-poppins font-semibold text-xs tracking-wider uppercase shadow-md hover:shadow-xl transition-all duration-200 border border-[#E7DFD4]"
               >
                 Apply Now

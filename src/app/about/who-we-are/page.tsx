@@ -53,7 +53,11 @@ export default function WhoWeArePage() {
             <span className="text-white/40">&gt;</span>
             <Link
               href="/about/who-we-are"
-              className="text-white/80 hover:text-white transition-colors"
+              onClick={(e) => {
+                e.preventDefault();
+                if (typeof window !== 'undefined') window.location.reload();
+              }}
+              className="text-white/80 hover:text-white transition-colors cursor-pointer"
             >
               About
             </Link>

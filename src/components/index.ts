@@ -6,3 +6,4 @@ export * from './about';
 export * from './news';
 export * from './market-insights';
 export * from './auth';
+export * from './contact';

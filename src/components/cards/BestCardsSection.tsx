@@ -328,7 +328,7 @@ export const BestCardsSection: React.FC = () => {
                         {/* Dual Action Buttons */}
                         <div className="grid grid-cols-2 gap-3 w-full max-w-[280px] sm:max-w-[300px] mt-5">
                           <Link
-                            href={`/apply/card?name=${encodeURIComponent(card.name)}`}
+                            href="/contact"
                             className="w-full py-2.5 px-3 bg-[#FAF2EB] hover:bg-[#B81446] text-[#1A1818] hover:text-white font-poppins font-semibold text-xs text-center tracking-wide uppercase transition-colors duration-200 border border-[#E8DFD5] shadow-xs"
                           >
                             Apply Now
@@ -503,7 +503,7 @@ export const BestCardsSection: React.FC = () => {
                   </div>
 
                   <Link
-                    href={`/apply/card?name=${encodeURIComponent(card.name)}`}
+                    href="/contact"
                     className="mt-5 w-full py-2 bg-[#B81446] text-white text-xs font-semibold text-center uppercase tracking-wider block"
                   >
                     Apply Now

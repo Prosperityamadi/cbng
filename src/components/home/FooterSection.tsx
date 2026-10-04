@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { SITE_CONFIG, ASSETS } from '@/core';
 import { BrandLogo } from '@/components/navigation';
 import { useInView } from './useInView';
@@ -123,37 +124,45 @@ export const FooterSection: React.FC = () => {
         </div>
       </div>
 
-      {/* 2. Main Footer Link Columns (Strictly Non-Clickable with Arrow Hover Effect) */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-12">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 lg:gap-12">
+      {/* 2. Main Footer Link Columns (Clickable with Arrow Hover Effect) */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-12">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-8 lg:gap-6">
           {footerSection.columns.map((column, colIdx) => {
-            const delays = ['delay-150', 'delay-300', 'delay-[450ms]', 'delay-[600ms]'];
+            const delays = ['delay-150', 'delay-200', 'delay-300', 'delay-[400ms]', 'delay-[500ms]', 'delay-[600ms]'];
 
             return (
               <div
                 key={column.title}
-                className={`transition-all duration-700 ease-out ${delays[colIdx]} ${
+                className={`transition-all duration-700 ease-out ${delays[colIdx] || 'delay-150'} ${
                   isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
                 }`}
               >
                 {/* Column Heading */}
-                <h3 className="font-poppins font-bold text-base sm:text-lg text-white mb-5 sm:mb-6 tracking-tight flex items-center gap-2">
-                  <span>{column.title}</span>
+                <h3 className="font-poppins font-bold text-base sm:text-lg text-white mb-5 sm:mb-6 tracking-tight">
+                  <Link
+                    href={column.href}
+                    className="hover:text-[#B81446] transition-colors"
+                  >
+                    {column.title}
+                  </Link>
                 </h3>
 
-                {/* Column Links: Non-clickable with hover arrow micro-interaction as requested */}
+                {/* Column Links: Clickable with hover arrow micro-interaction as requested */}
                 <ul className="space-y-2.5">
                   {column.links.map((link) => (
-                    <li key={link}>
-                      <div className="group inline-flex items-center gap-2 cursor-default select-none py-0.5">
-                        <span className="text-gray-400 group-hover:text-white group-hover:font-medium transition-colors duration-200 text-[13.5px] sm:text-sm font-roboto tracking-normal">
-                          {link}
+                    <li key={link.label}>
+                      <Link
+                        href={link.href}
+                        className="group inline-flex items-center gap-1.5 select-none py-0.5"
+                      >
+                        <span className="text-gray-400 group-hover:text-white group-hover:font-medium transition-colors duration-200 text-xs sm:text-[13px] font-roboto tracking-normal">
+                          {link.label}
                         </span>
-                        {/* Slide-in Arrow Indicator matching screenshot 2 */}
-                        <span className="inline-block opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 text-white font-bold text-xs transition-all duration-200 ease-out">
+                        {/* Slide-in Arrow Indicator matching design */}
+                        <span className="inline-block opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 text-[#B81446] font-bold text-xs transition-all duration-200 ease-out">
                           →
                         </span>
-                      </div>
+                      </Link>
                     </li>
                   ))}
                 </ul>
@@ -249,15 +258,16 @@ export const FooterSection: React.FC = () => {
       {/* 4. Sub-Footer Strip (Bottom Bar with Links & Social Channels) */}
       <div className="w-full bg-[#0A0B0E] border-t border-white/5 py-5 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          {/* Sub-Footer Links (Non-clickable hover list) */}
+          {/* Sub-Footer Links */}
           <div className="flex flex-wrap items-center gap-5 sm:gap-7 text-xs text-gray-400 font-roboto">
-            {footerSection.subFooterLinks.map((link) => (
-              <span
-                key={link}
-                className="hover:text-white cursor-default transition-colors select-none"
+            {footerSection.subFooterLinks.map((subLink) => (
+              <Link
+                key={subLink.label}
+                href={subLink.href}
+                className="hover:text-white transition-colors"
               >
-                {link}
-              </span>
+                {subLink.label}
+              </Link>
             ))}
           </div>
 

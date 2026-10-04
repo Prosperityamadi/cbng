@@ -24,6 +24,15 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({
     setCurrentIndex(prev => (prev === 0 ? slides.length - 1 : prev - 1));
   }, [slides.length]);
 
+  // Reload back to home page when hero CTA button is clicked
+  const handleCtaClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    if (typeof window !== 'undefined') {
+      window.location.href = '/';
+      window.location.reload();
+    }
+  }, []);
+
   // Continuous autoplay transition every 5 seconds
   useEffect(() => {
     const timer = setInterval(() => {
@@ -130,8 +139,9 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({
                   }`}
                 >
                   <Link
-                    href={slide.ctaHref}
-                    className="inline-flex items-center justify-center px-8 py-3.5 rounded-none bg-white hover:bg-[#F7F1EB] text-[#1A1818] font-poppins font-semibold text-sm tracking-wide shadow-xl transition-all duration-200 transform hover:scale-105 active:scale-95"
+                    href={slide.ctaHref || '/'}
+                    onClick={handleCtaClick}
+                    className="inline-flex items-center justify-center px-8 py-3.5 rounded-none bg-white hover:bg-[#F7F1EB] text-[#1A1818] font-poppins font-semibold text-sm tracking-wide shadow-xl transition-all duration-200 transform hover:scale-105 active:scale-95 cursor-pointer"
                   >
                     <span>{slide.ctaText}</span>
                   </Link>

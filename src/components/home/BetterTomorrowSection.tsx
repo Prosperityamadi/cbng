@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import Link from 'next/link';
 import { SITE_CONFIG } from '@/core';
 import { OrigamiDiamondBadge } from './OrigamiDiamondBadge';
 import { CardPetalBackdrop } from './CardPetalBackdrop';
@@ -92,14 +91,15 @@ export const BetterTomorrowSection: React.FC = () => {
                   </p>
                 </div>
 
-                {/* Read More Action Link */}
+                {/* Read More Action Button (Inactive / No action) */}
                 <div className="relative z-10 mt-6 pt-2">
-                  <Link
-                    href={card.href}
-                    className="inline-flex items-center gap-1 font-poppins font-semibold text-xs sm:text-sm text-[#1A1818] group-hover:text-[#B81446] transition-colors"
+                  <button
+                    type="button"
+                    onClick={(e) => e.preventDefault()}
+                    className="inline-flex items-center gap-1 font-poppins font-semibold text-xs sm:text-sm text-[#1A1818] group-hover:text-[#B81446] transition-colors cursor-pointer select-none"
                   >
                     <span>{card.actionText ?? 'Read More +'}</span>
-                  </Link>
+                  </button>
                 </div>
               </div>
             );

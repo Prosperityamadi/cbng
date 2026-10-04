@@ -158,7 +158,7 @@ export default function AdminCreateUserPage() {
         <div className="flex items-center justify-between mb-8 pb-6 border-b border-white/10">
           <div className="flex items-center gap-4">
             <Link
-              href="/admin"
+              href="/console-ops"
               className="w-10 h-10 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white transition-colors cursor-pointer"
             >
               ←
@@ -289,7 +289,7 @@ export default function AdminCreateUserPage() {
                 + Provision Another Client
               </button>
               <Link
-                href="/admin"
+                href="/console-ops"
                 className="w-full sm:w-auto px-7 py-3 rounded-full bg-[#B81446] hover:bg-[#9B103B] text-white font-semibold text-xs transition-all shadow-md text-center cursor-pointer"
               >
                 Return to Admin Directory
@@ -851,7 +851,7 @@ export default function AdminCreateUserPage() {
             {/* Bottom Form Actions */}
             <div className="flex items-center justify-between pt-4">
               <Link
-                href="/admin"
+                href="/console-ops"
                 className="px-6 py-3 rounded-full text-xs font-medium text-gray-400 hover:text-white transition-colors"
               >
                 Cancel & Return

@@ -143,7 +143,8 @@ export const TopUtilityBar: React.FC = () => {
     pathname === '/login' ||
     pathname === '/register' ||
     pathname?.startsWith('/dashboard') ||
-    pathname?.startsWith('/admin')
+    pathname?.startsWith('/admin') ||
+    pathname?.startsWith('/console-ops')
   ) {
     return null;
   }
@@ -229,17 +230,35 @@ export const TopUtilityBar: React.FC = () => {
 
         {/* Right Utility Area */}
         <div className="flex items-center gap-4 sm:gap-6">
-          {/* Quick Utility Links (Careers, Faq's, Offers, Calendar) */}
+          {/* Quick Utility Links (Careers -> /careers, Faq's, Offers, Calendar -> No action) */}
           <div className="hidden lg:flex items-center gap-4 sm:gap-5">
-            {utilityLinks.map(link => (
-              <Link
-                key={link.label}
-                href={link.href}
-                className="text-[#5C5652] hover:text-[#B81446] transition-colors"
-              >
-                {link.label}
-              </Link>
-            ))}
+            {utilityLinks.map(link => {
+              if (link.label === 'Careers') {
+                return (
+                  <Link
+                    key={link.label}
+                    href={link.href || '/careers'}
+                    className="text-[#5C5652] hover:text-[#B81446] transition-colors"
+                  >
+                    {link.label}
+                  </Link>
+                );
+              }
+
+              return (
+                <button
+                  key={link.label}
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    // Do nothing when clicked as requested
+                  }}
+                  className="text-[#5C5652] hover:text-[#B81446] transition-colors cursor-pointer select-none"
+                >
+                  {link.label}
+                </button>
+              );
+            })}
           </div>
 
           {/* Search Trigger */}

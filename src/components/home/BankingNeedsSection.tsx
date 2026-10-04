@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { SITE_CONFIG, ASSETS } from '@/core';
@@ -10,6 +10,16 @@ export const BankingNeedsSection: React.FC = () => {
   const { bankingNeedsSection } = SITE_CONFIG;
   const [activeTab, setActiveTab] = useState<'individuals' | 'companies'>('individuals');
   const { ref, isInView } = useInView<HTMLElement>({ threshold: 0.15 });
+
+  // Reload back to home page when card or button is clicked
+  const handleReloadHome = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (typeof window !== 'undefined') {
+      window.location.href = '/';
+      window.location.reload();
+    }
+  }, []);
 
   const cardIconMap = {
     coin: ASSETS.icons.coin,
@@ -137,10 +147,11 @@ export const BankingNeedsSection: React.FC = () => {
             const cardDelays = ['delay-300', 'delay-[450ms]', 'delay-[600ms]'];
 
             return (
-              <Link
+              <button
                 key={item.id}
-                href={item.href}
-                className={`relative bg-black/45 backdrop-blur-md border border-white/15 hover:border-[#B81446]/60 transition-all duration-700 ease-out p-6 sm:p-7 flex flex-col justify-between group rounded-none transform ${
+                type="button"
+                onClick={handleReloadHome}
+                className={`relative w-full text-left bg-black/45 backdrop-blur-md border border-white/15 hover:border-[#B81446]/60 transition-all duration-700 ease-out p-6 sm:p-7 flex flex-col justify-between group rounded-none transform cursor-pointer select-none ${
                   cardDelays[idx]
                 } ${
                   isInView
@@ -163,7 +174,7 @@ export const BankingNeedsSection: React.FC = () => {
                     </div>
 
                     {/* Sharp Arrow Action Button (Highlights in Brand Red on Hover) */}
-                    <div className="w-8 h-8 rounded-none border border-white/30 text-white flex items-center justify-center group-hover:bg-[#B81446] group-hover:border-[#B81446] transition-all duration-200">
+                    <div className="w-8 h-8 rounded-none border border-white/30 text-white flex items-center justify-center group-hover:bg-[#B81446] group-hover:border-[#B81446] transition-all duration-200 pointer-events-none flex-shrink-0">
                       <svg
                         className="w-3.5 h-3.5 transform transition-transform group-hover:translate-x-0.5"
                         viewBox="0 0 24 24"
@@ -207,7 +218,7 @@ export const BankingNeedsSection: React.FC = () => {
                     </p>
                   </div>
                 )}
-              </Link>
+              </button>
             );
           })}
         </div>
@@ -218,12 +229,13 @@ export const BankingNeedsSection: React.FC = () => {
             isInView ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-90 translate-y-6'
           }`}
         >
-          <Link
-            href={bankingNeedsSection.viewAllHref}
-            className="inline-flex items-center justify-center px-8 py-3 rounded-none bg-white hover:bg-[#F7F1EB] text-[#1A1818] font-poppins font-semibold text-xs sm:text-sm tracking-wide shadow-xl transition-all duration-200 transform hover:scale-105 active:scale-95"
+          <button
+            type="button"
+            onClick={handleReloadHome}
+            className="inline-flex items-center justify-center px-8 py-3 rounded-none bg-white hover:bg-[#F7F1EB] text-[#1A1818] font-poppins font-semibold text-xs sm:text-sm tracking-wide shadow-xl transition-all duration-200 transform hover:scale-105 active:scale-95 cursor-pointer select-none"
           >
             <span>{bankingNeedsSection.viewAllText}</span>
-          </Link>
+          </button>
         </div>
       </div>
     </section>

@@ -12,6 +12,7 @@ router = APIRouter(prefix="/api/py/contact", tags=["Contact Concierge"])
 class ContactMessageRequest(BaseModel):
     name: str = Field(..., min_length=2, max_length=150, description="Full name of client or prospect")
     email: EmailStr = Field(..., description="Direct contact email for reply")
+    phone: Optional[str] = Field(None, max_length=50, description="Contact phone number")
     subject: str = Field(..., min_length=2, max_length=200, description="Inquiry category or subject")
     message: str = Field(..., min_length=5, max_length=5000, description="Detailed inquiry message body")
 
@@ -30,11 +31,12 @@ def submit_contact_message(
     user: Optional[Dict[str, Any]] = Depends(get_optional_user),
 ):
     """
-    Submits a secure inquiry to NemiCapital Private Wealth Concierge.
-    Populates database in backend and delivers message to info@nemicapbank.com.
+    Submits a secure inquiry to NemiCapital Support.
+    Populates database in backend and delivers message to support@nemicapital.com.
     """
     cleaned_name = req.name.strip()
     cleaned_email = req.email.strip().lower()
+    cleaned_phone = req.phone.strip() if req.phone else None
     cleaned_subject = req.subject.strip()
     cleaned_message = req.message.strip()
 
@@ -45,7 +47,7 @@ def submit_contact_message(
         )
 
     user_id = user["id"] if user else None
-    delivery_email = "info@nemicapbank.com"
+    delivery_email = "support@nemicapital.com"
 
     try:
         with get_db_cursor() as cur:
@@ -55,17 +57,19 @@ def submit_contact_message(
                     user_id,
                     name,
                     email,
+                    phone,
                     subject,
                     message,
                     status,
                     delivery_recipient
-                ) VALUES (%s, %s, %s, %s, %s, %s, %s)
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
                 RETURNING id, created_at;
                 """,
                 (
                     user_id,
                     cleaned_name,
                     cleaned_email,
+                    cleaned_phone,
                     cleaned_subject,
                     cleaned_message,
                     "delivered",
@@ -75,18 +79,20 @@ def submit_contact_message(
             created_row = cur.fetchone()
             inquiry_id = str(created_row["id"]) if created_row else str(uuid.uuid4())
 
-        # Dispatch luxury notification to info@nemicapbank.com
+        # Dispatch notification to support@nemicapital.com
         EmailService.send_contact_inquiry(
             sender_name=cleaned_name,
             sender_email=cleaned_email,
             subject=cleaned_subject,
             message=cleaned_message,
             inquiry_id=inquiry_id,
+            phone=cleaned_phone,
+            delivery_destination=delivery_email,
         )
 
         return ContactMessageResponse(
             success=True,
-            message=f"Inquiry successfully received. Our Private Wealth Concierge has been alerted at {delivery_email}.",
+            message=f"Inquiry successfully received. Our Support Team has been alerted at {delivery_email}.",
             inquiry_id=inquiry_id,
             status="delivered",
             delivery_destination=delivery_email,

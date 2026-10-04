@@ -2,7 +2,6 @@
 
 import React from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
 import { SITE_CONFIG, ASSETS } from '@/core';
 import { useInView } from './useInView';
 
@@ -58,10 +57,11 @@ export const MoneyProtectionSection: React.FC = () => {
                 const delays = ['delay-300', 'delay-[450ms]', 'delay-[600ms]'];
 
                 return (
-                  <Link
+                  <button
                     key={pillar.number}
-                    href={pillar.href}
-                    className={`group p-3.5 sm:p-4 bg-white border border-[#EDE5DB] border-l-4 border-l-transparent hover:border-l-[#B81446] hover:border-r-[#EDE5DB] hover:border-y-[#EDE5DB] hover:shadow-md shadow-black/[0.02] flex items-start gap-4 rounded-none transition-all duration-300 ease-out transform ${
+                    type="button"
+                    onClick={(e) => e.preventDefault()}
+                    className={`group w-full text-left p-3.5 sm:p-4 bg-white border border-[#EDE5DB] border-l-4 border-l-transparent hover:border-l-[#B81446] hover:border-r-[#EDE5DB] hover:border-y-[#EDE5DB] hover:shadow-md shadow-black/[0.02] flex items-start gap-4 rounded-none transition-all duration-300 ease-out transform cursor-pointer select-none ${
                       delays[idx]
                     } ${
                       isInView
@@ -96,7 +96,7 @@ export const MoneyProtectionSection: React.FC = () => {
                         <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
                       </svg>
                     </div>
-                  </Link>
+                  </button>
                 );
               })}
             </div>
@@ -107,9 +107,10 @@ export const MoneyProtectionSection: React.FC = () => {
                 isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
               }`}
             >
-              <Link
-                href="/security"
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#1A1818] hover:bg-[#B81446] text-white text-xs font-poppins font-semibold uppercase tracking-wider rounded-none transition-colors duration-300 shadow-sm"
+              <button
+                type="button"
+                onClick={(e) => e.preventDefault()}
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#1A1818] hover:bg-[#B81446] text-white text-xs font-poppins font-semibold uppercase tracking-wider rounded-none transition-colors duration-300 shadow-sm cursor-pointer select-none"
               >
                 <span>Visit Security Center</span>
                 <svg
@@ -121,7 +122,7 @@ export const MoneyProtectionSection: React.FC = () => {
                 >
                   <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
                 </svg>
-              </Link>
+              </button>
               <div className="flex items-center gap-2 text-xs text-gray-500 font-roboto">
                 <svg
                   className="w-4 h-4 text-[#B81446] flex-shrink-0"

@@ -64,12 +64,10 @@ export const NAV_ITEMS: readonly NavItem[] = [
   },
   {
     label: 'Apply Now',
-    href: '/apply',
+    href: '/register',
     hasDropdown: true,
     subItems: [
-      { label: 'Open Account', href: '/apply/account' },
-      { label: 'Credit Card', href: '/apply/credit-card' },
-      { label: 'Mortgages', href: '/apply/mortgage' },
+      { label: 'Open an Account', href: '/register' },
     ],
   },
   {

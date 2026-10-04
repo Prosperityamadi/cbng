@@ -2,7 +2,6 @@
 
 import React from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
 import { ASSETS } from '@/core';
 import { useInView } from '@/components/home';
 
@@ -24,7 +23,10 @@ export const MissionVisionSection: React.FC = () => {
           
           {/* COLUMN 1 (Left): Tall Vertical Mission Photo Card */}
           <div
-            className={`lg:col-span-4 h-[360px] sm:h-[420px] lg:h-full min-h-[380px] lg:min-h-[460px] relative overflow-hidden group shadow-sm bg-gray-900 cursor-pointer transition-all duration-900 ease-out ${
+            onClick={() => {
+              if (typeof window !== 'undefined') window.location.reload();
+            }}
+            className={`lg:col-span-4 h-[360px] sm:h-[420px] lg:h-full min-h-[380px] lg:min-h-[460px] relative overflow-hidden group shadow-sm bg-gray-900 cursor-pointer transition-all duration-900 ease-out select-none ${
               isInView ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-14 scale-95'
             }`}
           >
@@ -51,7 +53,10 @@ export const MissionVisionSection: React.FC = () => {
             
             {/* Top: Vision */}
             <div
-              className={`relative h-[200px] sm:h-[220px] lg:h-[220px] overflow-hidden group shadow-sm bg-gray-900 cursor-pointer transition-all duration-700 delay-150 ease-out ${
+              onClick={() => {
+                if (typeof window !== 'undefined') window.location.reload();
+              }}
+              className={`relative h-[200px] sm:h-[220px] lg:h-[220px] overflow-hidden group shadow-sm bg-gray-900 cursor-pointer transition-all duration-700 delay-150 ease-out select-none ${
                 isInView ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 -translate-y-8 scale-95'
               }`}
             >
@@ -75,7 +80,10 @@ export const MissionVisionSection: React.FC = () => {
 
             {/* Bottom: Core Value */}
             <div
-              className={`relative h-[200px] sm:h-[220px] lg:h-[220px] overflow-hidden group shadow-sm bg-gray-900 cursor-pointer transition-all duration-700 delay-300 ease-out ${
+              onClick={() => {
+                if (typeof window !== 'undefined') window.location.reload();
+              }}
+              className={`relative h-[200px] sm:h-[220px] lg:h-[220px] overflow-hidden group shadow-sm bg-gray-900 cursor-pointer transition-all duration-700 delay-300 ease-out select-none ${
                 isInView ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-8 scale-95'
               }`}
             >
@@ -122,14 +130,17 @@ export const MissionVisionSection: React.FC = () => {
                 Obligations of business it will frequently occur that pleasures have to be repudiated and annoyances accepted. The wise man always holds these matters to this principle of selection rejects pleasures to secure other greater pleasures.
               </p>
 
-              {/* Read More Link */}
-              <Link
-                href="/about/who-we-are"
-                className="inline-flex items-center gap-2 text-white font-semibold text-xs sm:text-sm tracking-wide group/link hover:text-white/90 transition-colors"
+              {/* Read More Button */}
+              <button
+                type="button"
+                onClick={() => {
+                  if (typeof window !== 'undefined') window.location.reload();
+                }}
+                className="inline-flex items-center gap-2 text-white font-semibold text-xs sm:text-sm tracking-wide group/link hover:text-white/90 transition-colors cursor-pointer select-none"
               >
                 <span>&rarr;</span>
                 <span className="underline-offset-4 group-hover/link:underline">Read More</span>
-              </Link>
+              </button>
             </div>
 
             {/* Bottom-Right Origami Geometric Pattern (Matching design badge) */}
