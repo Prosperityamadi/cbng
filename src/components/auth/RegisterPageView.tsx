@@ -9,6 +9,7 @@ import { ASSETS } from '@/core';
 import { BrandLogo } from '@/components/navigation/BrandLogo';
 import { Step3KycProfile } from './Step3KycProfile';
 import { Step4SecurityPin } from './Step4SecurityPin';
+import { AuthService } from '@/core/services/auth.service';
 
 export const RegisterPageView: React.FC = () => {
   // Multi-Step UI State:
@@ -133,7 +134,7 @@ export const RegisterPageView: React.FC = () => {
   const isPasswordValid = Object.values(passwordCriteria).every(Boolean);
 
   // Step 1 Submit
-  const handleStep1Submit = (e: React.FormEvent) => {
+  const handleStep1Submit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const newErrors: typeof errors = {};
@@ -177,16 +178,27 @@ export const RegisterPageView: React.FC = () => {
     setErrors({});
     setIsLoading(true);
 
-    setTimeout(() => {
+    try {
+      await AuthService.registerIntent({
+        email,
+        password,
+        phone_number: phone,
+        terms_accepted: termsAccepted,
+        privacy_policy_accepted: termsAccepted
+      });
       setIsLoading(false);
       setOtp('');
       setStep(2);
       setResendTimer(60);
-    }, 350);
+    } catch (err: any) {
+      setIsLoading(false);
+      setErrors({ email: err.message || 'Registration failed' });
+      triggerShake(['email']);
+    }
   };
 
   // Step 2 OTP Submit
-  const handleVerifyOtp = (e?: React.FormEvent) => {
+  const handleVerifyOtp = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     if (otp.length < 6) {
       setOtpError('Please enter all 6 digits of the verification code.');
@@ -198,20 +210,35 @@ export const RegisterPageView: React.FC = () => {
     setOtpError(null);
     setIsVerifying(true);
 
-    setTimeout(() => {
+    try {
+      const response = await AuthService.verifyOtp({ email, otp_code: otp });
+      if (response.onboarding_token) {
+        localStorage.setItem('onboarding_token', response.onboarding_token);
+      }
       setIsVerifying(false);
       setIsVerifiedSuccess(true);
-    }, 350);
+    } catch (err: any) {
+      setIsVerifying(false);
+      setOtpError(err.message || 'Invalid verification code.');
+      setIsOtpShaking(true);
+      setTimeout(() => setIsOtpShaking(false), 450);
+    }
   };
 
-  const handleResendCode = () => {
+  const handleResendCode = async () => {
     if (resendTimer > 0) return;
-    setResendTimer(60);
-    setOtp('');
+    
     setOtpError(null);
-    setTimeout(() => {
-      otpInputRef.current?.focus();
-    }, 50);
+    try {
+      const response = await AuthService.resendOtp({ email });
+      setResendTimer(response.expires_in || 300);
+      setOtp('');
+      setTimeout(() => {
+        otpInputRef.current?.focus();
+      }, 50);
+    } catch (err: any) {
+      setOtpError(err.message || 'Failed to resend code.');
+    }
   };
 
   return (
@@ -823,19 +850,7 @@ export const RegisterPageView: React.FC = () => {
                       )}
                     </button>
 
-                    <div
-                      onClick={() => {
-                        setOtp('849201');
-                        if (otpError) setOtpError(null);
-                        otpInputRef.current?.focus();
-                      }}
-                      className="p-2.5 rounded-xl bg-gray-50 hover:bg-gray-100/80 border border-gray-100 text-center cursor-pointer transition-colors"
-                    >
-                      <p className="text-[11px] text-gray-500">
-                        <span className="font-semibold text-gray-700">Demo Mode:</span> Click to auto-fill{' '}
-                        <span className="font-mono font-bold text-[#B81446]">849201</span> for instant verification.
-                      </p>
-                    </div>
+
                   </form>
                 </>
               )}

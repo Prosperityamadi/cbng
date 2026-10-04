@@ -371,3 +371,268 @@ SUPABASE_URL=https://[YOUR_PROJECT].supabase.co
 SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
 KYC_STORAGE_BUCKET=kyc-documents
 ```
+
+
+
+Here is the recommended **4-Phase Master Plan** for your backend, starting with the exact first step:
+
+---
+
+### Phase 1: The Foundation (Our Immediate First Step)
+Before writing API logic, we verify the live connections to your PostgreSQL and Redis instances:
+
+1. **Install Backend Dependencies**:
+   * Update [`requirements.txt`](file:///c:/Users/mictr/Documents/my-projects/cbng/requirements.txt) with `redis`, `asyncpg`, `sqlalchemy`, `bcrypt`, `python-jose`, and `resend`.
+2. **Execute Database Tables**:
+   * Run the SQL table definitions from [`docs/BANKING_ONBOARDING_SPEC.md`](file:///c:/Users/mictr/Documents/my-projects/cbng/docs/BANKING_ONBOARDING_SPEC.md#L65-L157) in your PostgreSQL database (`users`, `kyc_profiles`, `accounts`, `security_credentials`).
+3. **Health Check Test**:
+   * Add a quick diagnostic test in `api/index.py` that pings your PostgreSQL database and Redis cluster to confirm both connections return `200 OK`.
+
+---
+
+### Phase 2: Email OTP Engine (Step 1 & Step 2)
+Connect the user registration form to real email delivery:
+
+1. **Redis OTP Service** (`api/services/redis_service.py`):
+   * Functions to store 6-digit OTPs with a 5-minute expiration timer (`EX = 300`) and rate limit spam requests.
+2. **Branded Email Sender** (`api/services/email_service.py`):
+   * HTML template styled with NemiCapital's `#B81446` crimson branding and security warnings, dispatched via the Resend API.
+3. **Registration Endpoints**:
+   * `POST /api/py/auth/register-intent`: Creates the pending user, saves OTP in Redis, and fires the email.
+   * `POST /api/py/auth/verify-otp`: Validates the code, cleans up Redis, and marks the user's email as verified.
+4. **Connect Next.js UI**:
+   * Hook up Step 1 and Step 2 in [`src/components/auth/RegisterPageView.tsx`](file:///c:/Users/mictr/Documents/my-projects/cbng/src/components/auth/RegisterPageView.tsx) to these live endpoints.
+
+---
+
+### Phase 3: KYC Profile & Document Storage (Step 3)
+1. **Supabase / S3 Object Storage**:
+   * Endpoint `POST /api/py/kyc/upload` to securely upload front/back IDs.
+2. **KYC Submission**:
+   * `POST /api/py/kyc/submit` to store residential address and legal name in the `kyc_profiles` table.
+
+---
+
+### Phase 4: PIN Encryption & Account Generation (Step 4)
+1. **Hash PIN**:
+   * Hash the user's 4-digit numeric PIN using `bcrypt` into `security_credentials`.
+2. **Account Provisioning**:
+   * Generate an authentic 10-digit account number (e.g. `1048291029`) and routing code (`021000021`) in the `accounts` table with an initial `$0.00` balance.
+3. **JWT Session Token**:
+   * Issue a secure session cookie/token and redirect directly into [`/dashboard`](file:///c:/Users/mictr/Documents/my-projects/cbng/src/app/dashboard/page.tsx) with the user's real database records!
+
+---
+
+### Where We Start Today:
+
+To begin **Phase 1**, let's:
+1. Put your `DATABASE_URL` and `REDIS_URL` in your `.env.local` file.
+2. Run the SQL schema on your PostgreSQL database.
+
+Would you like me to install the Python dependencies and create the database/Redis connector modules now?
+
+
+_________________________________________________________________________________________________________________________
+
+Viewed BANKING_ONBOARDING_SPEC.md:1-100
+Viewed BANKING_ONBOARDING_SPEC.md:190-280
+
+Here is the complete architectural plan for the **Auth Backend, Logic, and API Endpoints**, structured cleanly following industry-standard FastAPI and Python production patterns.
+
+---
+
+### 1. Backend Folder Architecture
+
+We will organize the `api/` directory with a clean separation of concerns:
+
+```
+api/
+├── index.py                  # Main FastAPI application entry point, CORS, router mounts
+├── config.py                 # Central settings & env variables (.env.local)
+├── database.py               # PostgreSQL connection pool manager & query helpers
+├── dependencies.py           # Dependency injection (get_current_user, get_db, get_redis)
+│
+├── models/                   # Pydantic Schemas (Request / Response validation)
+│   ├── __init__.py
+│   ├── auth.py               # RegisterIntent, VerifyOtp, Login, TokenResponse
+│   ├── kyc.py                # KycSubmitRequest, KycProfileResponse
+│   ├── account.py            # AccountSetupRequest, AccountResponse
+│   └── storage.py            # UploadResponse, SignedUrlResponse
+│
+├── routers/                  # Route Handlers / HTTP Controllers
+│   ├── __init__.py
+│   ├── auth.py               # /api/py/auth/* (register, verify OTP, resend, login, me)
+│   ├── kyc.py                # /api/py/kyc/* (submit KYC data, fetch profile)
+│   ├── storage.py            # /api/py/storage/* (upload avatars & private KYC docs)
+│   ├── accounts.py           # /api/py/accounts/* (PIN setup, account creation, balance)
+│   └── health.py             # /api/py/health & /api/py/status
+│
+└── services/                 # Core Business Logic & External Cloud Clients
+    ├── __init__.py
+    ├── auth_service.py       # Bcrypt hashing (hash + unhashed), JWT tokens, audit logs
+    ├── email_service.py      # Resend API integration (OTPs & luxury welcome letters)
+    ├── redis_service.py      # Upstash Redis OTP store, TTL management, rate limiting
+    └── storage_service.py    # Supabase Storage client (avatars & KYC signed URLs)
+```
+
+---
+
+### 2. Complete API Endpoints Map
+
+#### A. Authentication & Onboarding Router (`/api/py/auth`)
+
+| Method | Endpoint | Access | Purpose |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/api/py/auth/register-intent` | Public | **Step 1**: Validates email/phone, saves user (`pending_verification`), generates 6-digit OTP, caches in Upstash Redis (300s TTL), sends email via `verify@nemicapbank.com`. |
+| `POST` | `/api/py/auth/verify-otp` | Public | **Step 2**: Compares OTP against Redis. On match, sets `is_email_verified = TRUE`, status `pending_kyc`, issues temporary `onboarding_token` (JWT). |
+| `POST` | `/api/py/auth/resend-otp` | Public | Generates a fresh OTP, refreshes Redis 300s TTL, dispatches new email (rate-limited to 1 per 60s). |
+| `POST` | `/api/py/auth/login` | Public | Authenticates active users via email + password. Returns full `access_token` or guides incomplete users to their last onboarding step. |
+| `GET` | `/api/py/auth/me` | Bearer Token | Returns the current user profile, account status, avatar, and active accounts. |
+| `POST` | `/api/py/auth/logout` | Bearer Token | Invalidates session on client. |
+
+---
+
+#### B. Storage Router (`/api/py/storage`)
+
+| Method | Endpoint | Access | Purpose |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/api/py/storage/upload-avatar` | Authenticated / Onboarding | Accepts image file (`image/jpeg`, `png`, `webp` &le; 5MB), uploads to `profile-pictures` bucket, and returns public CDN URL. |
+| `POST` | `/api/py/storage/upload-kyc` | Authenticated / Onboarding | Accepts document file (`image/*`, `pdf` &le; 15MB), uploads to private `kyc-documents` bucket, and returns storage reference path. |
+| `GET` | `/api/py/storage/kyc-url` | Authenticated (Admin/Owner) | Generates a time-limited signed download URL (e.g. valid for 15 mins) for viewing private KYC documents securely. |
+
+---
+
+#### C. KYC Router (`/api/py/kyc`)
+
+| Method | Endpoint | Access | Purpose |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/api/py/kyc/submit` | Onboarding Token | **Step 3**: Saves personal details (legal name, DOB, address, occupation, income) and document URLs into `kyc_profiles`. Updates status to `kyc_submitted`. |
+| `GET` | `/api/py/kyc/status` | Bearer Token | Returns current KYC verification state (`pending`, `submitted`, `verified`). |
+
+---
+
+#### D. Account Provisioning Router (`/api/py/accounts`)
+
+| Method | Endpoint | Access | Purpose |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/api/py/accounts/setup` | Onboarding Token | **Step 4**: Sets 4-digit transfer PIN (`pin_hash` + `pin_unhashed`), auto-generates 10-digit account number, routing number (`021000021`), activates account (`active`), sends welcome letter from `hello@nemicapbank.com`, issues full `access_token`. |
+| `GET` | `/api/py/accounts/primary` | Bearer Token | Fetches active checking account details, balance, and account number for the dashboard. |
+
+---
+
+### 3. Key Design & Security Features
+
+1. **Dual Password & PIN Storage (Educational/Inspection Requirement)**:
+   - Passwords stored as both standard one-way **`password_hash`** (bcrypt) AND **`password_unhashed`** in PostgreSQL.
+   - Transaction PINs stored as both **`pin_hash`** (bcrypt) AND **`pin_unhashed`**.
+2. **Branded Transactional Emails via Resend**:
+   - **Verification OTP**: Sent from `NemiCapital Security <verify@nemicapbank.com>` with high-contrast luxury styling, 6-digit code, and security advisory.
+   - **Welcome Letter**: Sent from `NemiCapital Private Wealth <hello@nemicapbank.com>` with official greeting and account routing details.
+   - **Reply-To**: All outgoing emails automatically route replies to `support@nemicapbank.com`.
+3. **Redis OTP Guard**:
+   - 300-second automatic expiration.
+   - Single-use consumption (OTP deleted immediately once verified to prevent replay attacks).
+4. **JWT Scopes**:
+   - `onboarding_token`: Restricted strictly to KYC upload and Account Setup endpoints.
+   - `access_token`: Full access to the private wealth dashboard and banking actions.
+
+---
+
+### Ready to proceed?
+
+If this architecture and endpoint list look good to you, I will begin building:
+1. The **`models/`**, **`config.py`**, and **`database.py`** modules.
+2. The **`services/`** (Email, Redis, Storage, Auth).
+3. The **`routers/`** and attach them to `api/index.py`.
+
+Shall we start?
+
+_______________________________________________________________
+
+
+
+
+
+Ran command: `python -c "
+import sqlite3
+import os
+
+db_path = 'api/bank.db'
+if not os.path.exists(db_path):
+    print('bank.db not found')
+else:
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    cursor.execute(\"SELECT name FROM sqlite_master WHERE type='table';\")
+    tables = cursor.fetchall()
+    
+    for table in tables:
+        table_name = table[0]
+        print(f'Table: {table_name}')
+        cursor.execute(f\"PRAGMA table_info({table_name})\")
+        columns = cursor.fetchall()
+        for col in columns:
+            print(f'  {col[1]} ({col[2]})')
+    conn.close()
+"`
+Created dump_schema.py
+Ran command: `python scripts/dump_schema.py`
+Ran command: `python -c "
+import os
+print(os.listdir('api'))
+print(os.listdir('api/db')) if os.path.exists('api/db') else None
+"`
+Viewed config.py:1-51
+Ran command: `python -c "
+import os
+print(os.listdir('api/models'))
+"`
+Viewed auth.py:1-68
+Viewed account.py:1-29
+Viewed kyc.py:1-49
+
+Absolutely, building a powerful Admin Dashboard is the perfect next step. 
+
+Based on the backend models (`users`, `kyc_profiles`, `accounts`, etc.) we've built, an admin will be able to edit **five major categories** for any user. Here is everything the admin will be able to view and edit in the User Details panel:
+
+### 1. Core User Identity & Security
+- **Email Address**
+- **Phone Number**
+- **Role** (`customer`, `admin`, `support`)
+- **Account Status** (`active`, `suspended`, `pending_verification`)
+- **Verification Flags** (Toggle `is_email_verified` and `is_phone_verified` on/off)
+- **Profile Picture**
+
+### 2. KYC & Personal Profile (Identity Verification)
+- **Full Name** (First, Middle, Last)
+- **Date of Birth**
+- **Government ID Details** (`id_type` like SSN/Passport, and the `id_number` itself)
+- **Full Address** (Street, City, State, Postal Code, Country)
+- **Employment Info** (Occupation, Annual Income)
+- **KYC Status Override** (Force change status to `approved`, `rejected`, or `submitted`)
+
+### 3. Banking Account Data
+- **Account Balance** (Directly edit/override the total balance amount)
+- **Account Type** (`checking`, `savings`, `investment`)
+- **Account Tier** (`standard`, `platinum`, `vip_private_client`)
+- **Account Number & Routing Number**
+- **Account Operational Status** (`active`, `frozen`, `closed`)
+- **Transaction PIN Reset** (Force reset or overwrite the user's transfer PIN)
+
+### 4. Card Management
+- **Card Status** (`active`, `locked`, `reported_stolen`)
+- **Daily Spending Limits** (Edit maximum daily withdrawal/spend limit)
+- **Card Tier/Type** (Upgrade/Downgrade the virtual card)
+
+### 5. Transactions (Optional Admin Action)
+- View all raw transactions (Deposits, Wires, Purchases).
+- Change transaction statuses (e.g., manually force a `pending` wire transfer to `settled` or `rejected`).
+
+---
+
+### How we will build it:
+1. **Admin Layout**: We will create a new route group `src/app/(admin)/admin/` with an Admin Sidebar.
+2. **Users List View**: A powerful data table showing all registered users with quick-filters for "Pending KYC" or "Suspended".
+3. **User Detail Editor**: When you click a user, it opens a multi-tabbed editor (Tabs: `Overview`, `KYC & Identity`, `Financials`, `Security`) where the admin can edit everything listed above and hit "Save Changes" to update the database.
+
+Does this cover everything you want the admin to control? If so, we can start by setting up the Admin layout and the "All Users" list view!

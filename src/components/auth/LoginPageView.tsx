@@ -107,19 +107,31 @@ export const LoginPageView: React.FC = () => {
         body: JSON.stringify({ email, password }),
       });
 
+      const data = await res.json();
+
       if (res.ok) {
-        window.location.href = '/';
+        if (data.access_token) {
+          localStorage.setItem('access_token', data.access_token);
+        } else if (data.onboarding_token) {
+          localStorage.setItem('onboarding_token', data.onboarding_token);
+        }
+
+        if (data.next_step === 'dashboard' || data.status === 'active') {
+          window.location.href = '/dashboard';
+        } else {
+          // Send to register to continue onboarding
+          window.location.href = '/register';
+        }
       } else {
-        setTimeout(() => {
-          setIsLoading(false);
-          alert('Login credentials submitted! Connecting to NemiCapital secure dashboard...');
-        }, 600);
+        setIsLoading(false);
+        const errorMessage = data.detail 
+          ? (Array.isArray(data.detail) ? data.detail[0]?.msg : data.detail) 
+          : data.message;
+        alert(errorMessage || 'Login failed. Please check your credentials.');
       }
     } catch {
-      setTimeout(() => {
-        setIsLoading(false);
-        alert('Welcome back to NemiCapital Bank! Demo mode activated.');
-      }, 500);
+      setIsLoading(false);
+      alert('An unexpected error occurred. Please try again later.');
     }
   };
 

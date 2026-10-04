@@ -104,6 +104,9 @@ import UptrendIcon from '@/assets/icons/uptrend.png';
 import DowntrendIcon from '@/assets/icons/downtrend.png';
 import HomeIcon from '@/assets/icons/home.png';
 import MailIcon from '@/assets/icons/mail.png';
+import CheckingAccountImg from '@/assets/icons/checking-account.png';
+import SavingsAccountImg from '@/assets/icons/savings-account.png';
+import MoneyTransferIcon from '@/assets/icons/money-transfer.png';
 
 /**
  * Core Assets Reference
@@ -222,6 +225,9 @@ export const ASSETS = {
     consistency: ConsistencyIcon,
     home: HomeIcon,
     mail: MailIcon,
+    checkingAccount: CheckingAccountImg,
+    savingsAccount: SavingsAccountImg,
+    moneyTransfer: MoneyTransferIcon,
     check: '/icons/custom-check.svg',
   }
 } as const;

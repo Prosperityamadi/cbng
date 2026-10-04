@@ -3,11 +3,14 @@
 import React, { useState, useRef } from 'react';
 import Image from 'next/image';
 import { ASSETS } from '@/core';
+import { KycService } from '@/core/services/kyc.service';
+import { StorageService } from '@/core/services/storage.service';
 
 interface UploadedDoc {
   name: string;
   size: string;
   previewUrl?: string;
+  rawFile?: File;
 }
 
 interface Step3KycProfileProps {
@@ -89,6 +92,7 @@ export const Step3KycProfile: React.FC<Step3KycProfileProps> = ({
       name: file.name,
       size: formattedSize,
       previewUrl: file.type.startsWith('image/') ? URL.createObjectURL(file) : undefined,
+      rawFile: file,
     };
 
     if (side === 'front') {
@@ -99,31 +103,7 @@ export const Step3KycProfile: React.FC<Step3KycProfileProps> = ({
     }
   };
 
-  const handleAutoFill = () => {
-    setFirstName('Sarah');
-    setLastName('Jenkins');
-    setMiddleName('Marie');
-    setDob('1994-06-15');
-    setIdType('passport');
-    setIdNumber('P84920194A');
-    setStreetAddress('742 Evergreen Terrace');
-    setCity('New York');
-    setStateRegion('NY');
-    setPostalCode('10001');
-    setOccupation('Executive Director');
-    setAnnualIncome('$100,000 - $250,000');
-    setIdFrontDoc({
-      name: 'passport_front_scan.jpg',
-      size: '2.4 MB',
-    });
-    setIdBackDoc({
-      name: 'passport_back_scan.jpg',
-      size: '1.8 MB',
-    });
-    setKycErrors({});
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const newErrors: Record<string, string> = {};
@@ -179,7 +159,38 @@ export const Step3KycProfile: React.FC<Step3KycProfileProps> = ({
     setKycErrors({});
     setIsSubmitting(true);
 
-    setTimeout(() => {
+    try {
+      let idFrontUrl = '';
+      if (idFrontDoc?.rawFile) {
+        const uploadRes = await StorageService.uploadKyc(idFrontDoc.rawFile, 'id_front');
+        idFrontUrl = uploadRes.url;
+      }
+
+      let idBackUrl = '';
+      if (idBackDoc?.rawFile) {
+        const uploadRes = await StorageService.uploadKyc(idBackDoc.rawFile, 'id_back');
+        idBackUrl = uploadRes.url;
+      }
+
+      await KycService.submitKyc({
+        first_name: firstName.trim(),
+        last_name: lastName.trim(),
+        middle_name: middleName.trim() || undefined,
+        date_of_birth: dob,
+        street_address: streetAddress.trim(),
+        city: city.trim(),
+        state: stateRegion.trim(),
+        postal_code: postalCode.trim(),
+        country,
+        occupation: occupation.trim(),
+        annual_income: annualIncome,
+        id_type: idType,
+        id_number: idNumber.trim(),
+        profile_picture_url: '',
+        id_front_image_url: idFrontUrl,
+        id_back_image_url: idBackUrl,
+        proof_of_address_url: ''
+      });
       setIsSubmitting(false);
       onSuccess({
         firstName: firstName.trim(),
@@ -198,7 +209,12 @@ export const Step3KycProfile: React.FC<Step3KycProfileProps> = ({
         idFrontDoc: idFrontDoc!,
         idBackDoc,
       });
-    }, 400);
+    } catch (err: any) {
+      setIsSubmitting(false);
+      setKycErrors({ apiError: err.message || 'Failed to submit KYC.' });
+      // Trigger a shake for the first visual field to indicate an error state if needed
+      triggerShake(['firstName']);
+    }
   };
 
   return (
@@ -218,17 +234,7 @@ export const Step3KycProfile: React.FC<Step3KycProfileProps> = ({
         </div>
       </div>
 
-      {/* Demo Auto-Fill Banner for Fast Testing */}
-      <div
-        onClick={handleAutoFill}
-        className="p-2 bg-emerald-50/80 hover:bg-emerald-100/80 border border-emerald-200/70 rounded-xl text-center cursor-pointer transition-all flex items-center justify-center gap-1.5 text-[11px] text-emerald-800 select-none"
-      >
-        <svg className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-        </svg>
-        <span className="font-semibold">Demo Auto-Fill:</span>
-        <span>Click here to fill valid KYC details & test documents</span>
-      </div>
+
 
       <form onSubmit={handleSubmit} noValidate className="space-y-2.5">
         {/* Section A: Legal Names & DOB */}

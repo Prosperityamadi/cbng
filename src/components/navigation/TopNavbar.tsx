@@ -71,7 +71,12 @@ export const TopNavbar: React.FC = () => {
     setStickyMobileExpanded(prev => (prev === label ? null : label));
   };
 
-  if (pathname === '/login' || pathname === '/register' || pathname?.startsWith('/dashboard')) {
+  if (
+    pathname === '/login' ||
+    pathname === '/register' ||
+    pathname?.startsWith('/dashboard') ||
+    pathname?.startsWith('/admin')
+  ) {
     return null;
   }
 

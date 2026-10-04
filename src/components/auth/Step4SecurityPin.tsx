@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { ASSETS } from '@/core';
+import { AccountService } from '@/core/services/account.service';
 
 interface Step4SecurityPinProps {
   userFullName: string;
@@ -21,6 +22,8 @@ export const Step4SecurityPin: React.FC<Step4SecurityPinProps> = ({
   // Sub-step: 'enter_pin' -> 'confirm_pin' -> 'account_created'
   const [subStep, setSubStep] = useState<'enter_pin' | 'confirm_pin' | 'account_created'>('enter_pin');
 
+  const [accountType, setAccountType] = useState<'checking' | 'savings' | null>(null);
+  const [accountDetails, setAccountDetails] = useState<any>(null);
   const [pin, setPin] = useState('');
   const [confirmPin, setConfirmPin] = useState('');
   const [isPinFocused, setIsPinFocused] = useState(false);
@@ -52,6 +55,14 @@ export const Step4SecurityPin: React.FC<Step4SecurityPinProps> = ({
   // Handle Enter PIN submit -> advances to separate confirm PIN screen
   const handleProceedToConfirm = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
+    
+    if (!accountType) {
+      setPinError('Please select an account type (Checking or Savings).');
+      setIsPinShaking(true);
+      setTimeout(() => setIsPinShaking(false), 450);
+      return;
+    }
+
     if (pin.length !== 4) {
       setPinError('Please enter all 4 digits for your transfer PIN.');
       setIsPinShaking(true);
@@ -65,7 +76,7 @@ export const Step4SecurityPin: React.FC<Step4SecurityPinProps> = ({
   };
 
   // Handle Confirm PIN submit -> validates match and activates account
-  const handleFinalSubmit = (e?: React.FormEvent) => {
+  const handleFinalSubmit = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
 
     if (confirmPin.length !== 4) {
@@ -89,24 +100,36 @@ export const Step4SecurityPin: React.FC<Step4SecurityPinProps> = ({
     setPinError(null);
     setIsCreatingAccount(true);
 
-    const generatedAcc = '1048291029';
-    const finalName = userFullName.trim() || 'Sarah Jenkins';
+    try {
+      const res = await AccountService.setupAccount({
+        account_type: accountType as string,
+        transaction_pin: confirmPin
+      });
+      
+      const generatedAcc = res.account.account_number;
+      const finalName = userFullName.trim() || 'Sarah Jenkins';
 
-    setTimeout(() => {
       if (typeof window !== 'undefined') {
         sessionStorage.setItem(
           'nemicapital_account',
           JSON.stringify({
             account_number: generatedAcc,
-            routing_number: '021000021',
-            balance: 0.0,
+            routing_number: res.account.routing_number,
+            balance: res.account.balance,
+            account_type: res.account.account_type
           })
         );
         sessionStorage.setItem('nemicapital_user_name', finalName);
+        localStorage.setItem('access_token', res.access_token);
+        localStorage.removeItem('onboarding_token'); // Clean up
       }
+      setAccountDetails(res.account);
       setIsCreatingAccount(false);
       setSubStep('account_created');
-    }, 450);
+    } catch (err: any) {
+      setIsCreatingAccount(false);
+      setPinError(err.message || 'Failed to setup account.');
+    }
   };
 
   const handleCopy = (text: string, field: 'acc' | 'rout') => {
@@ -152,6 +175,74 @@ export const Step4SecurityPin: React.FC<Step4SecurityPinProps> = ({
         </div>
 
         <form onSubmit={handleProceedToConfirm} noValidate className="space-y-4 pt-1">
+          {/* Account Type Selection */}
+          <div className="mb-6">
+            <label className="block text-xs font-semibold text-gray-700 text-center mb-3">
+              Select Account Type
+            </label>
+            <div className="grid grid-cols-2 gap-3 max-w-[320px] mx-auto">
+              {/* Checking Account Card */}
+              <button
+                type="button"
+                onClick={() => setAccountType('checking')}
+                className={`relative flex flex-col items-center justify-center p-4 rounded-2xl border-2 transition-all duration-300 ${
+                  accountType === 'checking'
+                    ? 'border-[#B81446] bg-[#B81446]/5 shadow-[0_4px_16px_rgba(184,20,70,0.12)] scale-[1.02]'
+                    : 'border-gray-100 bg-white hover:border-gray-200 hover:bg-gray-50'
+                }`}
+              >
+                {accountType === 'checking' && (
+                  <div className="absolute top-2.5 right-2.5 w-4 h-4 bg-[#B81446] rounded-full flex items-center justify-center animate-scaleUp">
+                    <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                )}
+                <Image
+                  src={ASSETS.icons.checkingAccount}
+                  alt="Checking Account"
+                  width={42}
+                  height={42}
+                  className={`object-contain mb-2 transition-transform duration-300 ${accountType === 'checking' ? 'scale-110 drop-shadow-md' : 'grayscale opacity-70'}`}
+                />
+                <span className={`font-poppins font-bold text-sm ${accountType === 'checking' ? 'text-[#B81446]' : 'text-gray-600'}`}>
+                  Checking
+                </span>
+                <span className="text-[10px] text-gray-500 mt-0.5 font-medium">Everyday Use</span>
+              </button>
+
+              {/* Savings Account Card */}
+              <button
+                type="button"
+                onClick={() => setAccountType('savings')}
+                className={`relative flex flex-col items-center justify-center p-4 rounded-2xl border-2 transition-all duration-300 ${
+                  accountType === 'savings'
+                    ? 'border-[#B81446] bg-[#B81446]/5 shadow-[0_4px_16px_rgba(184,20,70,0.12)] scale-[1.02]'
+                    : 'border-gray-100 bg-white hover:border-gray-200 hover:bg-gray-50'
+                }`}
+              >
+                {accountType === 'savings' && (
+                  <div className="absolute top-2.5 right-2.5 w-4 h-4 bg-[#B81446] rounded-full flex items-center justify-center animate-scaleUp">
+                    <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                )}
+                <Image
+                  src={ASSETS.icons.savingsAccount}
+                  alt="Savings Account"
+                  width={42}
+                  height={42}
+                  className={`object-contain mb-2 transition-transform duration-300 ${accountType === 'savings' ? 'scale-110 drop-shadow-md' : 'grayscale opacity-70'}`}
+                />
+                <span className={`font-poppins font-bold text-sm ${accountType === 'savings' ? 'text-[#B81446]' : 'text-gray-600'}`}>
+                  Savings
+                </span>
+                <span className="text-[10px] text-gray-500 mt-0.5 font-medium">4.85% APY</span>
+              </button>
+            </div>
+          </div>
+
           {/* 4-Digit Numeric Input (Strict Sequential) */}
           <div>
             <label className="block text-xs font-semibold text-gray-700 text-center mb-2">
@@ -520,13 +611,13 @@ export const Step4SecurityPin: React.FC<Step4SecurityPinProps> = ({
               Account Number
             </span>
             <span className="font-mono text-base sm:text-lg font-bold tracking-[0.22em] text-white">
-              1048 2910 29
+              {accountDetails?.account_number?.match(/.{1,4}/g)?.join(' ') || '1048 2910 29'}
             </span>
           </div>
 
           <button
             type="button"
-            onClick={() => handleCopy('1048291029', 'acc')}
+            onClick={() => handleCopy(accountDetails?.account_number || '1048291029', 'acc')}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 active:bg-white/25 text-white text-[11px] font-semibold transition-all cursor-pointer shadow-xs"
           >
             {copiedField === 'acc' ? (
@@ -565,10 +656,10 @@ export const Step4SecurityPin: React.FC<Step4SecurityPinProps> = ({
               Routing (ABA)
             </span>
             <div className="flex items-center gap-1.5">
-              <span className="font-mono text-white text-[11px] font-semibold">021000021</span>
+              <span className="font-mono text-white text-[11px] font-semibold">{accountDetails?.routing_number || '021000021'}</span>
               <button
                 type="button"
-                onClick={() => handleCopy('021000021', 'rout')}
+                onClick={() => handleCopy(accountDetails?.routing_number || '021000021', 'rout')}
                 className="text-gray-400 hover:text-white transition-colors cursor-pointer text-[10px]"
                 aria-label="Copy routing number"
               >
