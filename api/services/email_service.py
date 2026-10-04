@@ -25,73 +25,49 @@ class EmailService:
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{subject}</title>
 </head>
-<body style="margin: 0; padding: 0; background-color: #0F0E0E; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #FFFFFF;">
-  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #0F0E0E; width: 100%; height: 100%;">
+<body style="margin: 0; padding: 0; background-color: #F9FAFB; font-family: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #111827;">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #F9FAFB; width: 100%; height: 100%; padding: 40px 20px;">
     <tr>
-      <td align="center" style="padding: 40px 20px;">
-        <table role="presentation" width="600" cellspacing="0" cellpadding="0" border="0" style="max-width: 600px; width: 100%; background-color: #1A1818; border: 1px solid rgba(255, 255, 255, 0.08); border-top: 4px solid #B81446; border-radius: 8px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.5);">
+      <td align="center">
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="max-width: 500px; background-color: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);">
           
-          <!-- Header -->
+          <!-- Header with Logo -->
           <tr>
-            <td style="padding: 36px 40px 24px 40px; text-align: left; border-bottom: 1px solid rgba(255, 255, 255, 0.06);">
-              <div style="font-size: 11px; font-weight: 700; letter-spacing: 0.2em; color: #B81446; text-transform: uppercase; margin-bottom: 6px;">
-                SECURITY DESK VERIFICATION
-              </div>
-              <div style="font-size: 22px; font-weight: 800; letter-spacing: -0.02em; color: #FFFFFF;">
-                NemiCapital <span style="font-weight: 300; color: #999999;">International Bank</span>
-              </div>
+            <td align="center" style="padding: 40px 40px 20px 40px;">
+              <img src="https://cbng-ten.vercel.app/logo192.png" alt="NemiCapital Logo" width="64" height="64" style="display: block; margin-bottom: 16px; border-radius: 12px;">
+              <h1 style="margin: 0; font-size: 24px; font-weight: 700; color: #111827; letter-spacing: -0.025em;">Verify your email</h1>
             </td>
           </tr>
 
           <!-- Body Content -->
           <tr>
-            <td style="padding: 36px 40px;">
-              <p style="font-size: 15px; line-height: 1.6; color: #E5E5E5; margin: 0 0 24px 0;">
-                Dear Client,
-              </p>
-              <p style="font-size: 14px; line-height: 1.7; color: #A0A0A0; margin: 0 0 32px 0;">
-                You are establishing access to NemiCapital Private Wealth services. To verify your email address and authorize your digital banking application, enter the one-time authentication code below:
+            <td style="padding: 0 40px 30px 40px; text-align: center;">
+              <p style="margin: 0 0 24px 0; font-size: 15px; line-height: 1.6; color: #4B5563;">
+                Enter the following code to authorize your NemiCapital digital banking access.
               </p>
 
-              <!-- OTP Code Display Box -->
-              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin-bottom: 32px;">
-                <tr>
-                  <td align="center" style="background-color: #121111; border: 1px solid #332F2F; border-radius: 6px; padding: 24px;">
-                    <div style="font-size: 11px; font-weight: 600; letter-spacing: 0.15em; color: #888888; text-transform: uppercase; margin-bottom: 10px;">
-                      ONE-TIME PASSCODE
-                    </div>
-                    <div style="font-family: 'Courier New', Courier, monospace; font-size: 40px; font-weight: 800; letter-spacing: 0.25em; color: #FFFFFF; text-shadow: 0 0 12px rgba(184, 20, 70, 0.4);">
-                      {otp_code}
-                    </div>
-                    <div style="font-size: 12px; color: #B81446; margin-top: 10px; font-weight: 600;">
-                      Valid for 5 minutes
-                    </div>
-                  </td>
-                </tr>
-              </table>
-
-              <!-- Security Advisory -->
-              <div style="background-color: rgba(184, 20, 70, 0.08); border-left: 3px solid #B81446; padding: 16px 20px; border-radius: 4px; margin-bottom: 28px;">
-                <div style="font-size: 12px; font-weight: 700; color: #FFFFFF; margin-bottom: 4px;">
-                  Security Advisory
-                </div>
-                <div style="font-size: 12px; line-height: 1.6; color: #B3B3B3;">
-                  NemiCapital advisors will never call, message, or email you asking for this code. Do not disclose this passcode to any third party.
+              <!-- OTP Code Box -->
+              <div style="background-color: #F3F4F6; border-radius: 8px; padding: 24px; margin-bottom: 24px;">
+                <div style="font-family: 'Courier New', Courier, monospace; font-size: 42px; font-weight: 700; letter-spacing: 0.25em; color: #111827;">
+                  {otp_code}
                 </div>
               </div>
 
-              <p style="font-size: 13px; line-height: 1.6; color: #777777; margin: 0;">
-                If you did not initiate this registration, please contact our Global Fraud Desk immediately at <a href="mailto:support@nemicapbank.com" style="color: #B81446; text-decoration: none;">support@nemicapbank.com</a>.
+              <p style="margin: 0 0 8px 0; font-size: 13px; color: #6B7280;">
+                This code expires in <strong>5 minutes</strong>.
+              </p>
+              <p style="margin: 0; font-size: 13px; color: #9CA3AF;">
+                If you didn't request this, please ignore this email.
               </p>
             </td>
           </tr>
-
+          
           <!-- Footer -->
           <tr>
-            <td style="padding: 24px 40px; background-color: #141313; border-top: 1px solid rgba(255, 255, 255, 0.06); text-align: center;">
-              <p style="font-size: 11px; line-height: 1.6; color: #555555; margin: 0;">
-                © 2026 NemiCapital International Bank. Member FDIC. Equal Housing Lender.<br>
-                One Financial Plaza, New York, NY 10005 | Zurich | London | Singapore
+            <td style="padding: 24px 40px; background-color: #F9FAFB; border-top: 1px solid #E5E7EB; text-align: center;">
+              <p style="margin: 0; font-size: 12px; line-height: 1.5; color: #9CA3AF;">
+                © 2026 NemiCapital International Bank.<br>
+                Member FDIC. Equal Housing Lender.
               </p>
             </td>
           </tr>
