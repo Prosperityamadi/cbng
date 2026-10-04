@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { PhoneInput } from 'react-international-phone';
 import 'react-international-phone/style.css';
 import { ASSETS } from '@/core';
@@ -12,6 +13,8 @@ import { Step4SecurityPin } from './Step4SecurityPin';
 import { AuthService } from '@/core/services/auth.service';
 
 export const RegisterPageView: React.FC = () => {
+  const router = useRouter();
+
   // Multi-Step UI State:
   // 1 = Account Credentials, 2 = Verify Email OTP, 3 = KYC Profile, 4 = Security PIN & Provisioning
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
@@ -75,6 +78,38 @@ export const RegisterPageView: React.FC = () => {
       });
     }, 450);
   };
+
+  // Resume state on page load
+  useEffect(() => {
+    const resumeOnboarding = async () => {
+      const accessToken = localStorage.getItem('access_token');
+      if (accessToken) {
+        router.push('/dashboard');
+        return;
+      }
+      
+      const onboardingToken = localStorage.getItem('onboarding_token');
+      if (onboardingToken) {
+        try {
+          const res = await AuthService.getMe();
+          if (res.user.status === 'active') {
+            router.push('/dashboard');
+            return;
+          }
+          
+          if (res.kyc) {
+            setStep(4);
+            setUserFullName(`${res.kyc.first_name} ${res.kyc.last_name}`);
+          } else if (res.user.is_email_verified) {
+            setStep(3);
+          }
+        } catch (e) {
+          localStorage.removeItem('onboarding_token');
+        }
+      }
+    };
+    resumeOnboarding();
+  }, [router]);
 
   // Countdown timer for OTP resend (Step 2)
   useEffect(() => {
