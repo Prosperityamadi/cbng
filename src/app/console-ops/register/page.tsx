@@ -43,7 +43,7 @@ export default function AdminRegisterPage() {
       });
 
       // Store admin token & profile
-      localStorage.setItem('access_token', res.access_token);
+      localStorage.setItem('admin_access_token', res.access_token);
       localStorage.setItem('admin_role', res.role);
       localStorage.setItem('admin_email', res.email);
 

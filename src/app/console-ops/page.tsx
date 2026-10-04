@@ -62,6 +62,11 @@ export default function AdminDashboardPage() {
   useEffect(() => {
     // Check if admin token is stored
     if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('admin_access_token');
+      if (!token) {
+        router.push('/console-ops/login');
+        return;
+      }
       const email = localStorage.getItem('admin_email');
       setAdminEmail(email || 'Chief Operations Officer');
     }
@@ -79,8 +84,11 @@ export default function AdminDashboardPage() {
 
       if (statsData) setStats(statsData);
       if (clientsData && clientsData.clients) setClients(clientsData.clients);
-    } catch (e) {
+    } catch (e: any) {
       console.error('Failed to load admin dashboard data', e);
+      if (e.message && (e.message.toLowerCase().includes('unauthorized') || e.message.toLowerCase().includes('token') || e.message.toLowerCase().includes('credential'))) {
+        router.push('/console-ops/login');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -283,7 +291,7 @@ export default function AdminDashboardPage() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('access_token');
+    localStorage.removeItem('admin_access_token');
     localStorage.removeItem('admin_role');
     localStorage.removeItem('admin_email');
     router.push('/console-ops/login');

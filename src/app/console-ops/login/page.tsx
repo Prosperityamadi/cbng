@@ -26,7 +26,7 @@ export default function AdminLoginPage() {
       });
 
       // Save tokens
-      localStorage.setItem('access_token', res.access_token);
+      localStorage.setItem('admin_access_token', res.access_token);
       localStorage.setItem('admin_role', res.role);
       localStorage.setItem('admin_email', res.email);
 

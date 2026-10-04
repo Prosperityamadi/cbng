@@ -1,15 +1,21 @@
 export const BASE_URL = '/api/py';
 
 export class ApiClient {
-  private static getHeaders(): Record<string, string> {
+  private static getHeaders(endpoint: string): Record<string, string> {
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
     };
 
     if (typeof window !== 'undefined') {
-      const accessToken = localStorage.getItem('access_token');
-      const onboardingToken = localStorage.getItem('onboarding_token');
-      const token = accessToken || onboardingToken;
+      const isAdminRoute = endpoint.startsWith('/admin/');
+      
+      let token = null;
+      if (isAdminRoute) {
+        token = localStorage.getItem('admin_access_token');
+      } else {
+        token = localStorage.getItem('access_token') || localStorage.getItem('onboarding_token');
+      }
+      
       if (token) {
         headers['Authorization'] = `Bearer ${token}`;
       }
@@ -36,9 +42,10 @@ export class ApiClient {
     return response.json();
   }
 
-  private static async tryRefreshToken(): Promise<string | null> {
+  private static async tryRefreshToken(endpoint: string): Promise<string | null> {
     if (typeof window === 'undefined') return null;
-    const token = localStorage.getItem('access_token') || localStorage.getItem('onboarding_token');
+    const isAdminRoute = endpoint.startsWith('/admin/');
+    const token = isAdminRoute ? localStorage.getItem('admin_access_token') : (localStorage.getItem('access_token') || localStorage.getItem('onboarding_token'));
     if (!token) return null;
 
     try {
@@ -49,7 +56,11 @@ export class ApiClient {
       if (res.ok) {
         const data = await res.json();
         if (data.access_token) {
-          localStorage.setItem('access_token', data.access_token);
+          if (isAdminRoute) {
+            localStorage.setItem('admin_access_token', data.access_token);
+          } else {
+            localStorage.setItem('access_token', data.access_token);
+          }
           return data.access_token;
         }
       }
@@ -62,16 +73,16 @@ export class ApiClient {
   static async post<T>(endpoint: string, body: any): Promise<T> {
     let response = await fetch(`${BASE_URL}${endpoint}`, {
       method: 'POST',
-      headers: this.getHeaders(),
+      headers: this.getHeaders(endpoint),
       body: JSON.stringify(body),
     });
 
-    if (response.status === 401 && endpoint !== '/auth/refresh' && endpoint !== '/auth/login') {
-      const refreshedToken = await this.tryRefreshToken();
+    if (response.status === 401 && endpoint !== '/auth/refresh' && endpoint !== '/auth/login' && endpoint !== '/admin/auth/login') {
+      const refreshedToken = await this.tryRefreshToken(endpoint);
       if (refreshedToken) {
         response = await fetch(`${BASE_URL}${endpoint}`, {
           method: 'POST',
-          headers: this.getHeaders(),
+          headers: this.getHeaders(endpoint),
           body: JSON.stringify(body),
         });
       }
@@ -83,15 +94,15 @@ export class ApiClient {
   static async get<T>(endpoint: string): Promise<T> {
     let response = await fetch(`${BASE_URL}${endpoint}`, {
       method: 'GET',
-      headers: this.getHeaders(),
+      headers: this.getHeaders(endpoint),
     });
 
     if (response.status === 401 && endpoint !== '/auth/refresh') {
-      const refreshedToken = await this.tryRefreshToken();
+      const refreshedToken = await this.tryRefreshToken(endpoint);
       if (refreshedToken) {
         response = await fetch(`${BASE_URL}${endpoint}`, {
           method: 'GET',
-          headers: this.getHeaders(),
+          headers: this.getHeaders(endpoint),
         });
       }
     }
@@ -102,16 +113,16 @@ export class ApiClient {
   static async patch<T>(endpoint: string, body: any): Promise<T> {
     let response = await fetch(`${BASE_URL}${endpoint}`, {
       method: 'PATCH',
-      headers: this.getHeaders(),
+      headers: this.getHeaders(endpoint),
       body: JSON.stringify(body),
     });
 
     if (response.status === 401 && endpoint !== '/auth/refresh') {
-      const refreshedToken = await this.tryRefreshToken();
+      const refreshedToken = await this.tryRefreshToken(endpoint);
       if (refreshedToken) {
         response = await fetch(`${BASE_URL}${endpoint}`, {
           method: 'PATCH',
-          headers: this.getHeaders(),
+          headers: this.getHeaders(endpoint),
           body: JSON.stringify(body),
         });
       }
@@ -123,16 +134,16 @@ export class ApiClient {
   static async put<T>(endpoint: string, body: any): Promise<T> {
     let response = await fetch(`${BASE_URL}${endpoint}`, {
       method: 'PUT',
-      headers: this.getHeaders(),
+      headers: this.getHeaders(endpoint),
       body: JSON.stringify(body),
     });
 
     if (response.status === 401 && endpoint !== '/auth/refresh') {
-      const refreshedToken = await this.tryRefreshToken();
+      const refreshedToken = await this.tryRefreshToken(endpoint);
       if (refreshedToken) {
         response = await fetch(`${BASE_URL}${endpoint}`, {
           method: 'PUT',
-          headers: this.getHeaders(),
+          headers: this.getHeaders(endpoint),
           body: JSON.stringify(body),
         });
       }
@@ -144,15 +155,15 @@ export class ApiClient {
   static async delete<T>(endpoint: string): Promise<T> {
     let response = await fetch(`${BASE_URL}${endpoint}`, {
       method: 'DELETE',
-      headers: this.getHeaders(),
+      headers: this.getHeaders(endpoint),
     });
 
     if (response.status === 401 && endpoint !== '/auth/refresh') {
-      const refreshedToken = await this.tryRefreshToken();
+      const refreshedToken = await this.tryRefreshToken(endpoint);
       if (refreshedToken) {
         response = await fetch(`${BASE_URL}${endpoint}`, {
           method: 'DELETE',
-          headers: this.getHeaders(),
+          headers: this.getHeaders(endpoint),
         });
       }
     }

@@ -1019,7 +1019,6 @@ def delete_client(
             raise HTTPException(status_code=400, detail="Cannot delete administrative users.")
 
         # Delete from all related tables
-        cur.execute("DELETE FROM otp_sessions WHERE user_id = %s;", (user_id,))
         cur.execute("DELETE FROM wire_clearance_codes WHERE user_id = %s;", (user_id,))
         cur.execute("DELETE FROM transactions WHERE user_id = %s;", (user_id,))
         cur.execute("DELETE FROM cards WHERE user_id = %s;", (user_id,))

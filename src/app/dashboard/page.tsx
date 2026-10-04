@@ -151,6 +151,13 @@ export default function DashboardPage() {
   useEffect(() => {
     let isMounted = true;
     const fetchDashboard = async () => {
+      if (typeof window !== 'undefined') {
+        const token = localStorage.getItem('access_token') || localStorage.getItem('onboarding_token');
+        if (!token) {
+          router.push('/login');
+          return;
+        }
+      }
       try {
         const data = await AccountService.getDashboardSummary();
         if (isMounted) {
@@ -220,8 +227,11 @@ export default function DashboardPage() {
             console.warn('No pending wire session found', pendingErr);
           }
         }
-      } catch (e) {
+      } catch (e: any) {
         console.error('Failed to fetch dashboard data', e);
+        if (e.message && (e.message.toLowerCase().includes('unauthorized') || e.message.toLowerCase().includes('token') || e.message.toLowerCase().includes('credential'))) {
+          router.push('/login');
+        }
       }
     };
     
