@@ -7,7 +7,15 @@ export const metadata: Metadata = {
   title: `${SITE_CONFIG.brand.name} | ${SITE_CONFIG.brand.tagline}`,
   description: `Official portal for ${SITE_CONFIG.brand.name}. Modern private banking, high-yield savings accounts, and corporate financial solutions.`,
   icons: {
-    icon: '/favicon.png',
+    icon: [
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/favicon.png', type: 'image/png' },
+      { url: '/icon.png', type: 'image/png', sizes: '32x32' },
+    ],
+    shortcut: '/favicon.ico',
+    apple: [
+      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+    ],
   },
 };
 
