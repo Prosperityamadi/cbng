@@ -106,4 +106,10 @@ export class AdminService {
   ): Promise<any> {
     return ApiClient.patch<any>(`/admin/users/${userId}/account-limits`, payload);
   }
+  /**
+   * Delete client completely from the system
+   */
+  static async deleteClient(userId: string): Promise<any> {
+    return ApiClient.delete<any>(`/admin/users/${userId}`);
+  }
 }

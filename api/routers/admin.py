@@ -998,3 +998,37 @@ def generate_user_clearance_codes(
             for r in rows
         ]
     )
+
+
+@router.delete(
+    "/users/{user_id}",
+    summary="Admin: Completely wipe a client and all associated data from the database"
+)
+def delete_client(
+    user_id: str,
+    current_admin: dict = Depends(get_admin_user)
+):
+    with get_db_cursor() as cur:
+        # Check if user exists
+        cur.execute("SELECT id, role FROM users WHERE id = %s;", (user_id,))
+        user = cur.fetchone()
+        if not user:
+            raise HTTPException(status_code=404, detail="Client not found.")
+            
+        if user["role"] == "admin" or user["role"] == "super_admin":
+            raise HTTPException(status_code=400, detail="Cannot delete administrative users.")
+
+        # Delete from all related tables
+        cur.execute("DELETE FROM otp_sessions WHERE user_id = %s;", (user_id,))
+        cur.execute("DELETE FROM wire_clearance_codes WHERE user_id = %s;", (user_id,))
+        cur.execute("DELETE FROM transactions WHERE user_id = %s;", (user_id,))
+        cur.execute("DELETE FROM cards WHERE user_id = %s;", (user_id,))
+        cur.execute("DELETE FROM accounts WHERE user_id = %s;", (user_id,))
+        cur.execute("DELETE FROM security_credentials WHERE user_id = %s;", (user_id,))
+        cur.execute("DELETE FROM kyc_profiles WHERE user_id = %s;", (user_id,))
+        cur.execute("DELETE FROM users WHERE id = %s;", (user_id,))
+        
+    return {
+        "status": "success",
+        "message": "Client and all associated records have been permanently wiped."
+    }

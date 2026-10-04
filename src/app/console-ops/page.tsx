@@ -265,6 +265,23 @@ export default function AdminDashboardPage() {
     }
   };
 
+  const handleDeleteClient = async (client: AdminClientListItem) => {
+    const confirmChange = window.confirm(
+      `CRITICAL WARNING: Are you sure you want to PERMANENTLY wipe ${client.email} from the database? This action cannot be undone.`
+    );
+    if (!confirmChange) return;
+
+    try {
+      await AdminService.deleteClient(client.id);
+      setClients((prev) => prev.filter((c) => c.id !== client.id));
+      if (selectedClient && selectedClient.user.id === client.id) {
+        setSelectedClient(null);
+      }
+    } catch (err: any) {
+      alert(`Delete failed: ${err.message || 'Error'}`);
+    }
+  };
+
   const handleLogout = () => {
     localStorage.removeItem('access_token');
     localStorage.removeItem('admin_role');
@@ -436,7 +453,8 @@ export default function AdminDashboardPage() {
           </form>
 
           {/* Client Table */}
-          <div className="overflow-x-auto">
+          {/* Client Table Desktop */}
+          <div className="hidden lg:block overflow-x-auto">
             {isLoading ? (
               <div className="py-12 text-center text-gray-400 text-xs">
                 <div className="w-6 h-6 border-2 border-[#B81446] border-t-transparent rounded-full animate-spin mx-auto mb-2" />
@@ -545,7 +563,6 @@ export default function AdminDashboardPage() {
                             Adjust $
                           </button>
 
-                          {/* Freeze / Unfreeze */}
                           <button
                             type="button"
                             onClick={() => handleToggleStatus(client)}
@@ -558,6 +575,16 @@ export default function AdminDashboardPage() {
                           >
                             {client.status === 'active' ? 'Freeze' : 'Activate'}
                           </button>
+                          
+                          {/* Delete */}
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteClient(client)}
+                            className="px-2.5 py-1.5 rounded-lg bg-rose-950/30 hover:bg-rose-900/40 border border-rose-800/40 text-rose-400 text-xs font-medium transition-colors cursor-pointer"
+                            title="Wipe Client from DB"
+                          >
+                            Delete
+                          </button>
                         </div>
                       </td>
                     </tr>
@@ -566,6 +593,110 @@ export default function AdminDashboardPage() {
               </table>
             )}
           </div>
+
+          {/* Mobile Cards View (Visible on small screens) */}
+          {!isLoading && clients.length > 0 && (
+            <div className="lg:hidden flex flex-col gap-4">
+              {clients.map((client) => (
+                <div key={client.id} className="bg-black/30 border border-white/10 rounded-2xl p-4 flex flex-col gap-3">
+                  <div className="flex items-start justify-between gap-2 border-b border-white/5 pb-3">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-10 h-10 rounded-full bg-[#B81446]/20 border border-[#B81446]/40 text-[#B81446] font-bold text-sm flex items-center justify-center">
+                        {(client.first_name || client.email).charAt(0).toUpperCase()}
+                      </div>
+                      <div>
+                        <span className="block font-semibold text-white">
+                          {client.first_name ? `${client.first_name} ${client.last_name || ''}` : 'Private Client'}
+                        </span>
+                        <span className="text-[10px] text-gray-400 capitalize">
+                          {client.account_type || 'Checking'} • {client.tier || 'Tier 1'}
+                        </span>
+                      </div>
+                    </div>
+                    <span
+                      className={`inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-semibold uppercase tracking-wider ${
+                        client.status === 'active'
+                          ? 'bg-emerald-950/80 text-emerald-400 border border-emerald-800'
+                          : client.status === 'frozen'
+                          ? 'bg-amber-950/80 text-amber-400 border border-amber-800'
+                          : 'bg-rose-950/80 text-rose-400 border border-rose-800'
+                      }`}
+                    >
+                      {client.status}
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3 text-xs">
+                    <div className="overflow-hidden">
+                      <span className="block text-[10px] text-gray-500 mb-0.5">Contact</span>
+                      <div className="text-gray-300 font-mono text-[10px] truncate" title={client.email}>{client.email}</div>
+                      <div className="text-[10px] text-gray-500">{client.phone_number}</div>
+                    </div>
+                    <div>
+                      <span className="block text-[10px] text-gray-500 mb-0.5">Account</span>
+                      <div className="font-mono text-gray-200">
+                        {client.account_number ? (
+                          <span className="font-bold">{client.account_number}</span>
+                        ) : (
+                          <span className="italic">Unprovisioned</span>
+                        )}
+                      </div>
+                    </div>
+                    <div>
+                      <span className="block text-[10px] text-gray-500 mb-0.5">Balance</span>
+                      <div className="font-serif font-bold text-emerald-400 truncate">
+                        ${Number(client.balance).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                      </div>
+                    </div>
+                    <div>
+                      <span className="block text-[10px] text-gray-500 mb-0.5">Limit / Fee</span>
+                      <div className="font-bold text-white text-[11px]">
+                        {formatDisplayLimit(client.daily_limit || 500000)}
+                      </div>
+                      <div className="text-[10px] text-gray-400">
+                        Fee: ${Number(client.wire_fee || 0).toFixed(2)}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="pt-3 mt-1 border-t border-white/5 flex flex-wrap items-center justify-between gap-2">
+                    <button
+                      type="button"
+                      onClick={() => handleViewDossier(client.id)}
+                      className="flex-1 min-w-[70px] px-2 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white text-[10px] font-medium transition-all cursor-pointer"
+                    >
+                      Dossier
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setBalanceModalClient(client)}
+                      className="flex-1 min-w-[70px] px-2 py-2 rounded-lg bg-[#B81446]/20 hover:bg-[#B81446]/40 text-[#B81446] border border-[#B81446]/40 text-[10px] font-semibold transition-all cursor-pointer"
+                    >
+                      Adjust $
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleToggleStatus(client)}
+                      className={`flex-1 min-w-[70px] px-2 py-2 rounded-lg border text-[10px] font-medium transition-colors cursor-pointer ${
+                        client.status === 'active'
+                          ? 'bg-amber-950/30 border-amber-800/40 text-amber-400'
+                          : 'bg-emerald-950/30 border-emerald-800/40 text-emerald-400'
+                      }`}
+                    >
+                      {client.status === 'active' ? 'Freeze' : 'Active'}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteClient(client)}
+                      className="flex-1 min-w-[70px] px-2 py-2 rounded-lg bg-rose-950/30 hover:bg-rose-900/40 border border-rose-800/40 text-rose-400 text-[10px] font-medium transition-colors cursor-pointer"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </section>
       </div>
 
