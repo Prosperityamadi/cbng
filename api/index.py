@@ -26,7 +26,7 @@ app = FastAPI(
 # CORS Configuration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origin_regex=r"^https?:\/\/.*",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -45,6 +45,8 @@ app.include_router(contact_router)
 
 
 @app.get("/")
+@app.get("/api/py")
+@app.get("/api/py/")
 def root_redirect():
     return {
         "service": settings.APP_NAME,
