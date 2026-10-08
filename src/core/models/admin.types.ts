@@ -110,6 +110,8 @@ export interface AdminClientListItem {
   account_number?: string;
   account_type?: string;
   balance: number;
+  account_balance?: number;
+  currency?: string;
   daily_limit?: number;
   wire_fee?: number;
   tier?: string;

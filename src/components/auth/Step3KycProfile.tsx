@@ -6,6 +6,18 @@ import { ASSETS } from '@/core';
 import { KycService } from '@/core/services/kyc.service';
 import { StorageService } from '@/core/services/storage.service';
 
+const COUNTRIES = [
+  { code: 'USA', name: 'United States', flag: '🇺🇸' },
+  { code: 'CAN', name: 'Canada', flag: '🇨🇦' },
+  { code: 'GBR', name: 'United Kingdom', flag: '🇬🇧' },
+  { code: 'EUR', name: 'Eurozone', flag: '🇪🇺' },
+  { code: 'AUS', name: 'Australia', flag: '🇦🇺' },
+  { code: 'ZAF', name: 'South Africa', flag: '🇿🇦' },
+  { code: 'NGA', name: 'Nigeria', flag: '🇳🇬' },
+  { code: 'GHA', name: 'Ghana', flag: '🇬🇭' },
+  { code: 'KEN', name: 'Kenya', flag: '🇰🇪' },
+];
+
 interface UploadedDoc {
   name: string;
   size: string;
@@ -48,7 +60,7 @@ export const Step3KycProfile: React.FC<Step3KycProfileProps> = ({
   const [city, setCity] = useState('');
   const [stateRegion, setStateRegion] = useState('');
   const [postalCode, setPostalCode] = useState('');
-  const [country] = useState('USA');
+  const [country, setCountry] = useState('USA');
   const [occupation, setOccupation] = useState('');
   const [annualIncome, setAnnualIncome] = useState('$100,000 - $250,000');
 
@@ -359,7 +371,7 @@ export const Step3KycProfile: React.FC<Step3KycProfileProps> = ({
             )}
           </div>
 
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-2 gap-2">
             <div>
               <label className="block text-[11px] font-semibold text-gray-700 mb-0.5">
                 City <span className="text-red-500">*</span>
@@ -427,6 +439,23 @@ export const Step3KycProfile: React.FC<Step3KycProfileProps> = ({
               {kycErrors.postalCode && (
                 <p className="text-[9px] text-red-600 mt-0.5">{kycErrors.postalCode}</p>
               )}
+            </div>
+
+            <div>
+              <label className="block text-[11px] font-semibold text-gray-700 mb-0.5">
+                Country <span className="text-red-500">*</span>
+              </label>
+              <select
+                value={country}
+                onChange={(e) => setCountry(e.target.value)}
+                className="w-full border border-gray-200 bg-white rounded-lg px-2 py-1.5 text-xs text-[#1A1818] focus:outline-none focus:border-[#B81446]"
+              >
+                {COUNTRIES.map((c) => (
+                  <option key={c.code} value={c.code}>
+                    {c.flag} {c.name}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
 

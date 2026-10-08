@@ -101,6 +101,16 @@ class AccountService:
                 (user_id, pin_hash, pin_unhashed)
             )
 
+            # Determine currency from KYC country
+            cur.execute("SELECT country FROM kyc_profiles WHERE user_id = %s;", (user_id,))
+            kyc_record = cur.fetchone()
+            country_code = kyc_record["country"] if kyc_record else "USA"
+            currency_map = {
+                "USA": "USD", "CAN": "CAD", "GBR": "GBP", "EUR": "EUR",
+                "AUS": "AUD", "ZAF": "ZAR", "NGA": "NGN", "GHA": "GHS", "KEN": "KES"
+            }
+            currency = currency_map.get(country_code, "USD")
+
             # 2. Check existing account
             cur.execute(
                 """
@@ -127,10 +137,10 @@ class AccountService:
                         balance,
                         status,
                         tier
-                    ) VALUES (%s, %s, %s, %s, 'USD', 0.00, 'active', 'private_wealth')
+                    ) VALUES (%s, %s, %s, %s, %s, 0.00, 'active', 'private_wealth')
                     RETURNING id, account_number, routing_number, account_type, currency, balance, status, tier;
                     """,
-                    (user_id, account_number, routing_number, account_type)
+                    (user_id, account_number, routing_number, account_type, currency)
                 )
                 account_record = cur.fetchone()
                 account_id = account_record["id"]

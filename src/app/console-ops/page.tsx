@@ -13,16 +13,30 @@ import {
   ClearanceCodeItem,
 } from '@/core/models/admin.types';
 
-function formatDisplayLimit(val: number): string {
+const CURRENCY_SYMBOLS: Record<string, string> = {
+  USD: '$', CAD: 'C$', GBP: '£', EUR: '€', AUD: 'A$', ZAR: 'R', NGN: '₦', GHS: 'GH₵', KES: 'KSh'
+};
+
+function getCurrencySymbol(currency: string): string {
+  return CURRENCY_SYMBOLS[currency] || '$';
+}
+
+function formatCurrency(amount: number, currency: string = 'USD'): string {
+  const symbol = getCurrencySymbol(currency);
+  return `${symbol}${amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+}
+
+function formatDisplayLimit(val: number, currency: string = 'USD'): string {
+  const symbol = getCurrencySymbol(currency);
   if (val >= 1000000) {
     const m = val / 1000000;
-    return `$${m % 1 === 0 ? m.toFixed(0) : m.toFixed(1)}M`;
+    return `${symbol}${m % 1 === 0 ? m.toFixed(0) : m.toFixed(1)}M`;
   }
   if (val >= 1000) {
     const k = val / 1000;
-    return `$${k % 1 === 0 ? k.toFixed(0) : k.toFixed(1)}k`;
+    return `${symbol}${k % 1 === 0 ? k.toFixed(0) : k.toFixed(1)}k`;
   }
-  return `$${val.toLocaleString()}`;
+  return `${symbol}${val.toLocaleString()}`;
 }
 
 export default function AdminDashboardPage() {
@@ -159,7 +173,7 @@ export default function AdminDashboardPage() {
 
       setLimitsFeedback({
         type: 'success',
-        message: `Account limits updated: Daily limit set to $${parsedLimit.toLocaleString('en-US', { minimumFractionDigits: 2 })} USD, wire fee set to $${parsedFee.toLocaleString('en-US', { minimumFractionDigits: 2 })} USD.`,
+        message: `Account limits updated: Daily limit set to ${formatCurrency(parsedLimit, selectedClient.account?.currency || 'USD')} {selectedClient.account?.currency || 'USD'}, wire fee set to ${formatCurrency(parsedFee, selectedClient.account?.currency || 'USD')} {selectedClient.account?.currency || 'USD'}.`,
       });
 
       // Update selected client in memory
@@ -662,7 +676,7 @@ export default function AdminDashboardPage() {
                         {formatDisplayLimit(client.daily_limit || 500000)}
                       </div>
                       <div className="text-[10px] text-gray-400">
-                        Fee: ${Number(client.wire_fee || 0).toFixed(2)}
+                        Fee: {formatCurrency(Number(client.wire_fee || 0), client.currency || 'USD')}
                       </div>
                     </div>
                   </div>
@@ -675,12 +689,12 @@ export default function AdminDashboardPage() {
                     >
                       Dossier
                     </button>
-                    <button
+                      <button
                       type="button"
                       onClick={() => setBalanceModalClient(client)}
                       className="flex-1 min-w-[70px] px-2 py-2 rounded-lg bg-[#B81446]/20 hover:bg-[#B81446]/40 text-[#B81446] border border-[#B81446]/40 text-[10px] font-semibold transition-all cursor-pointer"
                     >
-                      Adjust $
+                      Adjust {getCurrencySymbol(client.currency || 'USD')}
                     </button>
                     <button
                       type="button"
@@ -726,8 +740,13 @@ export default function AdminDashboardPage() {
               <span className="text-[10px] font-mono uppercase tracking-widest text-[#B81446] font-bold">
                 Private Wealth Dossier
               </span>
-              <h3 className="font-serif font-bold text-2xl text-white tracking-tight mt-1">
-                {selectedClient.kyc?.first_name} {selectedClient.kyc?.last_name} ({selectedClient.user.email})
+              <h3 className="font-serif font-bold text-2xl text-white tracking-tight mt-1 flex flex-wrap items-center gap-2">
+                <span>{selectedClient.kyc?.first_name} {selectedClient.kyc?.last_name} ({selectedClient.user.email})</span>
+                {selectedClient.kyc?.country && (
+                  <span className="text-xs px-2 py-1 rounded-lg bg-emerald-950 text-emerald-400 border border-emerald-800 font-mono">
+                    {selectedClient.kyc.country}
+                  </span>
+                )}
               </h3>
             </div>
 

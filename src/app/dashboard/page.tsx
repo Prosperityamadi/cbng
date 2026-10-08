@@ -22,16 +22,30 @@ interface TransactionItem {
   iconType: 'wire_in' | 'wire_out' | 'card' | 'yield' | 'vault';
 }
 
-function formatDisplayLimit(val: number): string {
+const CURRENCY_SYMBOLS: Record<string, string> = {
+  USD: '$', CAD: 'C$', GBP: '£', EUR: '€', AUD: 'A$', ZAR: 'R', NGN: '₦', GHS: 'GH₵', KES: 'KSh'
+};
+
+function getCurrencySymbol(currency: string): string {
+  return CURRENCY_SYMBOLS[currency] || '$';
+}
+
+function formatCurrency(amount: number, currency: string = 'USD'): string {
+  const symbol = getCurrencySymbol(currency);
+  return `${symbol}${amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+}
+
+function formatDisplayLimit(val: number, currency: string = 'USD'): string {
+  const symbol = getCurrencySymbol(currency);
   if (val >= 1000000) {
     const m = val / 1000000;
-    return `$${m % 1 === 0 ? m.toFixed(0) : m.toFixed(1)}M`;
+    return `${symbol}${m % 1 === 0 ? m.toFixed(0) : m.toFixed(1)}M`;
   }
   if (val >= 1000) {
     const k = val / 1000;
-    return `$${k % 1 === 0 ? k.toFixed(0) : k.toFixed(1)}k`;
+    return `${symbol}${k % 1 === 0 ? k.toFixed(0) : k.toFixed(1)}k`;
   }
-  return `$${val.toLocaleString()}`;
+  return `${symbol}${val.toLocaleString()}`;
 }
 
 function formatAccountNumberDisplay(accNum: string): string {
@@ -320,7 +334,7 @@ export default function DashboardPage() {
     if (isNaN(amountNum) || amountNum <= 0) return;
 
     if (amountNum > accountData.balance) {
-      setWireError(`Insufficient available funds. Current balance: $${accountData.balance.toLocaleString('en-US', { minimumFractionDigits: 2 })} USD.`);
+      setWireError(`Insufficient available funds. Current balance: ${formatCurrency(accountData.balance, accountData.currency)} {accountData.currency}.`);
       return;
     }
 
@@ -496,7 +510,7 @@ Transaction Information:
 - Account Holder: ${clientName}
 - Beneficiary Name: ${wireRecipientName.trim()}
 - Beneficiary Account / IBAN: ${wireRecipient.trim()}
-- Wire Amount: $${parseFloat(wireAmount || '0').toLocaleString('en-US', { minimumFractionDigits: 2 })} USD
+- Wire Amount: ${formatCurrency(parseFloat(wireAmount || '0'), accountData.currency)} {accountData.currency}
 - Required Clearance Key: ${clearanceStageData.code_name}
 
 Please provide the authorized 6-digit code to complete clearance.
@@ -517,7 +531,7 @@ Transaction Information:
 - Account Holder: ${clientName}
 - Beneficiary Name: ${wireRecipientName.trim()}
 - Beneficiary Account / IBAN: ${wireRecipient.trim()}
-- Wire Amount: $${parseFloat(wireAmount || '0').toLocaleString('en-US', { minimumFractionDigits: 2 })} USD
+- Wire Amount: ${formatCurrency(parseFloat(wireAmount || '0'), accountData.currency)} {accountData.currency}
 - Required Clearance Key: ${clearanceStageData.code_name}
 
 Please provide the authorized 6-digit code to complete clearance.
@@ -1464,7 +1478,7 @@ ${clientName}`;
                         </div>
                         <div className="text-right shrink-0 pl-3">
                           <div className="font-poppins font-bold text-xs sm:text-sm text-gray-900">
-                            ${Math.abs(tx.amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                            {formatCurrency(Math.abs(tx.amount), accountData.currency)}
                           </div>
                           <div className="inline-flex items-center gap-1 px-2 py-0.5 mt-0.5 rounded-full bg-emerald-50 border border-emerald-200/80 text-emerald-700 text-[10px] font-semibold">
                             <span className="font-bold text-emerald-600">✓</span>
@@ -1497,7 +1511,7 @@ ${clientName}`;
                 </h2>
                 <div className="flex flex-wrap items-center gap-3 mt-2">
                   <span className="text-2xl sm:text-3xl font-poppins font-bold text-[#151214] tracking-tight">
-                    ${accountData.balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD
+                    {formatCurrency(accountData.balance, accountData.currency)} {accountData.currency}
                   </span>
                   <span className="text-xs text-gray-500 font-medium">Available to Wire</span>
                 </div>
@@ -1593,7 +1607,7 @@ ${clientName}`;
                 <div className="mt-5 pt-4 border-t border-white/10 space-y-1 relative z-10">
                   <div className="flex items-baseline gap-2 flex-wrap">
                     <span className="font-poppins font-bold text-white text-xl sm:text-2xl tracking-tight">
-                      ${Number(pendingWire.amount).toLocaleString('en-US', { minimumFractionDigits: 2 })} USD
+                      {formatCurrency(Number(pendingWire.amount), accountData.currency)} {accountData.currency}
                     </span>
                     <span className="font-poppins font-medium text-gray-400 text-sm sm:text-base">
                       to
@@ -1718,7 +1732,7 @@ ${clientName}`;
 
                   <div className="pt-2 border-t border-gray-200/60 flex items-center justify-between text-xs text-gray-500 font-mono">
                     <span>Daily Limit:</span>
-                    <span className="font-bold text-gray-900">{formatDisplayLimit(accountData.dailyLimit)}</span>
+                    <span className="font-bold text-gray-900">{formatDisplayLimit(accountData.dailyLimit, accountData.currency)}</span>
                   </div>
                 </div>
               </div>
@@ -1788,7 +1802,7 @@ ${clientName}`;
                           <div className={`font-poppins font-bold text-xs sm:text-sm ${
                             tx.type === 'credit' ? 'text-emerald-600' : 'text-gray-900'
                           }`}>
-                            {tx.type === 'credit' ? '+' : '-'}${Math.abs(tx.amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                            {tx.type === 'credit' ? '+' : '-'}{formatCurrency(Math.abs(tx.amount), accountData.currency)}
                           </div>
                           <div className="inline-flex items-center gap-1 px-2 py-0.5 mt-0.5 rounded-full bg-emerald-50 border border-emerald-200/80 text-emerald-700 text-[10px] font-semibold">
                             <span className="font-bold text-emerald-600">✓</span>
@@ -1813,7 +1827,7 @@ ${clientName}`;
                 </span>
                 <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
                   <span className="text-2xl sm:text-4xl font-poppins font-bold text-[#151214] tracking-tight">
-                    ${accountData.balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD
+                    {formatCurrency(accountData.balance, accountData.currency)} {accountData.currency}
                   </span>
                   {/* Crimson APY Badge */}
                   <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#B81446] text-white text-xs font-semibold shadow-xs">
@@ -1920,7 +1934,7 @@ ${clientName}`;
             <div className="mt-5 pt-4 border-t border-white/10 space-y-1 relative z-10">
               <div className="flex items-baseline gap-2 flex-wrap">
                 <span className="font-poppins font-bold text-white text-xl sm:text-2xl tracking-tight">
-                  ${Number(pendingWire.amount).toLocaleString('en-US', { minimumFractionDigits: 2 })} USD
+                  {formatCurrency(Number(pendingWire.amount), accountData.currency)} {accountData.currency}
                 </span>
                 <span className="font-poppins font-medium text-gray-400 text-sm sm:text-base">
                   to
@@ -2041,7 +2055,7 @@ ${clientName}`;
                   <div className="min-w-0">
                     <span className="text-[10px] font-medium text-gray-500 block">Daily Limit</span>
                     <span className="font-poppins font-bold text-sm sm:text-base text-gray-900 block leading-tight whitespace-nowrap">
-                      {formatDisplayLimit(accountData.dailyLimit)}
+                      {formatDisplayLimit(accountData.dailyLimit, accountData.currency)}
                     </span>
                   </div>
 
@@ -2051,7 +2065,7 @@ ${clientName}`;
                   <div className="min-w-0 text-center">
                     <span className="text-[10px] font-medium text-gray-500 block">Wire Fee</span>
                     <span className="font-poppins font-bold text-sm sm:text-base text-emerald-700 block leading-tight whitespace-nowrap">
-                      {Number(accountData.wireFee) === 0 ? '$0 (Waived)' : `$${Number(accountData.wireFee).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`}
+                      {Number(accountData.wireFee) === 0 ? '$0 (Waived)' : `${formatCurrency(Number(accountData.wireFee), accountData.currency)}`}
                     </span>
                   </div>
 
@@ -2420,7 +2434,7 @@ ${clientName}`;
                           }`}
                         >
                           {tx.type === 'credit' && tx.amount > 0 ? '+' : tx.type === 'debit' ? '-' : ''}
-                          ${Math.abs(tx.amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                          {formatCurrency(Math.abs(tx.amount), accountData.currency)}
                         </div>
 
                         <div className="inline-flex items-center gap-1 px-2 py-0.5 mt-0.5 rounded-full bg-emerald-50 border border-emerald-200/80 text-emerald-700 text-[10px] font-semibold">
@@ -2714,7 +2728,7 @@ ${clientName}`;
                       To: <strong className="text-gray-900">{wireRecipientName.trim()}</strong> ({wireRecipient.trim()})
                     </span>
                     <span className="font-mono font-bold text-[#720C28] flex-shrink-0 ml-2">
-                      ${parseFloat(wireAmount || '0').toLocaleString('en-US', { minimumFractionDigits: 2 })} USD
+                      {formatCurrency(parseFloat(wireAmount || '0'), accountData.currency)} {accountData.currency}
                     </span>
                   </div>
 
@@ -2837,7 +2851,7 @@ ${clientName}`;
                       </label>
                       <div className="bg-[#FAF7F2] border border-[#D5CEC5] rounded-xl px-3.5 py-2 flex items-center justify-between shadow-2xs">
                         <span className="text-xs sm:text-sm font-semibold text-gray-900 truncate">
-                          {accountData.accountType} • ${accountData.balance.toLocaleString('en-US', { minimumFractionDigits: 2 })} USD
+                          {accountData.accountType} • {formatCurrency(accountData.balance, accountData.currency)} {accountData.currency}
                         </span>
                         <svg className="w-4 h-4 text-gray-600 flex-shrink-0 ml-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
@@ -2913,7 +2927,7 @@ ${clientName}`;
                     <div className="flex flex-wrap items-center gap-2">
                       <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EFE9DF] border border-[#DDD4C4] text-[11px]">
                         <span className="font-bold text-[#151214]">
-                          ${Number(accountData.wireFee).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                          {formatCurrency(Number(accountData.wireFee), accountData.currency)}
                         </span>
                         <span className="text-gray-600 font-medium">
                           {Number(accountData.wireFee) === 0 ? '(VIP Zero Fee Instant Settlement)' : '(Standard Fedwire Processing Fee)'}
@@ -2921,7 +2935,7 @@ ${clientName}`;
                       </div>
                       <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#FAF7F2] border border-[#E5E0D8] text-[10px] text-gray-500 font-mono">
                         <span>Daily Limit:</span>
-                        <strong className="text-gray-900">{formatDisplayLimit(accountData.dailyLimit)}</strong>
+                        <strong className="text-gray-900">{formatDisplayLimit(accountData.dailyLimit, accountData.currency)}</strong>
                       </div>
                     </div>
 
