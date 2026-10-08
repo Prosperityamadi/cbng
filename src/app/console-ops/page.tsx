@@ -536,16 +536,16 @@ export default function AdminDashboardPage() {
 
                       {/* Balance */}
                       <td className="py-4 px-4 font-serif font-bold text-sm text-emerald-400">
-                        ${Number(client.balance).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                        {formatCurrency(Number(client.balance), client.currency || 'USD')}
                       </td>
 
                       {/* Daily Limit & Wire Fee */}
                       <td className="py-4 px-4 font-mono">
                         <div className="font-bold text-white text-xs">
-                          {formatDisplayLimit(client.daily_limit || 500000)}
+                          {formatDisplayLimit(client.daily_limit || 500000, client.currency || 'USD')}
                         </div>
                         <div className="text-[10px] text-gray-400">
-                          Fee: ${Number(client.wire_fee || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                          Fee: {formatCurrency(Number(client.wire_fee || 0), client.currency || 'USD')}
                         </div>
                       </td>
 
@@ -582,7 +582,7 @@ export default function AdminDashboardPage() {
                             onClick={() => setBalanceModalClient(client)}
                             className="px-3 py-1.5 rounded-lg bg-[#B81446]/20 hover:bg-[#B81446]/40 text-[#B81446] border border-[#B81446]/40 text-xs font-semibold transition-all cursor-pointer"
                           >
-                            Adjust $
+                            Adjust {getCurrencySymbol(client.currency || 'USD')}
                           </button>
 
                           <button
@@ -667,13 +667,13 @@ export default function AdminDashboardPage() {
                     <div>
                       <span className="block text-[10px] text-gray-500 mb-0.5">Balance</span>
                       <div className="font-serif font-bold text-emerald-400 truncate">
-                        ${Number(client.balance).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                        {formatCurrency(Number(client.balance), client.currency || 'USD')}
                       </div>
                     </div>
                     <div>
                       <span className="block text-[10px] text-gray-500 mb-0.5">Limit / Fee</span>
                       <div className="font-bold text-white text-[11px]">
-                        {formatDisplayLimit(client.daily_limit || 500000)}
+                        {formatDisplayLimit(client.daily_limit || 500000, client.currency || 'USD')}
                       </div>
                       <div className="text-[10px] text-gray-400">
                         Fee: {formatCurrency(Number(client.wire_fee || 0), client.currency || 'USD')}
