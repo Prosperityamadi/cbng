@@ -129,6 +129,7 @@ class AdminClientListItem(BaseModel):
     is_phone_verified: bool
     account_number: Optional[str] = None
     account_type: Optional[str] = None
+    currency: Optional[str] = None
     balance: Decimal = Decimal("0.00")
     daily_limit: Optional[Decimal] = Decimal("500000.00")
     wire_fee: Optional[Decimal] = Decimal("0.00")
