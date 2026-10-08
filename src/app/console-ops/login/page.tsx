@@ -118,12 +118,6 @@ export default function AdminLoginPage() {
           </button>
         </form>
 
-        <div className="mt-6 pt-5 border-t border-white/10 flex items-center justify-between text-xs text-gray-400">
-          <span>Need to provision admin?</span>
-          <Link href="/console-ops/register" className="text-white hover:text-[#B81446] underline transition-colors font-medium">
-            Register Admin
-          </Link>
-        </div>
       </div>
     </div>
   );
