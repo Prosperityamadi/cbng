@@ -25,7 +25,7 @@ const FAQS = [
   {
     question: 'Are my deposits protected and insured?',
     answer:
-      'All deposits placed with NemiCapital International Bank are strictly secured under regulatory banking reserve guidelines, with deposit insurance coverage up to the maximum statutory limit per depositor. Additionally, all accounts are shielded by 256-bit institutional encryption.',
+      'All deposits placed with NemiCapital International Bank are strictly secured under regulatory banking reserve guidelines, with deposit insurance coverage up to the maximum statutory limit per depositor. Additionally, all accounts are shielded by zero-trust institutional encryption.',
   },
   {
     question: 'What are the fees for international wire transfers?',

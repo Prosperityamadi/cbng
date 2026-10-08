@@ -479,7 +479,7 @@ export const SITE_CONFIG = {
         id: 'faq-5',
         question: 'How safe/secure is our net banking a/c?',
         answer:
-          'Our digital infrastructure is protected with military-grade 256-bit AES encryption, multi-factor biometric authorization, real-time zero-trust fraud monitoring, and comprehensive regulatory deposit insurance across global jurisdictions.',
+          'Our digital infrastructure is protected with institutional-grade encryption, multi-factor biometric authorization, real-time zero-trust fraud monitoring, and comprehensive regulatory deposit insurance across global jurisdictions.',
       },
     ],
   },

@@ -257,7 +257,7 @@ export const ContactForm: React.FC = () => {
 
             {/* Privacy & Guarantee note */}
             <p className="text-xs text-gray-500 leading-relaxed font-roboto">
-              By submitting this confidential inquiry, you agree to NemiCapital Bank&apos;s privacy protocols. Information transmitted is protected by institutional 256-bit SSL encryption.
+              By submitting this confidential inquiry, you agree to NemiCapital Bank&apos;s privacy protocols. Information transmitted is protected by end-to-end institutional encryption.
             </p>
 
             {/* Submit CTA */}

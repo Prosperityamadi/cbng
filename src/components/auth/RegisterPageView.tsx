@@ -991,12 +991,12 @@ export const RegisterPageView: React.FC = () => {
                 <>
                   <div className="flex items-baseline justify-between gap-2">
                     <span className="font-poppins font-bold text-xs sm:text-sm text-[#1A1818]">
-                      256-Bit Vault
+                      Encrypted Vault
                     </span>
                     <span className="text-[9.5px] font-semibold text-emerald-600">Encrypted</span>
                   </div>
                   <p className="text-[9px] text-gray-500 font-medium mt-0.5 leading-tight">
-                    Supabase Storage Security
+                    Bank-Grade Storage Security
                   </p>
                   <div className="mt-2 flex items-center gap-1 text-[9px] text-emerald-600 font-medium">
                     <span>✓ KYC Verification Guard</span>
@@ -1049,7 +1049,7 @@ export const RegisterPageView: React.FC = () => {
             </div>
             <div className="flex flex-col items-center justify-center p-2 rounded-xl bg-white/5 border border-white/10 backdrop-blur-xs">
               <span className="text-emerald-400 font-bold mb-0.5">✓</span>
-              <span>{step === 3 ? '256-Bit Encryption' : '4.85% APY High-Yield'}</span>
+              <span>{step === 3 ? 'Institutional Security' : '4.85% APY High-Yield'}</span>
             </div>
             <div className="flex flex-col items-center justify-center p-2 rounded-xl bg-white/5 border border-white/10 backdrop-blur-xs">
               <span className="text-emerald-400 font-bold mb-0.5">✓</span>
