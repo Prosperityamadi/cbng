@@ -129,6 +129,12 @@ export const Step4SecurityPin: React.FC<Step4SecurityPinProps> = ({
     } catch (err: any) {
       setIsCreatingAccount(false);
       setPinError(err.message || 'Failed to setup account.');
+      // UX Fix: If the backend rejects the PIN (e.g., too weak), send them back to the first PIN input screen
+      setPin('');
+      setConfirmPin('');
+      setSubStep('enter_pin');
+      setIsPinShaking(true);
+      setTimeout(() => setIsPinShaking(false), 450);
     }
   };
 

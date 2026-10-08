@@ -16,5 +16,11 @@
       "source": "/openapi.json",
       "destination": "/api/index.py"
     }
+  ],
+  "crons": [
+    {
+      "path": "/api/py/health",
+      "schedule": "0 12 * * *"
+    }
   ]
 }
