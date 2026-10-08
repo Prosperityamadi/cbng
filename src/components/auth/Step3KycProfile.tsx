@@ -6,17 +6,7 @@ import { ASSETS } from '@/core';
 import { KycService } from '@/core/services/kyc.service';
 import { StorageService } from '@/core/services/storage.service';
 
-const COUNTRIES = [
-  { code: 'USA', name: 'United States', flag: '🇺🇸' },
-  { code: 'CAN', name: 'Canada', flag: '🇨🇦' },
-  { code: 'GBR', name: 'United Kingdom', flag: '🇬🇧' },
-  { code: 'EUR', name: 'Eurozone', flag: '🇪🇺' },
-  { code: 'AUS', name: 'Australia', flag: '🇦🇺' },
-  { code: 'ZAF', name: 'South Africa', flag: '🇿🇦' },
-  { code: 'NGA', name: 'Nigeria', flag: '🇳🇬' },
-  { code: 'GHA', name: 'Ghana', flag: '🇬🇭' },
-  { code: 'KEN', name: 'Kenya', flag: '🇰🇪' },
-];
+import { COUNTRIES } from '@/core/countries';
 
 interface UploadedDoc {
   name: string;

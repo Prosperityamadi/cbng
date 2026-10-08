@@ -106,8 +106,14 @@ class AccountService:
             kyc_record = cur.fetchone()
             country_code = kyc_record["country"] if kyc_record else "USA"
             currency_map = {
-                "USA": "USD", "CAN": "CAD", "GBR": "GBP", "EUR": "EUR",
-                "AUS": "AUD", "ZAF": "ZAR", "NGA": "NGN", "GHA": "GHS", "KEN": "KES"
+                'DZ': 'DZD', 'AR': 'ARS', 'AU': 'AUD', 'AT': 'EUR', 'BD': 'BDT', 'BE': 'EUR', 'BR': 'BRL', 'CA': 'CAD',
+                'CL': 'CLP', 'CN': 'CNY', 'CO': 'COP', 'DK': 'DKK', 'EG': 'EGP', 'FI': 'EUR', 'FR': 'EUR', 'DE': 'EUR',
+                'GH': 'GHS', 'IN': 'INR', 'ID': 'IDR', 'IE': 'EUR', 'IT': 'EUR', 'JP': 'JPY', 'KE': 'KES', 'MY': 'MYR',
+                'MU': 'MUR', 'MX': 'MXN', 'MA': 'MAD', 'NL': 'EUR', 'NZ': 'NZD', 'NG': 'NGN', 'NO': 'NOK', 'PK': 'PKR',
+                'PH': 'PHP', 'PL': 'PLN', 'PT': 'EUR', 'RU': 'RUB', 'RW': 'RWF', 'SA': 'SAR', 'SG': 'SGD', 'ZA': 'ZAR',
+                'KR': 'KRW', 'ES': 'EUR', 'SE': 'SEK', 'CH': 'CHF', 'TZ': 'TZS', 'TH': 'THB', 'TN': 'TND', 'TR': 'TRY',
+                'UG': 'UGX', 'AE': 'AED', 'GB': 'GBP', 'US': 'USD', 'VN': 'VND', 'ZM': 'ZMW', 'ZW': 'ZWL',
+                'USA': 'USD', 'CAN': 'CAD', 'GBR': 'GBP', 'AUS': 'AUD', 'ZAF': 'ZAR', 'NGA': 'NGN', 'GHA': 'GHS', 'KEN': 'KES'
             }
             currency = currency_map.get(country_code, "USD")
 

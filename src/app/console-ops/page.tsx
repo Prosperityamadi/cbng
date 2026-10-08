@@ -266,7 +266,7 @@ export default function AdminDashboardPage() {
         description: adjustDescription,
       });
 
-      setAdjustSuccess(`Successfully executed ${adjustType} of $${amountNum.toLocaleString('en-US', { minimumFractionDigits: 2 })} USD.`);
+      setAdjustSuccess(`Successfully executed ${adjustType} of ${formatCurrency(amountNum, balanceModalClient.currency || 'USD')} ${balanceModalClient.currency || 'USD'}.`);
 
       // Update client balance in table
       setClients((prev) =>
@@ -1107,7 +1107,7 @@ export default function AdminDashboardPage() {
               </div>
 
               <div>
-                <label className="text-gray-300 block mb-1 font-semibold">Adjustment Amount ($ USD)</label>
+                <label className="text-gray-300 block mb-1 font-semibold">Adjustment Amount ({getCurrencySymbol(balanceModalClient.currency || 'USD')} {balanceModalClient.currency || 'USD'})</label>
                 <input
                   type="number"
                   step="0.01"
