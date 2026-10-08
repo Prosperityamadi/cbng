@@ -115,6 +115,7 @@ export const Step4SecurityPin: React.FC<Step4SecurityPinProps> = ({
           JSON.stringify({
             account_number: generatedAcc,
             routing_number: res.account.routing_number,
+            currency: res.account.currency,
             balance: res.account.balance,
             account_type: res.account.account_type
           })

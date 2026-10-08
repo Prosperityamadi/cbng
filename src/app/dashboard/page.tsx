@@ -179,6 +179,7 @@ export default function DashboardPage() {
             ...prev,
             accountNumber: data.account.account_number,
             routingNumber: data.account.routing_number,
+            currency: data.account.currency || 'USD',
             balance: Number(data.account.balance),
             accountType: data.account.account_type === 'checking' ? 'Private Wealth Checking' : 'Savings',
             tier: data.account.tier === 'private_wealth' ? 'Tier 1 Metal Access' : 'Standard Access',
